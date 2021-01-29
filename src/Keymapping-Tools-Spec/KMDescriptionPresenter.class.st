@@ -24,7 +24,10 @@ KMDescriptionPresenter class >> defaultSpec [
 { #category : #example }
 KMDescriptionPresenter class >> example [
 	self new
-		categories: #(GlobalShortcuts MonticelloShortcuts TextEditor);
+		categories: #(#MorphFocusNavigation #TextEditorTab #SimpleHierarchicalList #RubTextEditor
+#WindowShortcuts #Glamour #RubSmalltalkEditor #TextEditor #TabMorphsNavigation
+#ChangesBrowserGlobalShortcuts #MorphFocusCtrlNavigation #PluggableButtonMorph
+#GlobalShortcuts #TextMorph #ScrollPane #MonticelloShortcuts);
 		openWithSpec
 ]
 
@@ -37,7 +40,7 @@ KMDescriptionPresenter >> categories: aCollectionOfSymbols [
 KMDescriptionPresenter >> initializePresenter [
 	categoryList
 		transmitTo: shortcutList
-		transform: [ :category | (category entriesAt: #all) keymaps sorted: [ :keymap | keymap shortcut asString ] ascending ]
+		transform: [ :category | category model keymaps sorted: [ :keymap | keymap shortcut asString ] ascending ]
 ]
 
 { #category : #initialization }
@@ -46,7 +49,7 @@ KMDescriptionPresenter >> initializeWidgets [
 	shortcutList := self newTable.
 	actionBar := self newActionBar.
 
-	categoryList displayBlock: [ :category | category name ].
+	categoryList display: [ :category | category name ].
 
 	shortcutList
 		addColumn: (SpStringTableColumn title: 'Shortcut' evaluated: #shortcut);
