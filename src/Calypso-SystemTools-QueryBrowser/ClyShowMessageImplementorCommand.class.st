@@ -69,9 +69,10 @@ ClyShowMessageImplementorCommand >> defaultMenuItemName [
 { #category : 'execution' }
 ClyShowMessageImplementorCommand >> execute [
 
-	| selectors |
-	selectors := messages collect: [ :each | each selector].
-	browser spawnQueryBrowserOn: (ClyMessageImplementorsQuery ofAny: selectors)
+	StMessageBrowser 
+		browse: (messages flatCollect: [ :each | each contextUser implementors ])
+		asImplementorsOf: ((messages collect: [ : each | each contextUser selector ]) joinUsing: $,)
+
 ]
 
 { #category : 'execution' }
