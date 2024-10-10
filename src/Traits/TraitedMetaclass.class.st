@@ -293,7 +293,6 @@ TraitedMetaclass >> recategorizeSelector: selector from: oldProtocol to: newProt
 TraitedMetaclass >> recompile: selector from: oldClass [
 	"Compile the method associated with selector in the receiver's method dictionary."
 
-<<<<<<< HEAD:src/TraitsV2/TraitedMetaclass.class.st
 	| method newMethod |
 	method := oldClass compiledMethodAt: selector.
 	newMethod := self compiler
@@ -308,26 +307,6 @@ TraitedMetaclass >> recompile: selector from: oldClass [
 		ifPresent: [ :aSource | newMethod propertyAt: #traitSource put: aSource].
 	
 	self addSelector: selector withRecompiledMethod: newMethod.
-||||||| f5a33d82ec:src/TraitsV2/TraitedMetaclass.class.st
-	| method newMethod |
-	method := oldClass compiledMethodAt: selector.
-	newMethod := self compiler
-				source: (oldClass sourceCodeAt: selector);
-				class: self;
-				failBlock: [^ self];
-				compiledMethodTrailer: method trailer;
-				compile.   "Assume OK after proceed from SyntaxError"
-	selector == newMethod selector ifFalse: [self error: 'selector changed!'].
-	
-	method properties 
-		at: #traitSource 
-		ifPresent: [ :aSource | newMethod propertyAt: #traitSource put: aSource].
-	
-	self addSelector: selector withRecompiledMethod: newMethod.
-=======
-	super recompile: selector from: oldClass.
-	TraitChange addSelector: selector on: self
->>>>>>> origin/Pharo13:src/Traits/TraitedMetaclass.class.st
 ]
 
 { #category : 'traits' }
