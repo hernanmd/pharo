@@ -3,8 +3,8 @@ A ConnectionQueue listens on a given port number and collects a queue of client 
 
 "
 Class {
-	#name : #ConnectionQueue,
-	#superclass : #Object,
+	#name : 'ConnectionQueue',
+	#superclass : 'Object',
 	#instVars : [
 		'portNumber',
 		'maxQueueLength',
@@ -13,16 +13,18 @@ Class {
 		'socket',
 		'process'
 	],
-	#category : #'Network-Kernel-Utilities'
+	#category : 'Network-Kernel-Utilities',
+	#package : 'Network-Kernel',
+	#tag : 'Utilities'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 ConnectionQueue class >> portNumber: anInteger queueLength: queueLength [
 
 	^ self new initPortNumber: anInteger queueLength: queueLength
 ]
 
-{ #category : #public }
+{ #category : 'public' }
 ConnectionQueue >> connectionCount [
 	"Return an estimate of the number of currently queued connections. This is only an estimate since a new connection could be made, or an existing one aborted, at any moment."
 
@@ -30,7 +32,7 @@ ConnectionQueue >> connectionCount [
 	^accessSema critical: [connections size]
 ]
 
-{ #category : #public }
+{ #category : 'public' }
 ConnectionQueue >> destroy [
 	"Terminate the listener process and destroy all sockets in my possesion."
 
@@ -41,10 +43,10 @@ ConnectionQueue >> destroy [
 		socket destroy.
 		socket := nil].
 	connections do: [:s | s destroy].
-	connections := OrderedCollection new.
+	connections := OrderedCollection new
 ]
 
-{ #category : #public }
+{ #category : 'public' }
 ConnectionQueue >> getConnectionOrNil [
 	"Return a connected socket, or nil if no connection has been established."
 
@@ -60,7 +62,7 @@ ConnectionQueue >> getConnectionOrNil [
 		result]
 ]
 
-{ #category : #public }
+{ #category : 'public' }
 ConnectionQueue >> getConnectionOrNilLenient [
 	"Return a connected socket, or nil if no connection has been established."
 
@@ -77,10 +79,10 @@ ConnectionQueue >> getConnectionOrNilLenient [
 			]
 		].
 		result
-	].
+	]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ConnectionQueue >> initPortNumber: anInteger queueLength: queueLength [
 	"Private! Initialize the receiver to listen on the given port number. Up to queueLength connections will be queued."
 
@@ -91,20 +93,20 @@ ConnectionQueue >> initPortNumber: anInteger queueLength: queueLength [
 	socket := nil.
 	process := [self listenLoop] newProcess.
 	process priority: Processor highIOPriority.
-	process resume.
+	process resume
 ]
 
-{ #category : #public }
+{ #category : 'public' }
 ConnectionQueue >> isValid [
-	^process notNil
+	^process isNotNil
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ConnectionQueue >> listenLoop [
 	"Private! This loop is run in a separate process. It will establish up to maxQueueLength connections on the given port."
 	"Details: When out of sockets or queue is full, retry more frequently, since a socket may become available, space may open in the queue, or a previously queued connection may be aborted by the client, making it available for a fresh connection."
 	"Note: If the machine is disconnected from the network while the server is running, the currently waiting socket will go from 'isWaitingForConnection' to 'unconnected', and attempts to create new sockets will fail. When this happens, delete the broken socket and keep trying to create a socket in case the network connection is re-established. Connecting and disconnecting was tested under PPP on Mac system 8.1. It is not if this will work on other platforms.
-	
+
 	Fixed to not accept the connection if the queue is full (gvc)."
 
 
@@ -125,18 +127,18 @@ ConnectionQueue >> listenLoop [
 		[newConnection := socket waitForAcceptFor: 10]
 			on: ConnectionTimedOut
 			do: [:ex | newConnection := nil].
-		(newConnection notNil and: [newConnection isConnected])
+		(newConnection isNotNil and: [newConnection isConnected])
 			ifTrue: [(accessSema critical: [connections size < maxQueueLength])
 						ifFalse: [newConnection close. newConnection := nil]]
 			ifFalse: [newConnection := nil].
-		(newConnection notNil and: [newConnection isConnected]) ifTrue: [
+		(newConnection isNotNil and: [newConnection isConnected]) ifTrue: [
 			accessSema critical: [connections addLast: newConnection].
 			newConnection := nil.
 			self changed].
-		self pruneStaleConnections].
+		self pruneStaleConnections]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ConnectionQueue >> oldStyleListenLoop [
 	"Private! This loop is run in a separate process. It will establish up to maxQueueLength connections on the given port."
 	"Details: When out of sockets or queue is full, retry more frequently, since a socket may become available, space may open in the queue, or a previously queued connection may be aborted by the client, making it available for a fresh connection."
@@ -161,10 +163,10 @@ ConnectionQueue >> oldStyleListenLoop [
 							ifFalse: [
 								socket isWaitingForConnection
 									ifFalse: [socket destroy. socket := nil]]]].  "broken socket; start over"
-		self pruneStaleConnections].
+		self pruneStaleConnections]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ConnectionQueue >> pruneStaleConnections [
 	"Private! The client may establish a connection and then disconnect while it is still in the connection queue. This method is called periodically to prune such sockets out of the connection queue and make room for fresh connections."
 
@@ -176,5 +178,5 @@ ConnectionQueue >> pruneStaleConnections [
 				s destroy.
 				foundStaleConnection := true]].
 		foundStaleConnection ifTrue: [
-			connections := connections select: [:s | s isValid]]].
+			connections := connections select: [:s | s isValid]]]
 ]

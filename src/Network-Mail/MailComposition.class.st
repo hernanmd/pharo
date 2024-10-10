@@ -2,8 +2,8 @@
 a message being composed.  When finished, it will be submitted via a Celeste.
 "
 Class {
-	#name : #MailComposition,
-	#superclass : #Model,
+	#name : 'MailComposition',
+	#superclass : 'Model',
 	#instVars : [
 		'messageText',
 		'morphicWindow',
@@ -12,66 +12,48 @@ Class {
 	#classVars : [
 		'SmtpServer'
 	],
-	#category : #'Network-Mail'
+	#category : 'Network-Mail',
+	#package : 'Network-Mail'
 }
 
-{ #category : #'smtp server' }
-MailComposition class >> isSmtpServerSet [
-	^ SmtpServer notNil and: [SmtpServer notEmpty]
-]
-
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 MailComposition class >> sendMailMessage: aMailMessage [
 	| newComposition |
 	newComposition := self new.
 	newComposition messageText: aMailMessage text; open
 ]
 
-{ #category : #'smtp server' }
-MailComposition class >> setSmtpServer [
-	"Set the SMTP server used to send outgoing messages via"
-	SmtpServer ifNil: [SmtpServer := ''].
-	SmtpServer := UIManager default
-		request: 'What is your mail server for outgoing mail?'
-		initialAnswer: SmtpServer.
-]
-
-{ #category : #'smtp server' }
+{ #category : 'smtp server' }
 MailComposition class >> setSmtpServer: aString [
 	SmtpServer := aString
 ]
 
-{ #category : #'smtp server' }
+{ #category : 'smtp server' }
 MailComposition class >> smtpServer [
 	"Answer the server for sending email"
 
-	self isSmtpServerSet
-		ifFalse: [self setSmtpServer].
-	SmtpServer isEmpty ifTrue: [
-		self error: 'no SMTP server specified' ].
+	SmtpServer isEmpty ifTrue: [ self error: 'no SMTP server specified' ].
 
-	^SmtpServer
+	^ SmtpServer
 ]
 
-{ #category : #interface }
+{ #category : 'interface' }
 MailComposition >> addAttachment [
+
 	| fileSelected |
-	self textModel hasUnacceptedEdits
-		ifTrue: [ self textModel acceptEditsInView ].
-	fileSelected := UIManager default chooseFullFileNameMatching: nil.
+	self textModel hasUnacceptedEdits ifTrue: [
+		self textModel acceptEditsInView ].
+	fileSelected := MorphicUIManager new chooseFullFileNameMatching: nil.
 	fileSelected ifNil: [ ^ self ].
-	fileSelected
-		writeStreamDo: [ :stream | 
-			stream binary.
-			self
-				messageText:
-					((MailMessage from: self messageText asString)
-						addAttachmentFrom: stream withName: fileSelected basename;
-						text;
-						yourself) ]
+	fileSelected writeStreamDo: [ :stream |
+		stream binary.
+		self messageText: ((MailMessage from: self messageText asString)
+				 addAttachmentFrom: stream withName: fileSelected basename;
+				 text;
+				 yourself) ]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 MailComposition >> breakLines: aString  atWidth: width [
 	"break lines in the given string into shorter lines"
 	| result atAttachment |
@@ -79,7 +61,7 @@ MailComposition >> breakLines: aString  atWidth: width [
 	result := (String new: (aString size * 50 // 49)) writeStream.
 
 	atAttachment := false.
-	aString asString linesDo: [ :line | | start end | 
+	aString asString linesDo: [ :line | | start end |
 		(line beginsWith: '====') ifTrue: [ atAttachment := true ].
 		atAttachment ifTrue: [
 			"at or after an attachment line; no more wrapping for the rest of the message"
@@ -93,7 +75,7 @@ MailComposition >> breakLines: aString  atWidth: width [
 				start := 1.
 					"output one shorter line each time through this loop"
 				[ start + width <= line size ] whileTrue: [
-	
+
 					"find the end of the line"
 					end := start + width - 1.
 					[end >= start and: [ (line at: (end+1)) isSeparator not ]] whileTrue: [
@@ -121,14 +103,14 @@ MailComposition >> breakLines: aString  atWidth: width [
 	^result contents
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 MailComposition >> breakLinesInMessage: message [
 	"reformat long lines in the specified message into shorter ones"
 
 	"multipart message; process the top-level parts.  HACK: the parts are modified in place"
 
 	message body mainType = 'text'
-		ifTrue: [ 
+		ifTrue: [
 			| newBodyText "it's a single-part text message.  reformat the text" |
 			newBodyText := self breakLines: message bodyText atWidth: 72.
 			message body: (MIMEDocument contentType: message body contentType content: newBodyText).
@@ -136,18 +118,18 @@ MailComposition >> breakLinesInMessage: message [
 	message body isMultipart
 		ifFalse: [ ^ self ].
 	message parts
-		do: [ :part | 
+		do: [ :part |
 			part body mainType = 'text'
-				ifTrue: [ 
+				ifTrue: [
 					| newBodyText |
 					newBodyText := self breakLines: part bodyText atWidth: 72.
 					part body: (MIMEDocument contentType: part body contentType content: newBodyText) ] ].
 	message regenerateBodyFromParts
 ]
 
-{ #category : #interface }
+{ #category : 'interface' }
 MailComposition >> menuGet: aMenu shifted: shifted [
-	
+
 	aMenu addList: {
 		{'Find...(f)' .	#find}.
 		{'Find again (g)' . #findAgain}.
@@ -155,16 +137,16 @@ MailComposition >> menuGet: aMenu shifted: shifted [
 		#-.
 		{'Accept (s)' . #accept}.
 		{'Send message' .  #submit}}.
-	^aMenu.
+	^aMenu
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailComposition >> messageText [
 	"return the current text"
-	^messageText.
+	^messageText
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailComposition >> messageText: aText [
 	"change the current text"
 	messageText := aText.
@@ -172,15 +154,15 @@ MailComposition >> messageText: aText [
 	^true
 ]
 
-{ #category : #interface }
+{ #category : 'interface' }
 MailComposition >> open [
 	"open an interface"
 	self openInMorphic
 ]
 
-{ #category : #interface }
+{ #category : 'interface' }
 MailComposition >> openInMorphic [
-	"open an interface for sending a mail message with the given initial 
+	"open an interface for sending a mail message with the given initial
 	text"
 
 	| textMorph buttonsList sendButton attachmentButton |
@@ -213,17 +195,17 @@ MailComposition >> openInMorphic [
 	morphicWindow openInWorld
 ]
 
-{ #category : #interface }
+{ #category : 'interface' }
 MailComposition >> sendMailMessage: aMailMessage [
 	self messageText: aMailMessage text
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailComposition >> smtpServer [
 	^self class smtpServer
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailComposition >> submit [
 	| message |
 	"submit the message"
@@ -239,7 +221,7 @@ MailComposition >> submit [
 	morphicWindow ifNotNil: [ morphicWindow delete ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailComposition >> textModel [
 	^ textModel ifNil: [ textModel := RubScrolledTextModel new interactionModel: self ]
 ]

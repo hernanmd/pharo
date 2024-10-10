@@ -2,27 +2,29 @@
 Example for class tree nodes
 "
 Class {
-	#name : #ClassTreeNodeExample,
-	#superclass : #MorphTreeNodeModel,
+	#name : 'ClassTreeNodeExample',
+	#superclass : 'MorphTreeNodeModel',
 	#instVars : [
 		'contents'
 	],
-	#category : #'Morphic-Examples-MorphTreeWidget'
+	#category : 'Morphic-Examples-MorphTreeWidget',
+	#package : 'Morphic-Examples',
+	#tag : 'MorphTreeWidget'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ClassTreeNodeExample >> browseItem [
 	Smalltalk tools browser openOnClass: self item
 ]
 
-{ #category : #menu }
+{ #category : 'menu' }
 ClassTreeNodeExample >> childrenItems [
 	^ (self item subclasses asArray sort: [:a :b | a name < b name]) asOrderedCollection
 ]
 
-{ #category : #menu }
+{ #category : 'menu' }
 ClassTreeNodeExample >> classButton [
-	^ (self theme 
+	^ (self theme
 			newButtonIn: self
 			for: self
 			getState: nil
@@ -35,7 +37,7 @@ ClassTreeNodeExample >> classButton [
 				yourself
 ]
 
-{ #category : #menu }
+{ #category : 'menu' }
 ClassTreeNodeExample >> commentText [
 
 	^ (self theme newTextIn: self text: self item comment)
@@ -44,41 +46,34 @@ ClassTreeNodeExample >> commentText [
 		yourself
 ]
 
-{ #category : #menu }
+{ #category : 'menu' }
 ClassTreeNodeExample >> contents [
 	^ contents ifNil: [contents := super contents]
 ]
 
-{ #category : #accessing }
-ClassTreeNodeExample >> exploreItem [
-	self inspect
-]
-
-{ #category : #menu }
+{ #category : 'menu' }
 ClassTreeNodeExample >> icon [
-	^ self iconNamed: #smallExpertIcon
+	^ self iconNamed: #smallExpert
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ClassTreeNodeExample >> inspectItem [
 	self inspect
 ]
 
-{ #category : #accessing }
-ClassTreeNodeExample >> keyStroke: anEvent from: aTreeMorph [ 
+{ #category : 'accessing' }
+ClassTreeNodeExample >> keyStroke: anEvent from: aTreeMorph [
 	| c  |
 	c := anEvent keyCharacter.
 	c = $b
 		ifTrue: [self browseItem. ^ true].
 	c = $i
 		ifTrue: [self inspectItem. ^ true].
-	c = $I
-		ifTrue: [self exploreItem. ^ true].
 	^ false
 ]
 
-{ #category : #accessing }
-ClassTreeNodeExample >> menu: menu shifted: b [ 
+{ #category : 'accessing' }
+ClassTreeNodeExample >> menu: menu shifted: b [
 	menu
 		add: 'Browse (b)'
 		target: self
@@ -86,9 +81,5 @@ ClassTreeNodeExample >> menu: menu shifted: b [
 	menu
 		add: 'Inspect (i)'
 		target: self
-		selector: #inspectItem.
-	menu
-		add: 'Explore (I)'
-		target: self
-		selector: #exploreItem.
+		selector: #inspectItem
 ]

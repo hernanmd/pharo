@@ -41,31 +41,33 @@ Distribute morphs in row/column:
 
 "
 Class {
-	#name : #TableLayout,
-	#superclass : #LayoutPolicy,
+	#name : 'TableLayout',
+	#superclass : 'LayoutPolicy',
 	#instVars : [
 		'properties',
 		'minExtentCache'
 	],
-	#category : #'Morphic-Base-Layouts'
+	#category : 'Morphic-Base-Layouts',
+	#package : 'Morphic-Base',
+	#tag : 'Layouts'
 }
 
-{ #category : #nil }
+{ #category : 'nil' }
 TableLayout >> computeCellArrangement: cellHolder in: newBounds horizontal: aBool target: aMorph [
 	"Compute number of cells we can put in each row/column. The returned array contains a list of all the cells we can put into the row/column at each level.
 	Note: The arrangement is so that the 'x' value of each cell advances along the list direction and the 'y' value along the wrap direction. The returned arrangement has an extra cell at the start describing the width and height of the row."
 	| cells wrap spacing output maxExtent n sum index max cell first last w cellMax maxCell hFill vFill inset |
 	maxCell := cellHolder key.
 	cells := cellHolder value.
-	properties wrapDirection == #none 
+	properties wrapDirection == #none
 		ifTrue:[wrap := SmallInteger maxVal]
 		ifFalse:[wrap := aBool ifTrue:[newBounds width] ifFalse:[newBounds height].
 				wrap < maxCell x ifTrue:[wrap := maxCell x]].
 	spacing := properties cellSpacing.
 	(spacing == #globalRect or:[spacing = #globalSquare]) ifTrue:[
 		"Globally equal spacing is a very special case here, so get out fast and easy"
-		^self computeGlobalCellArrangement: cells 
-			in: newBounds horizontal: aBool 
+		^self computeGlobalCellArrangement: cells
+			in: newBounds horizontal: aBool
 			wrap: wrap spacing: spacing].
 
 	output := Array new writeStream.
@@ -83,17 +85,17 @@ TableLayout >> computeCellArrangement: cellHolder in: newBounds horizontal: aBoo
 		cellMax := maxExtent max: cell cellSize. "e.g., minSize"
 		(spacing == #localRect or:[spacing == #localSquare]) ifTrue:[
 			"Recompute entire size of current row"
-			spacing == #localSquare 
+			spacing == #localSquare
 				ifTrue:[max := cellMax x max: cellMax y]
 				ifFalse:[max := cellMax x].
 			sum := (n + 1) * max.
 		] ifFalse:[
 			sum := sum + (cell cellSize x).
 		].
-		((sum + (n * inset x)) > wrap and:[first notNil]) ifTrue:[
+		((sum + (n * inset x)) > wrap and:[first isNotNil]) ifTrue:[
 			"It doesn't fit and we're not starting a new line"
 			(spacing == #localSquare or:[spacing == #localRect]) ifTrue:[
-				spacing == #localSquare 
+				spacing == #localSquare
 					ifTrue:[maxExtent := (maxExtent x max: maxExtent y) asPoint].
 				first do:[:c| c cellSize: maxExtent]].
 			w := w + ((n - 1) * inset x).
@@ -140,7 +142,7 @@ TableLayout >> computeCellArrangement: cellHolder in: newBounds horizontal: aBoo
 	^output
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TableLayout >> computeCellSizes: aMorph in: newBounds horizontal: aBool [
 	"Step 1: Compute the minimum extent for all the children of aMorph"
 	| cells block minSize maxSize maxCell |
@@ -173,8 +175,8 @@ TableLayout >> computeCellSizes: aMorph in: newBounds horizontal: aBool [
 	^maxCell -> cells contents
 ]
 
-{ #category : #layout }
-TableLayout >> computeExtraSpacing: arrangement in: newBounds horizontal: aBool target: aMorph [ 
+{ #category : 'layout' }
+TableLayout >> computeExtraSpacing: arrangement in: newBounds horizontal: aBool target: aMorph [
 	"Compute the required extra spacing for laying out the cells"
 
 	"match newBounds extent with arrangement's orientation"
@@ -186,8 +188,8 @@ TableLayout >> computeExtraSpacing: arrangement in: newBounds horizontal: aBool 
 	"figure out if we have any horizontal or vertical space fillers"
 	hFill := vFill := false.
 	max := 0 @ 0.
-	arrangement do: 
-			[:c | 
+	arrangement do:
+			[:c |
 			max := (max x max: c cellSize x) @ (max y + c cellSize y).
 			max := max max: c cellSize.
 			hFill := hFill or: [c hSpaceFill].
@@ -197,122 +199,122 @@ TableLayout >> computeExtraSpacing: arrangement in: newBounds horizontal: aBool 
 	Note: these are only honored when there are no #spaceFill children,
 	or when #rubberBandCells is set."
 	allow := properties rubberBandCells not.
-	aMorph hResizing == #shrinkWrap 
-		ifTrue: 
-			[aBool 
+	aMorph hResizing == #shrinkWrap
+		ifTrue:
+			[aBool
 				ifTrue: [allow & hFill ifFalse: [extent := max x @ (max y max: extent y)]]
 				ifFalse: [allow & vFill ifFalse: [extent := (max x max: extent x) @ max y]]].
-	aMorph vResizing == #shrinkWrap 
-		ifTrue: 
-			[aBool 
+	aMorph vResizing == #shrinkWrap
+		ifTrue:
+			[aBool
 				ifFalse: [allow & hFill ifFalse: [extent := max x @ (max y max: extent y)]]
 				ifTrue: [allow & vFill ifFalse: [extent := (max x max: extent x) @ max y]]].
 
 	"Now compute the extra v space"
-	extra := extent y 
+	extra := extent y
 				- (arrangement inject: 0 into: [:sum :c | sum + c cellSize y]).
-	extra > 0 
-		ifTrue: 
+	extra > 0
+		ifTrue:
 			["Check if we have any #spaceFillers"
 
-			vFill 
-				ifTrue: 
+			vFill
+				ifTrue:
 					["use only #spaceFillers"
 
 					n := arrangement inject: 0
 								into: [:sum :c | c vSpaceFill ifTrue: [sum + 1] ifFalse: [sum]].
 					n isZero ifFalse: [extraPerCell := extra asFloat / n asFloat].
 					extra := last := 0.
-					arrangement do: 
-							[:c | 
-							c vSpaceFill 
-								ifTrue: 
+					arrangement do:
+							[:c |
+							c vSpaceFill
+								ifTrue:
 									[extra := (last := extra) + extraPerCell.
 									amount := 0 @ (extra truncated - last truncated).
 									c do: [:cc | cc cellSize: cc cellSize + amount]]]]
-				ifFalse: 
+				ifFalse:
 					["no #spaceFillers; distribute regularly"
 
 					centering := properties wrapCentering.
 					"centering == #topLeft ifTrue:[]."	"add all extra space to the last cell; e.g., do nothing"
-					centering == #bottomRight 
-						ifTrue: 
+					centering == #bottomRight
+						ifTrue:
 							["add all extra space to the first cell"
 
 							arrangement first addExtraSpace: 0 @ extra].
-					centering == #center 
-						ifTrue: 
+					centering == #center
+						ifTrue:
 							["add 1/2 extra space to the first and last cell"
 
 							arrangement first addExtraSpace: 0 @ (extra // 2)].
-					centering == #justified 
-						ifTrue: 
+					centering == #justified
+						ifTrue:
 							["add extra space equally distributed to each cell"
 
 							n := arrangement size - 1 max: 1.
 							extraPerCell := extra asFloat / n asFloat.
 							extra := last := 0.
-							arrangement do: 
-									[:c | 
+							arrangement do:
+									[:c |
 									c addExtraSpace: 0 @ (extra truncated - last truncated).
 									extra := (last := extra) + extraPerCell]]]].
 
 	"Now compute the extra space for the primary direction"
 	centering := properties listCentering.
 	1 to: arrangement size
-		do: 
-			[:i | 
+		do:
+			[:i |
 			cell := arrangement at: i.
 			extra := extent x - cell cellSize x.
-			extra > 0 
-				ifTrue: 
+			extra > 0
+				ifTrue:
 					["Check if we have any #spaceFillers"
 					cell := cell nextCell.
-					cell hSpaceFill 
-						ifTrue: 
+					cell hSpaceFill
+						ifTrue:
 							["use only #spaceFillers"
 
-							
+
 							n := cell inject: 0
 										into: [:sum :c | c hSpaceFill ifTrue: [sum + c target spaceFillWeight] ifFalse: [sum]].
 							n isZero ifFalse: [extraPerCell := extra asFloat / n asFloat].
 							extra := last := 0.
-							cell do: 
-									[:c | 
-									c hSpaceFill 
-										ifTrue: 
+							cell do:
+									[:c |
+									c hSpaceFill
+										ifTrue:
 											[extra := (last := extra) + (extraPerCell * c target spaceFillWeight).
 											amount := extra truncated - last truncated.
 											c cellSize: c cellSize + (amount @ 0)]]]
-						ifFalse: 
+						ifFalse:
 							["no #spaceFiller; distribute regularly"
 
-						
+
 							"centering == #topLeft ifTrue:[]"	"add all extra space to the last cell; e.g., do nothing"
-							centering == #bottomRight 
-								ifTrue: 
+							centering == #bottomRight
+								ifTrue:
 									["add all extra space to the first cell"
 
 									cell addExtraSpace: extra @ 0].
-							centering == #center 
-								ifTrue: 
+							centering == #center
+								ifTrue:
 									["add 1/2 extra space to the first and last cell"
 
 									cell addExtraSpace: (extra // 2) @ 0].
-							centering == #justified 
-								ifTrue: 
+							centering == #justified
+								ifTrue:
 									["add extra space equally distributed to each cell"
 
 									n := cell size - 1 max: 1.
 									extraPerCell := extra asFloat / n asFloat.
 									extra := last := 0.
-									cell do: 
-											[:c | 
+									cell do:
+											[:c |
 											c addExtraSpace: (extra truncated - last truncated) @ 0.
 											extra := (last := extra) + extraPerCell]]]]]
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TableLayout >> computeGlobalCellArrangement: cells in: newBounds horizontal: aBool wrap: wrap spacing: spacing [
 	"Compute number of cells we can put in each row/column. The returned array contains a list of all the cells we can put into the row/column at each level.
 	Note: The arrangement is so that the 'x' value of each cell advances along the list direction and the 'y' value along the wrap direction. The returned arrangement has an extra cell at the start describing the width and height of the row."
@@ -346,24 +348,24 @@ TableLayout >> computeGlobalCellArrangement: cells in: newBounds horizontal: aBo
 	^output contents
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TableLayout >> flushLayoutCache [
 	"Flush any cached information associated with the receiver"
-	minExtentCache := nil.
+	minExtentCache := nil
 ]
 
-{ #category : #utilities }
-TableLayout >> indexForInserting: aMorph at: aPoint in: owner [ 
+{ #category : 'utilities' }
+TableLayout >> indexForInserting: aMorph at: aPoint in: owner [
 	"Return the insertion index based on the layout strategy defined for some morph. Used for drop insertion."
 
 	| horizontal morphList index |
 	owner hasSubmorphs ifFalse: [^1].
 	aMorph disableTableLayout ifTrue: [^1].
-	horizontal := (owner listDirection == #topToBottom 
+	horizontal := (owner listDirection == #topToBottom
 				or: [owner listDirection == #bottomToTop]) not .
 	morphList := owner submorphs.
 	owner reverseTableCells ifTrue: [morphList := morphList reversed].
-	index := self 
+	index := self
 				indexForInserting: aPoint
 				inList: morphList
 				horizontal: horizontal
@@ -372,48 +374,48 @@ TableLayout >> indexForInserting: aMorph at: aPoint in: owner [
 	^index ifNil: [1]
 ]
 
-{ #category : #utilities }
-TableLayout >> indexForInserting: aPoint inList: morphList horizontal: aBool target: aMorph [ 
+{ #category : 'utilities' }
+TableLayout >> indexForInserting: aPoint inList: morphList horizontal: aBool target: aMorph [
 	| cmp1 cmp2 cmp3 noWrap |
 	properties := aMorph layoutProperties.
 	noWrap := properties wrapDirection == #none.
-	aBool 
-		ifTrue: 
+	aBool
+		ifTrue:
 			["horizontal"
 
-			properties listDirection == #rightToLeft 
+			properties listDirection == #rightToLeft
 				ifTrue: [cmp1 := [:rect | aPoint x > rect left]]
 				ifFalse: [cmp1 := [:rect | aPoint x < rect right]].
-			properties wrapDirection == #bottomToTop 
-				ifTrue: 
+			properties wrapDirection == #bottomToTop
+				ifTrue:
 					[cmp2 := [:rect | aPoint y > rect top].
 					cmp3 := [:rect | aPoint y > rect bottom]]
-				ifFalse: 
+				ifFalse:
 					[cmp2 := [:rect | aPoint y < rect bottom].
 					cmp3 := [:rect | aPoint y < rect top]]]
-		ifFalse: 
+		ifFalse:
 			["vertical"
 
-			properties listDirection == #bottomToTop 
+			properties listDirection == #bottomToTop
 				ifTrue: [cmp1 := [:rect | aPoint y > rect top]]
 				ifFalse: [cmp1 := [:rect | aPoint y < rect bottom]].
-			properties wrapDirection == #rightToLeft 
-				ifTrue: 
+			properties wrapDirection == #rightToLeft
+				ifTrue:
 					[cmp2 := [:rect | aPoint x > rect left].
 					cmp3 := [:rect | aPoint x > rect right]]
-				ifFalse: 
+				ifFalse:
 					[cmp2 := [:rect | aPoint x < rect right].
-					cmp3 := [:rect | aPoint x < rect left]]]. 
-	morphList keysAndValuesDo: 
-			[:index :m | | box | 
+					cmp3 := [:rect | aPoint x < rect left]]].
+	morphList keysAndValuesDo:
+			[:index :m | | box |
 			self flag: #pharoFixMe.	"it is not quite clear if we can really use #fullBounds here..."
 			box := m fullBounds.
-			noWrap 
-				ifTrue: 
+			noWrap
+				ifTrue:
 					["Only in one direction"
 
 					(cmp1 value: box) ifTrue: [^index]]
-				ifFalse: 
+				ifFalse:
 					["Check for inserting before current row"
 
 					(cmp3 value: box) ifTrue: [^index].
@@ -422,62 +424,62 @@ TableLayout >> indexForInserting: aPoint inList: morphList horizontal: aBool tar
 	^morphList size + 1
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 TableLayout >> isTableLayout [
 	^true
 ]
 
-{ #category : #layout }
-TableLayout >> layout: aMorph in: box [ 
+{ #category : 'layout' }
+TableLayout >> layout: aMorph in: box [
 	"Compute the layout for the given morph based on the new bounds"
 
 	| cells arrangement horizontal newBounds |
 	aMorph hasSubmorphs ifFalse: [^self].
 	properties := aMorph assureTableProperties.
 	newBounds := box origin asIntegerPoint corner: box corner asIntegerPoint.
-	(properties wrapDirection == #none and: [properties cellSpacing == #none]) 
-		ifTrue: 
+	(properties wrapDirection == #none and: [properties cellSpacing == #none])
+		ifTrue:
 			["get into the fast lane"
 
-			properties listCentering == #justified 
-				ifFalse: 
+			properties listCentering == #justified
+				ifFalse:
 					["can't deal with that"
 
-					properties listDirection == #leftToRight 
+					properties listDirection == #leftToRight
 						ifTrue: [^self layoutLeftToRight: aMorph in: newBounds].
-					properties listDirection == #topToBottom 
+					properties listDirection == #topToBottom
 						ifTrue: [^self layoutTopToBottom: aMorph in: newBounds]]].
-	horizontal := (properties listDirection == #topToBottom 
-				or: [properties listDirection == #bottomToTop]) not. 
+	horizontal := (properties listDirection == #topToBottom
+				or: [properties listDirection == #bottomToTop]) not.
 	"Step 1: Compute the minimum extent for all the children of aMorph"
-	cells := self 
+	cells := self
 				computeCellSizes: aMorph
 				in: (0 @ 0 corner: newBounds extent)
 				horizontal: horizontal.
 	"Step 2: Compute the arrangement of the cells for each row and column"
-	arrangement := self 
+	arrangement := self
 				computeCellArrangement: cells
 				in: newBounds
 				horizontal: horizontal
 				target: aMorph.
 	"Step 3: Compute the extra spacing for each cell"
-	self 
+	self
 		computeExtraSpacing: arrangement
 		in: newBounds
 		horizontal: horizontal
 		target: aMorph.
 	"Step 4: Place the children within the cells accordingly"
-	self 
+	self
 		placeCells: arrangement
 		in: newBounds
 		horizontal: horizontal
 		target: aMorph
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TableLayout >> layoutLeftToRight: aMorph in: newBounds [
 	"An optimized left-to-right list layout"
-	| inset extent block posX posY centering extraPerCell amount minX minY maxX maxY n width extra last cell size height sum vFill first |
+	| inset extent block posX posY centering extraPerCell amount minX minY maxX maxY n width extra last cell size height sum vFill first submorphs |
 	size := properties minCellSize asPoint. minX := size x. minY := size y.
 	size := properties maxCellSize asPoint. maxX := size x. maxY := size y.
 	inset := properties cellInset asPoint x.
@@ -511,9 +513,13 @@ TableLayout >> layoutLeftToRight: aMorph in: newBounds [
 			sizeY > height ifTrue:[height := sizeY].
 		].
 	].
-	properties reverseTableCells
-		ifTrue:[aMorph submorphsReverseDo: block]
-		ifFalse:[aMorph submorphsDo: block].
+
+	submorphs := aMorph submorphs.
+	properties reverseTableCells ifTrue:[ submorphs := submorphs reversed ].
+	submorphs do: [ :each |
+		each visible 
+			ifTrue: [ block value: each ]
+			ifFalse: [ each privateBounds: (each bounds topLeft extent: 0@0) ] ].
 
 	n > 1 ifTrue:[width := width + (n-1 * inset)].
 
@@ -565,13 +571,13 @@ TableLayout >> layoutLeftToRight: aMorph in: newBounds [
 		cell target layoutInBounds: (posX @ posY extent: width @ height).
 		posX := posX + width + inset.
 		cell := cell nextCell.
-	].
+	]
 ]
 
-{ #category : #nil }
+{ #category : 'nil' }
 TableLayout >> layoutTopToBottom: aMorph in: newBounds [
 	"An optimized top-to-bottom list layout"
-	| inset extent block posX posY centering extraPerCell amount minX minY maxX maxY n height extra last cell size width sum vFill first |
+	| inset extent block posX posY centering extraPerCell amount minX minY maxX maxY n height extra last cell size width sum vFill first submorphs |
 	size := properties minCellSize asPoint. minX := size x. minY := size y.
 	size := properties maxCellSize asPoint. maxX := size x. maxY := size y.
 	inset := properties cellInset asPoint y.
@@ -605,9 +611,13 @@ TableLayout >> layoutTopToBottom: aMorph in: newBounds [
 			sizeX > width ifTrue:[width := sizeX].
 		].
 	].
-	properties reverseTableCells
-		ifTrue:[aMorph submorphsReverseDo: block]
-		ifFalse:[aMorph submorphsDo: block].
+
+	submorphs := aMorph submorphs.
+	properties reverseTableCells ifTrue:[ submorphs := submorphs reversed ].
+	submorphs do: [ :each |
+		each visible 
+			ifTrue: [ block value: each ]
+			ifFalse: [ each privateBounds: (each bounds topLeft extent: 0@0) ] ].
 
 	n > 1 ifTrue:[height := height + (n-1 * inset)].
 
@@ -659,10 +669,10 @@ TableLayout >> layoutTopToBottom: aMorph in: newBounds [
 		cell target layoutInBounds: (posX @ posY extent: width @ height).
 		posY := posY + height + inset.
 		cell := cell nextCell.
-	].
+	]
 ]
 
-{ #category : #nil }
+{ #category : 'nil' }
 TableLayout >> minExtentHorizontal: aMorph [
 	"Return the minimal size aMorph's children would require given the new bounds"
 	| inset minX minY maxX maxY n size width height |
@@ -689,7 +699,7 @@ TableLayout >> minExtentHorizontal: aMorph [
 	^minExtentCache := width @ height
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TableLayout >> minExtentOf: aMorph in: box [
 
 	"Return the minimal size aMorph's children would require given the new bounds"
@@ -722,7 +732,7 @@ TableLayout >> minExtentOf: aMorph in: box [
 		target: aMorph.	"Step 3: Extract the minimum size out of the arrangement"
 	minX := minY := 0.
 	arrangement
-		do: [ :cell | 
+		do: [ :cell |
 			minX := minX max: cell cellSize x + cell extraSpace x.
 			minY := minY + cell cellSize y + cell extraSpace y
 			].
@@ -732,7 +742,7 @@ TableLayout >> minExtentOf: aMorph in: box [
 	^ minExtentCache
 ]
 
-{ #category : #nil }
+{ #category : 'nil' }
 TableLayout >> minExtentVertical: aMorph [
 	"Return the minimal size aMorph's children would require given the new bounds"
 	| inset minX minY maxX maxY n size width height |
@@ -759,67 +769,67 @@ TableLayout >> minExtentVertical: aMorph [
 	^minExtentCache := width @ height
 ]
 
-{ #category : #layout }
-TableLayout >> placeCells: arrangement in: newBounds horizontal: aBool target: aMorph [ 
+{ #category : 'layout' }
+TableLayout >> placeCells: arrangement in: newBounds horizontal: aBool target: aMorph [
 	"Place the morphs within the cells accordingly"
 
 	| xDir yDir anchor yDist place cell xDist cellRect corner inset |
 	inset := properties cellInset.
 	(inset isNumber and: [inset isZero]) ifTrue: [inset := nil].
-	aBool 
-		ifTrue: 
+	aBool
+		ifTrue:
 			["horizontal layout"
 
-			properties listDirection == #rightToLeft 
-				ifTrue: 
+			properties listDirection == #rightToLeft
+				ifTrue:
 					[xDir := -1 @ 0.
-					properties wrapDirection == #bottomToTop 
-						ifTrue: 
+					properties wrapDirection == #bottomToTop
+						ifTrue:
 							[yDir := 0 @ -1.
 							anchor := newBounds bottomRight]
-						ifFalse: 
+						ifFalse:
 							[yDir := 0 @ 1.
 							anchor := newBounds topRight]]
-				ifFalse: 
+				ifFalse:
 					[xDir := 1 @ 0.
-					properties wrapDirection == #bottomToTop 
-						ifTrue: 
+					properties wrapDirection == #bottomToTop
+						ifTrue:
 							[yDir := 0 @ -1.
 							anchor := newBounds bottomLeft]
-						ifFalse: 
+						ifFalse:
 							[yDir := 0 @ 1.
 							anchor := newBounds topLeft]]]
-		ifFalse: 
+		ifFalse:
 			["vertical layout"
 
-			properties listDirection == #bottomToTop 
-				ifTrue: 
+			properties listDirection == #bottomToTop
+				ifTrue:
 					[xDir := 0 @ -1.
-					properties wrapDirection == #rightToLeft 
-						ifTrue: 
+					properties wrapDirection == #rightToLeft
+						ifTrue:
 							[yDir := -1 @ 0.
 							anchor := newBounds bottomRight]
-						ifFalse: 
+						ifFalse:
 							[yDir := 1 @ 0.
 							anchor := newBounds bottomLeft]]
-				ifFalse: 
+				ifFalse:
 					[xDir := 0 @ 1.
-					anchor := properties wrapDirection == #rightToLeft 
-								ifTrue: 
+					anchor := properties wrapDirection == #rightToLeft
+								ifTrue:
 									[yDir := -1 @ 0.
 									newBounds topRight]
-								ifFalse: 
+								ifFalse:
 									[yDir := 1 @ 0.
 									newBounds topLeft]]].
 	1 to: arrangement size
-		do: 
-			[:i | 
+		do:
+			[:i |
 			cell := arrangement at: i.
 			cell extraSpace ifNotNil: [anchor := anchor + (cell extraSpace y * yDir)].
 			yDist := cell cellSize y * yDir.	"secondary advance direction"
 			place := anchor.
 			cell := cell nextCell.
-			[cell isNil] whileFalse: 
+			[cell isNil] whileFalse:
 					[cell extraSpace ifNotNil: [place := place + (cell extraSpace x * xDir)].
 					xDist := cell cellSize x * xDir.	"primary advance direction"
 					corner := place + xDist + yDist.

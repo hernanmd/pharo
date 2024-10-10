@@ -5,9 +5,11 @@ It's the simplest change to the compiler that I could imagine that doesn't inter
 
 "
 Class {
-	#name : #OCTargetCompiler,
-	#superclass : #OpalCompiler,
-	#category : #'OpalCompiler-Tests-Semantic'
+	#name : 'OCTargetCompiler',
+	#superclass : 'OpalCompiler',
+	#category : 'OpalCompiler-Tests-Semantic',
+	#package : 'OpalCompiler-Tests',
+	#tag : 'Semantic'
 }
 
 { #category : #accessing }

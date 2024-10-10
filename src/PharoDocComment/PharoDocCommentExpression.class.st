@@ -1,23 +1,25 @@
 "
-I am represent an expression within a String (typically the contents of a RBCommentNode resp. the comment text of a method. I am used as expression or the expected expression value by a PharoDocCommentNode.
+I am represent an expression within a String (typically the contents of a ASTCommentNode resp. the comment text of a method. I am used as expression or the expected expression value by a PharoDocCommentNode.
 "
 Class {
-	#name : #PharoDocCommentExpression,
-	#superclass : #Object,
+	#name : 'PharoDocCommentExpression',
+	#superclass : 'Object',
 	#instVars : [
 		'source',
 		'node',
 		'cachedExpressionNode'
 	],
-	#category : #'PharoDocComment-Base'
+	#category : 'PharoDocComment-Base',
+	#package : 'PharoDocComment',
+	#tag : 'Base'
 }
 
-{ #category : #operation }
+{ #category : 'operation' }
 PharoDocCommentExpression >> evaluate [
 
 	"Note: it seems there is no easy way here to reuse in Opal the parsed AST and just compile&evaluate it."
-
-	self isFaulty ifTrue: [ RuntimeSyntaxError signal ].
+	self isWellFormed ifFalse: [ self error: 'Doc comment is not well formed' ].
+	"we do not check for isFaulty here, as in the case of syntax errors, we want the evaluate to give us better error messages"
 
 	^ self methodClass compiler
 		  noPattern: true;
@@ -26,18 +28,17 @@ PharoDocCommentExpression >> evaluate [
 		  evaluate: self source
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PharoDocCommentExpression >> expressionNode [
 
 	cachedExpressionNode ifNil: [
 		cachedExpressionNode := self expressionNodeReal
 	].
-	^ cachedExpressionNode.
+	^ cachedExpressionNode
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PharoDocCommentExpression >> expressionNodeReal [
-
 	"Force the parsing of the expression node"
 
 	^ self methodClass compiler
@@ -47,13 +48,20 @@ PharoDocCommentExpression >> expressionNodeReal [
 		  parse: self source
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 PharoDocCommentExpression >> isFaulty [
 
 	"Check is the ast is OK and follows the 2 specific doccomments rules"
 
+	^ self isNotWellFormed or: [ self expressionNode isFaulty ]
+]
+
+{ #category : 'testing' }
+PharoDocCommentExpression >> isNotWellFormed [
+
+	"Check is the ast follows the 2 specific doccomments rules"
+
 	| cpt |
-	self expressionNode isFaulty ifTrue: [ ^ true ].
 
 	"There should be exactly only one triple > message send"
 	cpt := 0.
@@ -61,41 +69,47 @@ PharoDocCommentExpression >> isFaulty [
 		(n isMessage and: [ n selector == #>>> ]) ifTrue: [ cpt := cpt + 1 ]].
 	cpt ~= 1 ifTrue: [ ^ true ].
 
-	"`self expressionNode` is a RBDoItMethodNode. The last statement should be a return of a binop of >>>"
+	"`self expressionNode` is a ASTDoItMethodNode. The last statement should be a return of a binop of >>>"
 	self expressionNode body statements last value selector ~= #>>> ifTrue: [ ^ true ].
 
 	^false
 ]
 
-{ #category : #operation }
+{ #category : 'testing' }
+PharoDocCommentExpression >> isWellFormed [
+
+	^self isNotWellFormed not
+]
+
+{ #category : 'operation' }
 PharoDocCommentExpression >> methodClass [
 	^ node sourceNode methodNode methodClass
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PharoDocCommentExpression >> node [
 	^ node
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PharoDocCommentExpression >> node: anObject [
 	node := anObject
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 PharoDocCommentExpression >> printOn: aStream [
 	super printOn: aStream.
 	aStream nextPutAll: '('.
-	aStream nextPutAll: self source. 
+	aStream nextPutAll: self source.
 	aStream nextPutAll: ')'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PharoDocCommentExpression >> source [
 	^ source
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PharoDocCommentExpression >> source: anObject [
 	source := anObject
 ]

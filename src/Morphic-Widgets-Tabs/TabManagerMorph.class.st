@@ -6,8 +6,8 @@ I am composed of a TabBar and a Morph used as a canvas to render the morph repre
 I am very stupid (as you can see only four methods). I just listen to selected tab, and render it
 "
 Class {
-	#name : #TabManagerMorph,
-	#superclass : #PanelMorph,
+	#name : 'TabManagerMorph',
+	#superclass : 'PanelMorph',
 	#instVars : [
 		'toolbar',
 		'container',
@@ -15,14 +15,16 @@ Class {
 		'processes',
 		'model'
 	],
-	#category : #'Morphic-Widgets-Tabs-Morphs'
+	#category : 'Morphic-Widgets-Tabs-Morphs',
+	#package : 'Morphic-Widgets-Tabs',
+	#tag : 'Morphs'
 }
 
-{ #category : #'private - contents' }
+{ #category : 'private - contents' }
 TabManagerMorph >> addLastTabContents: aTab among: size delta: delta [
 	| process |
-	
-	process := aTab retrieveMorph: [ :contents | 
+
+	process := aTab retrieveMorph: [ :contents |
 		contents ifNil: [ TabWithNoContentsMorph signalTab: aTab ].
 		contentsWrapper
 			addMorph: contents
@@ -32,26 +34,26 @@ TabManagerMorph >> addLastTabContents: aTab among: size delta: delta [
 					leftOffset: 2;
 					rightFraction: 1).
 		"contents takeKeyboardFocus" "it should be managed better and not stale focus from another active windows/widgets. It should only forse focus on content when user focused on tabs but it is not clean how to detect it"].
-	
+
 	process ifNotNil: [ processes add: process ]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabManagerMorph >> addMorphs [
 
-	self 
+	self
 		addMorph: toolbar
 		fullFrame: (LayoutFrame identity
 			bottomFraction: 0;
 			bottomOffset: TabMorph defaultHeight + (2* self displayScaleFactor);
 			yourself).
-			
-	self 
+
+	self
 		addMorph: container
 		fullFrame: (LayoutFrame identity
 			topOffset: TabMorph defaultHeight + 2;
 			yourself).
-			
+
 	container
 		addMorph: contentsWrapper
 		fullFrame:
@@ -60,18 +62,18 @@ TabManagerMorph >> addMorphs [
 				rightOffset: -1;
 				bottomOffset: -1;
 				leftOffset: 2;
-				yourself).
+				yourself)
 ]
 
-{ #category : #'private - contents' }
+{ #category : 'private - contents' }
 TabManagerMorph >> addSplitterOn: tabs delta: delta [
 	| leftProcess rightProcess |
-	tabs overlappingPairsWithIndexDo: [ :left :right :index | 
-		leftProcess := left retrieveMorph: [ :leftContents | 
+	tabs overlappingPairsWithIndexDo: [ :left :right :index |
+		leftProcess := left retrieveMorph: [ :leftContents |
 			leftContents ifNil: [ TabWithNoContentsMorph signalTab: left ].
 			rightProcess := right retrieveMorph: [ :rightContents || splitter |
 				rightContents ifNil: [ TabWithNoContentsMorph signalTab: right ].
-				
+
 				splitter := ProportionalSplitterMorph new
 					addLeftOrTop: leftContents;
 					addRightOrBottom: rightContents;
@@ -85,22 +87,22 @@ TabManagerMorph >> addSplitterOn: tabs delta: delta [
 							rightFraction: index * delta;
 							leftOffset: -2;
 							rightOffset: 2) ] ] ].
-				
+
 	leftProcess ifNotNil: [ processes add: leftProcess ].
-	rightProcess ifNotNil: [ processes add: rightProcess ].
+	rightProcess ifNotNil: [ processes add: rightProcess ]
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> addTab: aTab [
 	toolbar addTab: aTab
 ]
 
-{ #category : #'private - contents' }
+{ #category : 'private - contents' }
 TabManagerMorph >> addTabContents: tab at: index delta: delta [
 	| process |
 	process := tab
 		retrieveMorph:
-			[ :contents | 
+			[ :contents |
 			| leftOffset |
 			contents ifNil: [ TabWithNoContentsMorph signalTab: tab ].
 			leftOffset := index = 1
@@ -117,68 +119,68 @@ TabManagerMorph >> addTabContents: tab at: index delta: delta [
 	process ifNotNil: [ processes add: process ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabManagerMorph >> adoptPaneColor: aColor [
 	"Prevent submorphs to be polluted by window color"
-	
+
 	self color: aColor
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> barDeleted: aBar [
 
 	self close
 ]
 
-{ #category : #'private - drawing' }
+{ #category : 'private - drawing' }
 TabManagerMorph >> borderColor [
 	^ self theme borderColor
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> canBeClosed [
 	^ toolbar canBeClosed
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabManagerMorph >> cleanProcesses [
-	
+
 	processes do: [ :each | each terminate ].
-	processes removeAll.
+	processes removeAll
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> close [
 
 	self canBeClosed ifFalse: [ ^ self ].
-	self delete.
+	self delete
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> closeAllTabs [
 	toolbar closeAllTabs
 ]
 
-{ #category : #'private - drawing' }
+{ #category : 'private - drawing' }
 TabManagerMorph >> containerColor [
 	^ self theme lightBaseColor
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> delete [
-	
+
 	super delete.
 	self triggerEvent: #tabManagerDeleted with: self
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> deleteSelectedTabs [
-	toolbar selectedTab 
-		ifNotNil: [ toolbar deleteSelectedTabs ] 
+	toolbar selectedTab
+		ifNotNil: [ toolbar deleteSelectedTabs ]
 		ifNil: [ self owner takeKeyboardFocus ]
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 TabManagerMorph >> drawLinesOn: aCanvas [
 	self flag: #pharoTodo. "this method, I don't know what's is for."
 	"aCanvas
@@ -198,19 +200,19 @@ TabManagerMorph >> drawLinesOn: aCanvas [
 		color: self borderColor"
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 TabManagerMorph >> drawSubmorphsOn: aCanvas [
 	super drawSubmorphsOn: aCanvas.
 	self drawLinesOn: aCanvas
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabManagerMorph >> emptyTabColor: aColor [
 
 	contentsWrapper color: aColor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabManagerMorph >> initialize [
 
 	super initialize.
@@ -219,43 +221,43 @@ TabManagerMorph >> initialize [
 	processes := OrderedCollection new.
 	self registerBarActions.
 	self registerShortcuts.
-	
+
 	container := Morph new
 		color: self containerColor;
 		changeProportionalLayout;
 		yourself.
-		
+
 	contentsWrapper := Morph new
 		color: self containerColor;
 		changeProportionalLayout;
 		yourself.
-		
+
 	self changeProportionalLayout.
 	self addMorphs
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabManagerMorph >> minExtent [
 
 	^ (100@50) * self displayScaleFactor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabManagerMorph >> model [
 
 	^ model
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabManagerMorph >> model: aModel [
 
 	model := aModel
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabManagerMorph >> registerBarActions [
-	
-	toolbar 
+
+	toolbar
 		when: #tabSelected send: #tabSelected: to: self;
 		when: #barDeleted send: #barDeleted: to: self;
 		when: #tabsChanged send: #tabsChanged to: self;
@@ -266,71 +268,71 @@ TabManagerMorph >> registerBarActions [
 		when: #tabEmptyContents send: #tabEmptyContents: to: self
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabManagerMorph >> registerShortcuts [
 
-	self 
+	self
 		bindKeyCombination: $] meta shift toAction: [ self selectNext ];
 		bindKeyCombination: $[ meta shift toAction: [ self selectPrevious ];
 		bindKeyCombination: $w command toAction: [ self deleteSelectedTabs ];
 		bindKeyCombination: $w command shift toAction: [ self closeAllTabs ].
-		
+
 	1 to: 9 do: [ :index |
 		self bindKeyCombination: index asString first meta toAction: [ self selectTabAt: index ] ].
-	
+
 	self bindKeyCombination: $0 meta toAction: [ self selectLastTab ]
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> selectLastTab [
 
 	toolbar selectLastTab
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> selectNext [
 
 	toolbar selectNext
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> selectPrevious [
 
 	toolbar selectPrevious
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> selectTabAt: index [
 
-	toolbar selectTabAt: index ifAbsent: [].
+	toolbar selectTabAt: index ifAbsent: []
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> selectedTab [
 
 	^ toolbar selectedTab
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabManagerMorph >> setMultipleContents [
 	| tabs size delta |
 
 	contentsWrapper removeAllMorphs.
 	self cleanProcesses.
-	
+
 	tabs := toolbar orderedSelectedTabs.
 	size := tabs size.
 	delta := 1 / size.
-	
+
 	tabs allButLast keysAndValuesDo: [ :index :tab | self addTabContents: tab at: index delta: delta ].
 	self addLastTabContents: tabs last among: size delta: delta.
 	self addSplitterOn: tabs delta: delta
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabManagerMorph >> setTabContentFrom: aTab [
 	| process |
-	
+
 	contentsWrapper removeAllMorphs.
 	self cleanProcesses.
 
@@ -339,69 +341,69 @@ TabManagerMorph >> setTabContentFrom: aTab [
 		contentsWrapper addMorph: contents fullFrame: LayoutFrame identity.
 		"contents takeKeyboardFocus" "it should be managed better and not stale focus from another active windows/widgets. It should only forse focus on content when user focused on tabs but it is not clean how to detect it"
 	].
-	process ifNotNil: [ processes add: process ].
+	process ifNotNil: [ processes add: process ]
 ]
 
-{ #category : #compatbility }
+{ #category : 'compatbility' }
 TabManagerMorph >> setTabs: aBlock [
 	self tabs: aBlock value
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabAddedToSelection: aTab [
 
 	self setMultipleContents
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabEmptyContents: aTab [
 	"My bar already filtered the tab, so here I am sure the tab is the selected tab"
-	
+
 	contentsWrapper removeAllMorphs
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabRefreshed: aTab [
 	"Here we know that aTab is the selected tab"
 
 	self setMultipleContents
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabRemovedFromSelection: aTab [
 
 	self setMultipleContents
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabResetSelection: aTab [
 
 	self setTabContentFrom: aTab
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabSelected: aTab [
 
 	self setTabContentFrom: aTab.
 	self triggerEvent: #tabSelected with: aTab
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabManagerMorph >> tabs: aCollection [
 
 	toolbar tabs: aCollection
 ]
 
-{ #category : #'private - actions' }
+{ #category : 'private - actions' }
 TabManagerMorph >> tabsChanged [
 	"Nothing to do"
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabManagerMorph >> themeChanged [
 	super themeChanged.
 	toolbar themeChanged.
-	
+
 	container
 		color: self theme lightBaseColor;
 		changed.
@@ -410,7 +412,7 @@ TabManagerMorph >> themeChanged [
 		changed
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabManagerMorph >> useSortedTabsBy: sortBlock [
 	toolbar useSortedTabsBy: sortBlock
 ]

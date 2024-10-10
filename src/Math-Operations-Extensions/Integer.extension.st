@@ -1,94 +1,57 @@
-Extension { #name : #Integer }
+Extension { #name : 'Integer' }
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> asWords [
 	"SmallInteger maxVal asWords"
+
 	| mils minus three num answer milCount |
-	self = 0 ifTrue: [^'zero'].
-	mils := #('' ' thousand' ' million' ' billion' ' trillion' ' quadrillion' ' quintillion' ' sextillion' ' septillion' ' octillion' ' nonillion' ' decillion' ' undecillion' ' duodecillion' ' tredecillion' ' quattuordecillion' ' quindecillion' ' sexdecillion' ' septendecillion' ' octodecillion' ' novemdecillion' ' vigintillion').
+	self = 0 ifTrue: [ ^ 'zero' ].
+	mils := #( '' ' thousand' ' million' ' billion' ' trillion' ' quadrillion' ' quintillion' ' sextillion' ' septillion' ' octillion' ' nonillion' ' decillion'
+	           ' undecillion' ' duodecillion' ' tredecillion' ' quattuordecillion' ' quindecillion' ' sexdecillion' ' septendecillion' ' octodecillion'
+	           ' novemdecillion' ' vigintillion' ).
 	num := self.
 	minus := ''.
 	self < 0 ifTrue: [
 		minus := 'negative '.
-		num := num negated.
-	].
+		num := num negated ].
 	answer := String new.
 	milCount := 1.
-	[num > 0] whileTrue: [
+	[ num > 0 ] whileTrue: [
 		three := (num \\ 1000) threeDigitName.
 		num := num // 1000.
-		three isEmpty ifFalse: [
-			answer isEmpty ifFalse: [
-				answer := ', ',answer
-			].
-			answer := three,(mils at: milCount),answer.
-		].
-		milCount := milCount + 1.
-	].
-	^minus,answer
+		three ifNotEmpty: [
+			answer isEmpty ifFalse: [ answer := ', ' , answer ].
+			answer := three , (mils at: milCount) , answer ].
+		milCount := milCount + 1 ].
+	^ minus , answer
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
-Integer >> benchFib [  
-	"Handy send-heavy benchmark"
-	"(result // seconds to run) = approx calls per second"
-	" | r t |
-	  t := Time millisecondsToRun: [r := 26 benchFib].
-	  (r * 1000) // t"
-	"138000 on a Mac 8100/100"
-	^ self < 2
-		ifTrue: [1] 
-		ifFalse: [(self-1) benchFib + (self-2) benchFib + 1]
-]
-
-{ #category : #'*Math-Operations-Extensions' }
-Integer >> benchmark [  "Handy bytecode-heavy benchmark"
-	"(500000 // time to run) = approx bytecodes per second"
-	"5000000 // (Time millisecondsToRun: [10 benchmark]) * 1000"
-	"3059000 on a Mac 8100/100"
-    | size flags prime k count |
-    size := 8190.
-    1 to: self do:
-        [:iter |
-        count := 0.
-        flags := (Array new: size) atAllPut: true.
-        1 to: size do:
-            [:i | (flags at: i) ifTrue:
-                [prime := i+1.
-                k := i + prime.
-                [k <= size] whileTrue:
-                    [flags at: k put: false.
-                    k := k + prime].
-                count := count + 1]]].
-    ^ count
-]
-
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> decimalDigitAt: anExponent [
 
-	"Return number that represents digit at given decimal position.
-		42 digitAt: 2 base: 10 -> 4
-		42 digitAt: 1 base: 10 -> 1
-	It is always a number or zero:
-		1 digitAt: 2 base: 10 -> 0
-	Results are not defined non-integer arguments."
+	"Return number that represents digit at given decimal position."
+		"(42 decimalDigitAt: 2) >>> 4"
+		"(42 decimalDigitAt: 1) >>> 2"
+	"It is always a number or zero:"
+		"(1 decimalDigitAt: 2) >>> 0"
+	"Results are not defined non-integer arguments."
 
 	^ self digitAt: anExponent base: 10
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> factorial [
 	"Answer the factorial of the receiver."
 
 	"The factorial on n is defined as: n * (n-1)*(n-2)*... while n>0. Factorial of 0 is 1.
 	We also know Factorial of 1 and 2 are themselves.
-	
+
 	This implementation uses a 2-partition algorithm.
-	
+
 	For a recursive (but slower) implementation see 'slowFactorial'
-	
+
 	Without verbose detail:
-	
+
 	If'm an even number,some optimization can be applied:
 	Instead of doing all multiplication we can halving the number of multiplication regrouping terms, so:
 	n*(n-1)*(n-2)*....*3*2*1
@@ -97,9 +60,9 @@ Integer >> factorial [
 	And the use the fact n is even to rewrite in a more efficient way.
 	If I'm an odd number then compute for n-1 and multily by n.
 	"
-	
+
 	"Example of usages:"
-	
+
 	"0 factorial >>> 1"
 	"1 factorial >>> 1"
 	"2 factorial >>> 2"
@@ -119,7 +82,7 @@ Integer >> factorial [
 	acc := 2.
 	nex := 2.
 	nexnext := 10.
-	
+
 	self // 2 - 1
 		timesRepeat: [ nex := nex + nexnext.
 			nexnext := nexnext + 8.
@@ -129,30 +92,29 @@ Integer >> factorial [
 	^ acc
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> isPrime [
 	| j jmax |
 	"Answer true if the receiver is a prime number. See isProbablyPrime for a probabilistic
 	implementation for larger Integers.  Not all odd numbers need to be checked,
 	beyond 2 & 3 all primes are 6k±1, yielding an approx. 2x speed-up."
-	
+
 	self <= 1 ifTrue: [ ^false ].
 	self even ifTrue: [ ^self = 2].
 	self \\ 3 = 0 ifTrue: [ ^self = 3].
 	j := 5. jmax := self sqrtFloor.
-	[j <= jmax] whileTrue: [ 
+	[j <= jmax] whileTrue: [
 		self \\ j = 0 ifTrue: [ ^false ].
 		j := j + 2.
 		self \\ j = 0 ifTrue: [ ^false ].
 		j := j + 4].
-	^true	
-	
+	^true
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> isProbablyPrime [
 	"See isProbablyPrimeWithK:andQ:randomIndex: for the algorithm description."
-	
+
 	| k q |
 	self <= 1 ifTrue: [ ^false ].
 	self even ifTrue: [ ^self = 2 ].
@@ -161,13 +123,13 @@ Integer >> isProbablyPrime [
 	k := q lowBit.
 	q := q bitShift: 1 - k.
 	"Repeat the probabilistic until false (the probability of false negative is zero) or until probability is very low."
-	
+
 	"The probability of false positive after 25 iterations is less than (1/4 raisedTo: 25) < 1.0e-15.  Use an Array of pregenerated 25 random numbers (as fractions) "
 	^{(7358707628525929/9007199254740992). (4476672520736517/4503599627370496). (4599362334273073/9007199254740992). (6794991761377285/36028797018963968). (3521097546400983/4503599627370496). (7149434852003007/18014398509481984). (2256749684852993/9007199254740992). (138798294760569/140737488355328). (7561030569146735/18014398509481984). (1168422440815961/4503599627370496). (3963174916991225/9007199254740992). (6738728495079853/72057594037927936). (3458098951393855/4503599627370496). (5263539441067603/18014398509481984). (6805352233327325/9007199254740992). (8277697662472459/18014398509481984). (8039661477371919/9007199254740992). (5594429820223541/9007199254740992). (8436167510585677/9007199254740992). (8687763071023859/18014398509481984). (8534015346516809/18014398509481984). (4439971299560515/144115188075855872). (3595168640502675/4503599627370496). (7413480251763979/9007199254740992). (7101202260194563/36028797018963968)}
 	 allSatisfy: [:rnd | self isProbablyPrimeWithK: k andQ: q randomIndex: rnd ]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> isProbablyPrimeWithK: k andQ: q randomIndex: aRandomFloat [
 	"Algorithm P, probabilistic primality test, from
 	Knuth, Donald E. 'The Art of Computer Programming', Vol 2,
@@ -176,12 +138,12 @@ Integer >> isProbablyPrimeWithK: k andQ: q randomIndex: aRandomFloat [
 
 	| x j y minusOne |
 	"P1"
-	x := ((self - 2) * aRandomFloat "a pregerated random number") asInteger + 1.	
+	x := ((self - 2) * aRandomFloat "a pregerated random number") asInteger + 1.
 	"P2"
 	j := 0.
 	y := x raisedTo: q modulo: self.
 	minusOne := self - 1.
-	
+
 	["P3"
 	y = 1 ifTrue: [^j = 0].
 	y = minusOne ifTrue: [^true].
@@ -193,17 +155,17 @@ Integer >> isProbablyPrimeWithK: k andQ: q randomIndex: aRandomFloat [
 	^false
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer class >> largePrimesUpTo: maxValue [
 	"Compute and return all the prime numbers up to maxValue"
 	^Array streamContents:[:s| self largePrimesUpTo: maxValue do:[:prime| s nextPut: prime]]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer class >> largePrimesUpTo: max do: aBlock [
 	"Evaluate aBlock with all primes up to maxValue.
 	The Algorithm is adapted from http://www.rsok.com/~jrm/printprimes.html
-	It encodes prime numbers much more compactly than #primesUpTo: 
+	It encodes prime numbers much more compactly than #primesUpTo:
 	38.5 integer per byte (2310 numbers per 60 byte) allow for some fun large primes.
 	(all primes up to SmallInteger maxVal can be computed within ~27MB of memory;
 	the regular #primesUpTo: would require 4 *GIGA*bytes).
@@ -230,13 +192,13 @@ Integer class >> largePrimesUpTo: max do: aBlock [
 
 	index := 6.
 	2 to: 2309 do:[:n|
-		[(primesUpTo2310 at: index) < n] 
+		[(primesUpTo2310 at: index) < n]
 			whileTrue:[index := index + 1].
 		n = (primesUpTo2310 at: index) ifTrue:[
 			maskBitIndex at: n+1 put: (bitIndex := bitIndex + 1).
 		] ifFalse:[
 			"if modulo any of the prime factors of 2310, then could not be prime"
-			(n \\ 2 = 0 or:[n \\ 3 = 0 or:[n \\ 5 = 0 or:[n \\ 7 = 0 or:[n \\ 11 = 0]]]]) 
+			(n \\ 2 = 0 or:[n \\ 3 = 0 or:[n \\ 5 = 0 or:[n \\ 7 = 0 or:[n \\ 11 = 0]]]])
 				ifTrue:[maskBitIndex at: n+1 put: 0]
 				ifFalse:[maskBitIndex at: n+1 put: (bitIndex := bitIndex + 1)].
 		].
@@ -251,8 +213,8 @@ Integer class >> largePrimesUpTo: max do: aBlock [
 			bitIndex := 1 bitShift: (maskBit bitAnd: 7).
 			((flags at: byteIndex) bitAnd: bitIndex) = 0 ifFalse:["not marked -- n is prime"
 				aBlock value: n.
-				"Start with n*n since any integer < n has already been sieved 
-				(e.g., any multiple of n with a number k < n has been cleared 
+				"Start with n*n since any integer < n has already been sieved
+				(e.g., any multiple of n with a number k < n has been cleared
 				when k was sieved); add 2 * i to avoid even numbers and
 				mark all multiples of this prime. Note: n < indexLimit below
 				limits running into LargeInts -- nothing more."
@@ -269,23 +231,23 @@ Integer class >> largePrimesUpTo: max do: aBlock [
 				].
 			].
 		].
-	].
+	]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
-Integer >> lcm: n [ 
+{ #category : '*Math-Operations-Extensions' }
+Integer >> lcm: n [
 	"Answer the least common multiple of the receiver and n."
 
 	^self // (self gcd: n) * n
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> montgomeryDigitBase [
 	"Answer the base used by Montgomery algorithm."
 	^1 << self montgomeryDigitLength
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> montgomeryDigitLength [
 	"Answer the number of bits composing a digit in Montgomery algorithm.
 	Primitive use either 8 or 32 bits digits"
@@ -293,29 +255,29 @@ Integer >> montgomeryDigitLength [
 	^8 "Legacy plugin which did not have this primitive did use 8 bits digits"
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> montgomeryDigitMax [
 	"Answer the maximum value of a digit used in Montgomery algorithm."
-	
+
 	^1 << self montgomeryDigitLength - 1
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> montgomeryNumberOfDigits [
 	"Answer the number of montgomery digits required to represent the receiver."
 	^self bytesCount * 8 + (self montgomeryDigitLength - 1) // self montgomeryDigitLength
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> montgomeryRaisedTo: n times: y modulo: m mInvModB: mInv [
 	"Private - do a Montgomery exponentiation of self modulo m.
 	The operation is equivalent to (self/y raisedTo: n)*y \\ m,
 	with y is (b raisedTo: m montgomeryNumberOfDigits),
 	with (m bitAnd: b-1) * mInv \\ b = (b-1)
 	with b = self montgomeryDigitBase (either 1<<8 or 1<<32)"
-	
+
 	| pow j k w index oddPowersOfSelf square |
-	
+
 	"Precompute powers of self for odd bit patterns xxxx1 up to length w + 1.
 	The width w is chosen with respect to the total bit length of n,
 	such that each bit pattern will on average be encoutered P times in the whole bit sequence of n.
@@ -326,7 +288,7 @@ Integer >> montgomeryRaisedTo: n times: y modulo: m mInvModB: mInv [
 	oddPowersOfSelf at: 1 put: (pow := self).
 	square := self montgomeryTimes: self modulo: m mInvModB: mInv.
 	2 to: oddPowersOfSelf size do: [:i | pow := oddPowersOfSelf at: i put: (pow montgomeryTimes: square modulo: m mInvModB: mInv)].
-	
+
 	"Now exponentiate by searching precomputed bit patterns with a sliding window"
 	pow := y.
 	[k > 0]
@@ -354,7 +316,7 @@ Integer >> montgomeryRaisedTo: n times: y modulo: m mInvModB: mInv [
 	^pow
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> montgomeryTimes: a modulo: m mInvModB: mInv [
 	"Answer the result of a Montgomery multiplication
 	self * a * (b raisedTo: m montgomeryNumberOfDigits) inv \\ m
@@ -363,14 +325,14 @@ Integer >> montgomeryTimes: a modulo: m mInvModB: mInv [
 	a montgomeryNumberOfDigits <= m montgomeryNumberOfDigits
 	mInv * m \\ b = (-1 \\ b) = (b-1) (this implies m odd)
 	where b = self montgomeryDigitBase
-	
+
 	Answer nil in case of absent plugin or other failure."
-	
+
 	<primitive: 'primMontgomeryTimesModulo' module:'LargeIntegers'>
 	^nil
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> nthRoot: aPositiveInteger [
 	"Answer the nth root of the receiver.
 	Answer an Integer if root is exactly this Integer, else answer the Float nearest the exact root."
@@ -388,7 +350,7 @@ Integer >> nthRoot: aPositiveInteger [
 	^(guess / (1 << p)) asFloat
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> nthRootRounded: aPositiveInteger [
 	"Answer the integer nearest the nth root of the receiver."
 	| guess |
@@ -403,7 +365,7 @@ Integer >> nthRootRounded: aPositiveInteger [
 		ifFalse: [guess]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> nthRootTruncated: aPositiveInteger [
 	"Answer the integer part of the nth root of the receiver."
 	| guess guessToTheNthMinusOne delta |
@@ -423,73 +385,73 @@ Integer >> nthRootTruncated: aPositiveInteger [
 	^guess
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> numberOfCombinationsTaken: k [
-	"Return the number of combinations of (self) elements taken k at a time. 
-	It is calculated as C(n,k) = n! / (k! (n-k)!) 
+	"Return the number of combinations of (self) elements taken k at a time.
+	It is calculated as C(n,k) = n! / (k! (n-k)!)
 	For 6 numberOfCombinationsTaken: 3, this is 6*5*4 / (1*2*3)"
-	
+
 	"(6 numberOfCombinationsTaken: 3) >>> 20"
 
 	| numerator denominator |
 	k < 0 ifTrue: [^ 0].
 	k > self ifTrue: [^ 0].
-	
+
 	numerator := 1.
-	
+
 	self to: (k max: self-k) + 1 by: -1 do: [ :factor |
 		numerator := numerator * factor ].
-	
+
 	denominator := 1.
-	
+
 	1 to: (k min: self-k) do: [ :factor |
 		denominator := denominator * factor ].
-	
+
 	^ numerator // denominator
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> primeFactors [
 	"Return all primeFactors of myself"
 	"( 106260 primeFactors fold: [ :a :b | a * b ]) = 106260"
-	
+
 	^ Array streamContents: [ :s | self primeFactorsOn: s ]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> primeFactorsOn: aStream [
 	"Recursively calculate the primefactors of myself and put the factors into the given stream"
 	self = 1 | self isZero
 		ifTrue: [ ^ self ].
-		
+
 	self even ifTrue: [
 		aStream nextPut: 2.
 		^ (self / 2) primeFactorsOn: aStream ].
-	
+
 	3 to: self sqrtFloor by: 2 do: [ :each |
-		self \\ each = 0 
-			ifTrue: [ 
+		self \\ each = 0
+			ifTrue: [
 				aStream nextPut: each.
 				^ (self / each) primeFactorsOn: aStream ]].
-	
-	aStream nextPut: self.
+
+	aStream nextPut: self
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer class >> primesUpTo: max [
 	"Return a list of prime integers up to the given integer."
 	"Integer primesUpTo: 100"
 	^Array streamContents:[:s| self primesUpTo: max do:[:prime| s nextPut: prime]]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer class >> primesUpTo: max do: aBlock [
 	"Compute aBlock with all prime integers up to the given integer."
 	"Integer primesUpTo: 100"
 
 	| limit flags prime k |
 	limit := max asInteger - 1.
-	"Fall back into #largePrimesUpTo:do: if we'd require more than 100k of memory; 
+	"Fall back into #largePrimesUpTo:do: if we'd require more than 100k of memory;
 	the alternative will only requre 1/154th of the amount we need here and is almost as fast."
 	limit > 25000 ifTrue:[^self largePrimesUpTo: max do: aBlock].
 	flags := (Array new: limit) atAllPut: true.
@@ -500,10 +462,10 @@ Integer class >> primesUpTo: max do: aBlock [
 			[k <= limit] whileTrue: [
 				flags at: k put: false.
 				k := k + prime].
-			aBlock value: prime]].
+			aBlock value: prime]]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> printStringRoman [
 	| stream integer |
 	stream := String new writeStream.
@@ -516,7 +478,7 @@ Integer >> printStringRoman [
 	^stream contents
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> raisedTo: n modulo: m [
 	"Answer the modular exponential.
 	Note: this implementation is optimized for case of large integers raised to large powers."
@@ -528,12 +490,12 @@ Integer >> raisedTo: n modulo: m [
 		ifTrue:
 			["Overhead of Montgomery method might cost more than naive divisions, use naive"
 			^self slidingLeftRightRaisedTo: n modulo: m].
-	
+
 	mInv := self montgomeryDigitBase - ((m bitAnd: self montgomeryDigitMax) reciprocalModulo: self montgomeryDigitBase).
- 
+
 	"Initialize the result to R=self montgomeryDigitModulo raisedTo: m montgomeryNumberOfDigits"
 	a := (1 bitShift: m montgomeryNumberOfDigits * m montgomeryDigitLength) \\ m.
-	
+
 	"Montgomerize self (multiply by R)"
 	(s := self montgomeryTimes: (a*a \\ m) modulo: m mInvModB: mInv)
 		ifNil:
@@ -547,7 +509,7 @@ Integer >> raisedTo: n modulo: m [
 	^a montgomeryTimes: 1 modulo: m mInvModB: mInv
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> raisedToFraction: aFraction [
 	| root |
 	root := self nthRootTruncated: aFraction denominator.
@@ -555,7 +517,7 @@ Integer >> raisedToFraction: aFraction [
 	^super raisedToFraction: aFraction
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> raisedToInteger: exp modulo: m [
 	exp = 0 ifTrue: [ ^ 1 ].
 	^ exp even
@@ -563,7 +525,7 @@ Integer >> raisedToInteger: exp modulo: m [
 		ifFalse: [ self * (self raisedToInteger: exp - 1 modulo: m) \\ m ]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> romanDigits: digits for: base on: aStream [
 	| n |
 	n := self \\ (base * 10) // base.
@@ -573,14 +535,14 @@ Integer >> romanDigits: digits for: base on: aStream [
 	n \\ 5 timesRepeat: [aStream nextPut: digits last]
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> slidingLeftRightRaisedTo: n modulo: m [
 	"Private - compute (self raisedTo: n) \\ m,
 	Note: this method has to be fast because it is generally used with large integers in cryptography.
 	It thus operate on exponent bits from left to right by packets with a sliding window rather than bit by bit (see below)."
-	
+
 	| pow j k w index oddPowersOfSelf square |
-	
+
 	"Precompute powers of self for odd bit patterns xxxx1 up to length w + 1.
 	The width w is chosen with respect to the total bit length of n,
 	such that each bit pattern will on average be encoutered P times in the whole bit sequence of n.
@@ -591,7 +553,7 @@ Integer >> slidingLeftRightRaisedTo: n modulo: m [
 	oddPowersOfSelf at: 1 put: (pow := self).
 	square := self * self \\ m.
 	2 to: oddPowersOfSelf size do: [:i | pow := oddPowersOfSelf at: i put: pow * square \\ m].
-	
+
 	"Now exponentiate by searching precomputed bit patterns with a sliding window"
 	pow := 1.
 	[k > 0]
@@ -619,16 +581,16 @@ Integer >> slidingLeftRightRaisedTo: n modulo: m [
 	^pow
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> slowFactorial [
 	"Answer the factorial of the receiver."
-	
+
 	"This implementation is recursive and very canonical.
 	This implementation is intended for demo purposes, but for better performance
 	another version 'factorial' is provided."
-	
+
 	"Example of usages:"
-	
+
 	"0 slowFactorial >>> 1"
 	"1 slowFactorial >>> 1"
 	"2 slowFactorial >>> 2"
@@ -644,7 +606,7 @@ Integer >> slowFactorial [
 	self error: 'Not valid for negative integers'
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> sqrt [
 	"Answer the square root of the receiver."
 
@@ -666,7 +628,7 @@ Integer >> sqrt [
 			guess := self sqrtFloor.
 			guess squared = self ifTrue: [
 				^guess ].
-			
+
 			"Nothing else can be done. No exact answer means answer must be a Float.
 			Answer the best we have which is the rounded sqrt."
 			guess := (self * 4) sqrtFloor.
@@ -676,7 +638,7 @@ Integer >> sqrt [
 	^floatResult
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 Integer >> sqrtFloor [
 	"Return the integer part of the square root of self"
 

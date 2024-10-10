@@ -3,24 +3,26 @@ A MenuLineMorph is a item separator in menu.
 
 "
 Class {
-	#name : #MenuLineMorph,
-	#superclass : #Morph,
-	#category : #'Morphic-Base-Menus'
+	#name : 'MenuLineMorph',
+	#superclass : 'Morph',
+	#category : 'Morphic-Base-Menus',
+	#package : 'Morphic-Base',
+	#tag : 'Menus'
 }
 
-{ #category : #private }
+{ #category : 'private' }
 MenuLineMorph >> baseColor [
 	^ self theme autoMenuColor
 		ifTrue: [ owner color twiceDarker ]
-		ifFalse: [ 
+		ifFalse: [
 			self theme currentSettings flatMenu
 				ifFalse: [ owner color ]
 				ifTrue: [ owner color twiceDarker ] ]
 ]
 
-{ #category : #drawing }
-MenuLineMorph >> drawOn: aCanvas [ 
-	self theme flatMenu 
+{ #category : 'drawing' }
+MenuLineMorph >> drawOn: aCanvas [
+	self theme flatMenu
 		ifFalse: [
 			aCanvas
 				fillRectangle: (bounds topLeft corner: bounds rightCenter)
@@ -34,37 +36,37 @@ MenuLineMorph >> drawOn: aCanvas [
 				color: self baseColor ]
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 MenuLineMorph >> drawOnAthensCanvas: anAthensCanvas [
 	self theme flatMenu
-		ifFalse: [ 
+		ifFalse: [
 			anAthensCanvas setPaint: self baseColor twiceDarker.
 			anAthensCanvas drawShape: (bounds topLeft corner: bounds rightCenter).
 			anAthensCanvas setPaint: self baseColor twiceLighter.
 			anAthensCanvas drawShape: (bounds leftCenter corner: bounds bottomRight) ]
-		ifTrue: [ 
+		ifTrue: [
 			anAthensCanvas setPaint: self baseColor.
 			anAthensCanvas drawShape: (bounds topLeft corner: bounds bottomRight) ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MenuLineMorph >> initialize [
 	super initialize.
-	self hResizing: #spaceFill; vResizing: #spaceFill.
+	self hResizing: #spaceFill; vResizing: #spaceFill
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 MenuLineMorph >> isMenuLineMorph [
 	^ true
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 MenuLineMorph >> minHeight [
 	"Answer the receiver's minHeight"
 	^ self theme menuBorderWidth
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 MenuLineMorph >> minWidth [
 	"Answer the receiver's minWidth"
 	^  10 * self displayScaleFactor

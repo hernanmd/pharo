@@ -2,29 +2,51 @@
 A source code cleaner
 "
 Class {
-	#name : #ReMethodSourceCleaner,
-	#superclass : #Object,
+	#name : 'ReMethodSourceCleaner',
+	#superclass : 'Object',
 	#instVars : [
-		'sourceLines'
+		'sourceLines',
+		'keepFinalDot'
 	],
-	#category : #'Renraku-Utility'
+	#classVars : [
+		'KeepFinalDotInMethodBody'
+	],
+	#category : 'Renraku-Utility',
+	#package : 'Renraku',
+	#tag : 'Utility'
 }
 
-{ #category : #testing }
-ReMethodSourceCleaner class >> ableToClean: aCompiledMethod [
-
-	^ (self clean: aCompiledMethod sourceCode) size ~= aCompiledMethod sourceCode size
-]
-
-{ #category : #cleaning }
+{ #category : 'cleaning' }
 ReMethodSourceCleaner class >> clean: aString [
 
-	^(self forSource: aString)
-		clean;
-		contents
+	^ (self forSource: aString)
+		  clean;
+		  contents
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'cleaning' }
+ReMethodSourceCleaner class >> clean: aString keepFinalDot: aBoolean [
+
+	^ (self forSource: aString)
+			keepFinalDot: aBoolean;
+		   clean;
+		   contents
+]
+
+{ #category : 'settings' }
+ReMethodSourceCleaner class >> compactSourceCodeCleanupSettingsOn: aBuilder [
+	<systemsettings>
+
+	(aBuilder setting: #keepFinalDotInMethodBody)
+		order: 16;
+		label: 'Keep final dot dot in method body when critique is autofixed';
+		description: 'Define if the system keeps an unnecessary final dot at the end of a method body when critique on it is automatically resolved';
+		parent: #qualityAssistant;
+		default: false;
+		target: self
+]
+
+{ #category : 'instance creation' }
 ReMethodSourceCleaner class >> forSource: aString [
 
 	^ self new
@@ -32,7 +54,29 @@ ReMethodSourceCleaner class >> forSource: aString [
 		yourself
 ]
 
-{ #category : #utilities }
+{ #category : 'testing' }
+ReMethodSourceCleaner class >> isNecessaryToClean: aCompiledMethod allowFinalDot: aBoolean [
+	"Return true if the receiver finds out that it is necessary to clean the source code of the
+	 given method (which means cleaned source code would have different size than original method)"
+
+	| source |
+	source := aCompiledMethod sourceCode.
+	^ (self clean: source keepFinalDot: aBoolean) size ~= aCompiledMethod sourceCode size
+]
+
+{ #category : 'settings - accessing' }
+ReMethodSourceCleaner class >> keepFinalDotInMethodBody [
+
+	^ KeepFinalDotInMethodBody ifNil: [ KeepFinalDotInMethodBody := false ]
+]
+
+{ #category : 'settings - accessing' }
+ReMethodSourceCleaner class >> keepFinalDotInMethodBody: aBoolean [
+
+	KeepFinalDotInMethodBody := aBoolean
+]
+
+{ #category : 'utilities' }
 ReMethodSourceCleaner class >> showCleaningOf: aString [
 
 	SpDiffPresenter new
@@ -42,7 +86,7 @@ ReMethodSourceCleaner class >> showCleaningOf: aString [
 		open
 ]
 
-{ #category : #operating }
+{ #category : 'operating' }
 ReMethodSourceCleaner >> clean [
 
 	self
@@ -51,7 +95,7 @@ ReMethodSourceCleaner >> clean [
 		removeTrailingSeparatorsInAllLines
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ReMethodSourceCleaner >> contents [
 
 	^ String streamContents: [:s |
@@ -59,7 +103,7 @@ ReMethodSourceCleaner >> contents [
 	]
 ]
 
-{ #category : #'private - initialization' }
+{ #category : 'private - initialization' }
 ReMethodSourceCleaner >> initFromSource: aString [
 
 	| lines |
@@ -71,13 +115,33 @@ ReMethodSourceCleaner >> initFromSource: aString [
 		               yourself
 ]
 
-{ #category : #'private - operating' }
-ReMethodSourceCleaner >> removeTrailingDot [
+{ #category : 'initialization' }
+ReMethodSourceCleaner >> initialize [
 
-	 sourceLines last removeTrailingDot
+	super initialize.
+	self keepFinalDot: self class keepFinalDotInMethodBody
 ]
 
-{ #category : #'private - operating' }
+{ #category : 'accessing' }
+ReMethodSourceCleaner >> keepFinalDot [
+
+	^ keepFinalDot
+]
+
+{ #category : 'accessing' }
+ReMethodSourceCleaner >> keepFinalDot: aBoolean [
+
+	keepFinalDot := aBoolean
+]
+
+{ #category : 'private - operating' }
+ReMethodSourceCleaner >> removeTrailingDot [
+
+	self keepFinalDot ifTrue: [ ^ self ].
+	sourceLines last removeTrailingDot
+]
+
+{ #category : 'private - operating' }
 ReMethodSourceCleaner >> removeTrailingSeparatorLines [
 
 	[
@@ -86,7 +150,7 @@ ReMethodSourceCleaner >> removeTrailingSeparatorLines [
 		sourceLines removeLast ]
 ]
 
-{ #category : #'private - operating' }
+{ #category : 'private - operating' }
 ReMethodSourceCleaner >> removeTrailingSeparatorsInAllLines [
 
 	 sourceLines do: [:each | each removeTrailingSeparators ]

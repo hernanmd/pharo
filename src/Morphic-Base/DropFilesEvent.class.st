@@ -11,39 +11,41 @@ The event can be used by any Morph implementing:
 
 "
 Class {
-	#name : #DropFilesEvent,
-	#superclass : #DropEvent,
+	#name : 'DropFilesEvent',
+	#superclass : 'DropEvent',
 	#instVars : [
 		'fileNames'
 	],
-	#category : #'Morphic-Base-Events'
+	#category : 'Morphic-Base-Events',
+	#package : 'Morphic-Base',
+	#tag : 'Events'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 DropFilesEvent >> fileNames [
 	^ fileNames
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 DropFilesEvent >> fileNames: anObject [
 	fileNames := anObject
 ]
 
-{ #category : #dispatching }
+{ #category : 'dispatching' }
 DropFilesEvent >> requestDropReference: i [
 
-	| fileName |	
+	| fileName |
 	fileName := self fileNames at: i.
 	^ fileName asFileReference
 ]
 
-{ #category : #dispatching }
+{ #category : 'dispatching' }
 DropFilesEvent >> sentTo: anObject [
 	"Dispatch the receiver into anObject"
 	^anObject handleDropFiles: self
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 DropFilesEvent >> type [
 	^#dropFilesEvent
 ]

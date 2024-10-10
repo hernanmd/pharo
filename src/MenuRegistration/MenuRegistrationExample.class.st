@@ -6,30 +6,32 @@ I'm here to show you how to use the menu registration. See class side methods an
 
 "
 Class {
-	#name : #MenuRegistrationExample,
-	#superclass : #Object,
-	#category : #'MenuRegistration-Example'
+	#name : 'MenuRegistrationExample',
+	#superclass : 'Object',
+	#category : 'MenuRegistration-Example',
+	#package : 'MenuRegistration',
+	#tag : 'Example'
 }
 
-{ #category : #'menu declaring' }
-MenuRegistrationExample class >> mostUsedToolsOn: aBuilder [ 
+{ #category : 'menu declaring' }
+MenuRegistrationExample class >> mostUsedToolsOn: aBuilder [
 	<worldMenuExample>
 	(aBuilder group: #Tools)
 		withSeparatorAfter;
 		order: 0;
 		target: Smalltalk tools;
 		with: [
-			(aBuilder item: #'System browser') 
-				selector: #openClassBrowser; 
+			(aBuilder item: #'System browser')
+				selector: #openClassBrowser;
 				icon: (aBuilder iconNamed: Smalltalk tools browser taskbarIconName).
-			(aBuilder item: #Workspace) 
-				selector: #openWorkspace; 
+			(aBuilder item: #Playground)
+				selector: #openPlayground;
 				icon: (aBuilder iconNamed: Smalltalk tools workspace taskbarIconName).
 			]
 ]
 
-{ #category : #'menu declaring' }
-MenuRegistrationExample class >> myOwnCoolMenuRegistrationOn: aBuilder [ 
+{ #category : 'menu declaring' }
+MenuRegistrationExample class >> myOwnCoolMenuRegistrationOn: aBuilder [
 	<worldMenuExample>
 	(aBuilder item: #MyOwnCoolMenu)
 		parent: #Tools; "place me as a child of the #Tools node (declared by #toolsOn:)"
@@ -42,65 +44,68 @@ MenuRegistrationExample class >> myOwnCoolMenuRegistrationOn: aBuilder [
 				arguments: #('yep, my own cool tool can be also opened from a world sub-menu ! :)')]
 ]
 
-{ #category : #'menu declaring' }
-MenuRegistrationExample class >> myOwnCoolToolRegistrationOn: aBuilder [ 
-	<worldMenuExample> 
+{ #category : 'menu declaring' }
+MenuRegistrationExample class >> myOwnCoolToolRegistrationOn: aBuilder [
+	<worldMenuExample>
 	(aBuilder item: #MyOwnCoolTool)
 		parent: #Tools;
 		label: 'My own cool tool';
-		target: Smalltalk tools workspace; 
+		target: Smalltalk tools workspace;
 		selector: #openContents: ;
 		arguments: #('yep, my own cool tool can be opened from the world menu ! :)')
 ]
 
-{ #category : #'menu declaring' }
-MenuRegistrationExample class >> pharoItemsOn: aBuilder [ 
-	<worldMenuExample> 
+{ #category : 'menu declaring' }
+MenuRegistrationExample class >> pharoItemsOn: aBuilder [
+	<worldMenuExample>
 	(aBuilder group: #QuitPharo)
-		order: 9999; 
+		order: 9999;
 		with: [{
 				{'Save'. {Smalltalk. #saveSession}. 'save the current version of the image on disk'}.
 				{'Save as...'. {self. #saveAs}. 'save the current version of the image on disk under a new name.'}.
 				{'Save and quit'. {self. #saveAndQuit}. 'save the current image on disk, and quit Pharo.'}.
 	 			{'Quit'. {self. #quitSession}. 'quit Pharo.'}
 			} do: [:triplet |
-					(aBuilder item: triplet first asSymbol) 
+					(aBuilder item: triplet first asSymbol)
 						target: triplet second first;
 				 		selector: triplet second second;
 						help: (triplet size > 2 ifTrue: [triplet third] ifFalse: [nil])]]
 ]
 
-{ #category : #'menu declaring' }
+{ #category : 'menu declaring' }
 MenuRegistrationExample class >> pragmaKeyword [
 	^ #worldMenuExample
 ]
 
-{ #category : #'menu actions' }
+{ #category : 'menu actions' }
 MenuRegistrationExample class >> quitSession [
+
 	Smalltalk
-		snapshot: (UIManager default confirm: 'Save changes before quitting?' translated orCancel: [ ^ self ])
+		snapshot: (MorphicUIManager new
+				 confirm: 'Save changes before quitting?' translated
+				 orCancel: [ ^ self ])
 		andQuit: true
 ]
 
-{ #category : #'menu actions' }
+{ #category : 'menu actions' }
 MenuRegistrationExample class >> saveAndQuit [
 	Smalltalk snapshot: true andQuit: true
 ]
 
-{ #category : #'menu actions' }
+{ #category : 'menu actions' }
 MenuRegistrationExample class >> saveAs [
-	Smalltalk saveAs.
+	Smalltalk saveAs
 ]
 
-{ #category : #'menu declaring' }
+{ #category : 'menu declaring' }
 MenuRegistrationExample class >> theme [
 	"Answer the ui theme that provides controls."
 
 	^ Smalltalk ui theme
 ]
 
-{ #category : #'menu declaring' }
-MenuRegistrationExample class >> toolsOn: aBuilder [ 
+{ #category : 'menu declaring' }
+MenuRegistrationExample class >> toolsOn: aBuilder [
 	<worldMenuExample>
 	(aBuilder item: #Tools)
 		order: 1.0;
@@ -108,14 +113,14 @@ MenuRegistrationExample class >> toolsOn: aBuilder [
 		iconName: #smallDoIt;
 		withSeparatorAfter;
 		with: [
-			(aBuilder item: #Transcript) 
-				selector: #openTranscript; 
-				icon: (aBuilder iconNamed: Smalltalk tools transcript  taskbarIconName). 
-			(aBuilder item: #'File Browser') 
-				selector: #openFileList; 
+			(aBuilder item: #Transcript)
+				selector: #openTranscript;
+				icon: (aBuilder iconNamed: Smalltalk tools transcript  taskbarIconName).
+			(aBuilder item: #'File Browser')
+				selector: #openFileList;
 				icon: (aBuilder iconNamed: Smalltalk tools fileList taskbarIconName).
-			(aBuilder item: #'Process Browser') 
-				selector: #openProcessBrowser; 
+			(aBuilder item: #'Process Browser')
+				selector: #openProcessBrowser;
 				icon: (aBuilder iconNamed: Smalltalk tools processBrowser taskbarIconName);
 				withSeparatorAfter]
 ]

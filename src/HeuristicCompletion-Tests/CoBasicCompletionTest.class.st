@@ -1,20 +1,22 @@
 Class {
-	#name : #CoBasicCompletionTest,
-	#superclass : #TestCase,
+	#name : 'CoBasicCompletionTest',
+	#superclass : 'TestCase',
 	#instVars : [
 		'completionClass',
 		'systemNavigation'
 	],
-	#category : #'HeuristicCompletion-Tests-Core'
+	#category : 'HeuristicCompletion-Tests-Core',
+	#package : 'HeuristicCompletion-Tests',
+	#tag : 'Core'
 }
 
-{ #category : #testing }
+{ #category : 'testing' }
 CoBasicCompletionTest class >> isAbstract [
 
 	^ self == CoBasicCompletionTest
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 CoBasicCompletionTest >> assertCollectionOfEntry: aCollection equals: anotherCollection [
 
 	self assert: aCollection size equals: anotherCollection size.
@@ -23,7 +25,7 @@ CoBasicCompletionTest >> assertCollectionOfEntry: aCollection equals: anotherCol
 		self assertEntry: a equals: b ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 CoBasicCompletionTest >> assertEntry: anEntry equals: expectedEntry [
 
 	"Entries do not define equality :("
@@ -31,32 +33,32 @@ CoBasicCompletionTest >> assertEntry: anEntry equals: expectedEntry [
 	self assert: anEntry contents equals: expectedEntry contents
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 CoBasicCompletionTest >> completionClass [
 
 	^ completionClass
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 CoBasicCompletionTest >> innerASTNode [
 	| nodeInsideABlock |
-	RBMethodNode
+	ASTMethodNode
 		selector: #foo
-		arguments: (#(methodArgument) collect: [ :e | RBVariableNode named: e ])
+		arguments: (#(methodArgument) collect: [ :e | ASTVariableNode named: e ])
 		body:
-			(RBSequenceNode
-				temporaries: (#(methodTemporary) collect: [ :e | RBVariableNode named: e ])
+			(ASTSequenceNode
+				temporaries: (#(methodTemporary) collect: [ :e | ASTVariableNode named: e ])
 				statements:
-					{(RBBlockNode
-						arguments: (#(blockArgument) collect: [ :e | RBVariableNode named: e ])
+					{(ASTBlockNode
+						arguments: (#(blockArgument) collect: [ :e | ASTVariableNode named: e ])
 						body:
-							(RBSequenceNode
-								temporaries: (#(blockTemporary) collect: [ :e | RBVariableNode named: e ])
-								statements: {(nodeInsideABlock := RBVariableNode named: '')}))}).
+							(ASTSequenceNode
+								temporaries: (#(blockTemporary) collect: [ :e | ASTVariableNode named: e ])
+								statements: {(nodeInsideABlock := ASTVariableNode named: '')}))}).
 	^ nodeInsideABlock
 ]
 
-{ #category : #running }
+{ #category : 'running' }
 CoBasicCompletionTest >> setUp [
 
 	super setUp.
@@ -90,7 +92,7 @@ CoBasicCompletionTest >> setUp [
 		yourself
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 CoBasicCompletionTest >> systemNavigation [
 
 	^ systemNavigation

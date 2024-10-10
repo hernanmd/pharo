@@ -1,28 +1,28 @@
-Extension { #name : #Behavior }
+Extension { #name : 'Behavior' }
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> allTemps [
 	^#()
 ]
 
-{ #category : #'*OpalCompiler-Core' }
-Behavior >> compile: code [ 
-	"Compile the argument, code, as source code in the context of the 
-	receiver. Create an error notification if the code can not be compiled. 
-	The argument is either a string or an object that converts to a string or a 
+{ #category : '*OpalCompiler-Core' }
+Behavior >> compile: code [
+	"Compile the argument, code, as source code in the context of the
+	receiver. Create an error notification if the code can not be compiled.
+	The argument is either a string or an object that converts to a string or a
 	PositionableStream on an object that converts to a string."
 
 	^self compile: code notifying: nil
 ]
 
-{ #category : #'*OpalCompiler-Core' }
-Behavior >> compile: code notifying: requestor [ 
-	"Compile the argument, code, as source code in the context of the 
-	receiver and insEtall the result in the receiver's method dictionary. The 
-	second argument, requestor, is to be notified if an error occurs. The 
-	argument code is either a string or an object that converts to a string or 
+{ #category : '*OpalCompiler-Core' }
+Behavior >> compile: code notifying: requestor [
+	"Compile the argument, code, as source code in the context of the
+	receiver and insEtall the result in the receiver's method dictionary. The
+	second argument, requestor, is to be notified if an error occurs. The
+	argument code is either a string or an object that converts to a string or
 	a PositionableStream. This method also saves the source code."
-	
+
 	| method |
 	method  := self compiler
 		requestor: requestor;
@@ -35,20 +35,20 @@ Behavior >> compile: code notifying: requestor [
 	^ method selector
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> compileAll [
 	^ self compileAllFrom: self
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> compileAllFrom: oldClass [
 	"Compile all the methods in the receiver's method dictionary.
 	This validates sourceCode and variable references and forces
 	all methods to use the current bytecode set"
-	oldClass localSelectors do: [:sel | self recompile: sel from: oldClass].
+	oldClass localSelectors do: [:sel | self recompile: sel from: oldClass]
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> compiler [
 	"Answer a compiler appropriate for source methods of this class."
 
@@ -56,7 +56,7 @@ Behavior >> compiler [
 		semanticScope: (OCMethodSemanticScope targetingClass: self)
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> compilerClass [
 	"Answer a compiler class appropriate for source methods of this class."
 
@@ -100,20 +100,31 @@ Behavior >> outerScope [
 	^self environment
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> recompile [
 	self compileAll
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> recompile: selector [
 	"Compile the method associated with selector in the receiver's method dictionary."
 	^self recompile: selector from: self
 ]
 
-{ #category : #'*OpalCompiler-Core' }
+{ #category : '*OpalCompiler-Core' }
 Behavior >> recompile: selector from: oldClass [
 	"Compile the method associated with selector in the receiver's method dictionary."
+
+	| newMethod |
+	newMethod := self recompileBasic: selector from: oldClass.
+	self addSelectorSilently: selector withMethod: newMethod
+]
+
+{ #category : '*OpalCompiler-Core' }
+Behavior >> recompileBasic: selector from: oldClass [
+	"Compile the method associated with selector in the receiver's context.
+	The resulting compiled method is not installed.
+	If the original method is faulty, the result will be also faulty (silently)."
 
 	| method newMethod |
 	method := oldClass compiledMethodAt: selector.
@@ -126,8 +137,6 @@ Behavior >> recompile: selector from: oldClass [
 	self addSelector: selector withRecompiledMethod: newMethod.
 ]
 
-{ #category : #'*OpalCompiler-Core' }
-Behavior >> scopeLevel [
-	"For debugging we print a counter for all scopes, starting from the Method as 1, so we are 0"
-	^ 0
+	selector == newMethod selector ifFalse: [self error: 'selector changed!'].
+	^ newMethod
 ]

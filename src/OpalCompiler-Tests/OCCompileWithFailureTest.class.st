@@ -6,19 +6,21 @@ Instead of raising syntax errors at runtime, they are raised at compile time.
 
 "
 Class {
-	#name : #OCCompileWithFailureTest,
-	#superclass : #TestCase,
-	#category : #'OpalCompiler-Tests-Source'
+	#name : 'OCCompileWithFailureTest',
+	#superclass : 'TestCase',
+	#category : 'OpalCompiler-Tests-Source',
+	#package : 'OpalCompiler-Tests',
+	#tag : 'Source'
 }
 
-{ #category : #'interactive error protocol' }
+{ #category : 'interactive error protocol' }
 OCCompileWithFailureTest >> notify: aMessage at: positon in: object [
 	"ingnore, for testEmptyBlockArg"
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 OCCompileWithFailureTest >> testEmptyBlockArg [
-	| result | 
+	| result |
 	"parse [:] in parse error mode, this results in arg vars with an empty string as a name"
 	result := UndefinedObject compiler
     noPattern: true;
@@ -29,7 +31,7 @@ OCCompileWithFailureTest >> testEmptyBlockArg [
 	self assert: result statements first isReturn
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 OCCompileWithFailureTest >> testEvalSimpleMethodWithError [
 	| ast cm |
 	ast := OpalCompiler new
@@ -43,17 +45,16 @@ OCCompileWithFailureTest >> testEvalSimpleMethodWithError [
 	self should: [cm valueWithReceiver: nil arguments: #()] raise: RuntimeSyntaxError
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 OCCompileWithFailureTest >> testParenthesis [
-	| result cm | 
-	result := UndefinedObject compiler
+	| compiler cm |
+	cm := (compiler := UndefinedObject compiler)
     source: 'self assert: pragma( numArgs equals: 0.';
-    noPattern: true;
-    options:  #(+ optionParseErrors + optionSkipSemanticWarnings);
+    isScripting: true;
     requestor: self;
-    parse. 
-	self assert: result isDoIt.
-	self assert: result isFaulty.
-	cm := result compiledMethod.
-	self should: [cm valueWithReceiver: nil arguments: #()] raise: RuntimeSyntaxError
+    permitFaulty: true;
+    compile.
+	self assert: compiler ast isDoIt.
+	self assert: compiler ast isFaulty.
+	self should: [cm valueWithReceiver: nil] raise: RuntimeSyntaxError
 ]

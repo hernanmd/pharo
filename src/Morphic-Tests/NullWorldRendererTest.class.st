@@ -1,16 +1,17 @@
 Class {
-	#name : #NullWorldRendererTest,
-	#superclass : #TestCase,
-	#category : #'Morphic-Tests'
+	#name : 'NullWorldRendererTest',
+	#superclass : 'TestCase',
+	#category : 'Morphic-Tests',
+	#package : 'Morphic-Tests'
 }
 
-{ #category : #tests }
+{ #category : 'tests' }
 NullWorldRendererTest >> testConvertWindowMouseEventPosition [
 	| renderer |
-	
+
 
 	renderer := NullWorldRenderer new.
-	self 
+	self
 		assert: (renderer convertWindowMouseEventPosition: 0@0)
 		equals: 0@0
 ]

@@ -2,61 +2,69 @@
 I am the superclass of a hierarchy of morph specialized in allowing the user to resize windows.
 "
 Class {
-	#name : #CornerGripMorph,
-	#superclass : #AbstractResizerMorph,
+	#name : 'CornerGripMorph',
+	#superclass : 'AbstractResizerMorph',
 	#instVars : [
 		'target'
 	],
-	#category : #'Morphic-Widgets-Windows-Resizing'
+	#category : 'Morphic-Widgets-Windows-Resizing',
+	#package : 'Morphic-Widgets-Windows',
+	#tag : 'Resizing'
 }
 
-{ #category : #accessing }
+{ #category : 'testing' }
+CornerGripMorph class >> isAbstract [
+
+	^ self == CornerGripMorph
+]
+
+{ #category : 'accessing' }
 CornerGripMorph >> defaultHeight [
 	^ 22
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CornerGripMorph >> defaultWidth [
 	^ 22
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 CornerGripMorph >> initialize [
 	super initialize.
 	self extent: self defaultWidth @ self defaultHeight.
 	self layoutFrame: self gripLayoutFrame
 ]
 
-{ #category : #event }
+{ #category : 'event' }
 CornerGripMorph >> mouseDown: anEvent [
 	"Remember the receiver and target offsets too."
-	
+
 	|cp|
 	cp := anEvent cursorPoint.
 	lastMouse := {cp. cp - self position. cp - self targetPoint}
 ]
 
-{ #category : #event }
+{ #category : 'event' }
 CornerGripMorph >> mouseMove: anEvent [
 	"Track the mouse for resizing."
-	
+
 	target ifNil: [^ self].
-	target fastFramingOn 
-		ifTrue: [target doFastWindowReframe: self ptName] 
+	target fastFramingOn
+		ifTrue: [target doFastWindowReframe: self ptName]
 		ifFalse: [
 			lastMouse at: 1 put: anEvent cursorPoint.
 			self targetPoint: lastMouse first - lastMouse last.
-			self position: (lastMouse first - lastMouse second)].
+			self position: (lastMouse first - lastMouse second)]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CornerGripMorph >> target [
 	"Answer the target."
 
 	^target
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CornerGripMorph >> target: aMorph [
 
 	target := aMorph.
@@ -64,14 +72,14 @@ CornerGripMorph >> target: aMorph [
 		self fillStyle: (aMorph theme resizerGripNormalFillStyleFor: self)]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CornerGripMorph >> targetPoint [
 	"Answer the reference point of the target."
 
 	^self target bounds pointAtSideOrCorner: self ptName
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CornerGripMorph >> targetPoint: aPoint [
 	"Set the reference point of the target."
 

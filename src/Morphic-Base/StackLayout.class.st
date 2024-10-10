@@ -2,23 +2,25 @@
 A stack based layout
 "
 Class {
-	#name : #StackLayout,
-	#superclass : #LayoutPolicy,
+	#name : 'StackLayout',
+	#superclass : 'LayoutPolicy',
 	#instVars : [
 		'cachedMinExtent',
 		'cachedMinExtents'
 	],
-	#category : #'Morphic-Base-Layouts'
+	#category : 'Morphic-Base-Layouts',
+	#package : 'Morphic-Base',
+	#tag : 'Layouts'
 }
 
-{ #category : #private }
+{ #category : 'private' }
 StackLayout >> flushLayoutCache [
 	"Flush any cached information associated with the receiver."
-	
+
 	cachedMinExtent := nil
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 StackLayout >> layout: aMorph in: layoutBounds [
 	"Compute the layout for the given morph based on the new bounds.
 	Supports submorph hResizing, vResizing, cellInset, cellPositioning
@@ -35,7 +37,7 @@ StackLayout >> layout: aMorph in: layoutBounds [
 			ifTrue: [((vr == #shrinkWrap) not and: [m extent = cell extent])
 						ifTrue: [m position: cell origin]
 						ifFalse: [box := m bounds.
-								m hResizing == #spaceFill 
+								m hResizing == #spaceFill
 									ifTrue: [box := cell origin extent: cell width @ box height].
 								vr  == #spaceFill
 									ifTrue: [box := box origin extent: box width @ cell height].
@@ -46,10 +48,10 @@ StackLayout >> layout: aMorph in: layoutBounds [
 								m bounds: box]]]
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 StackLayout >> minExtentOf: aMorph in: newBounds [
 	"Return the minimal size aMorph's children would require given the new bounds"
-	
+
 	|min extent|
 	cachedMinExtent ifNotNil: [^cachedMinExtent].
 	aMorph submorphs ifEmpty: [^0 @ 0].

@@ -2,15 +2,17 @@
 A morphic based tree model with pagination
 "
 Class {
-	#name : #PaginatedMorphTreeModel,
-	#superclass : #MorphTreeModel,
+	#name : 'PaginatedMorphTreeModel',
+	#superclass : 'MorphTreeModel',
 	#instVars : [
 		'pageSize'
 	],
-	#category : #'Morphic-Widgets-Tree-Pagination'
+	#category : 'Morphic-Widgets-Tree-Pagination',
+	#package : 'Morphic-Widgets-Tree',
+	#tag : 'Pagination'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 PaginatedMorphTreeModel class >> example [
 	"This test demonstrate a paginating morphTreeMorph in action."
 
@@ -28,48 +30,48 @@ PaginatedMorphTreeModel class >> example [
 	self assert: treeMorph pager currentPage == 2
 ]
 
-{ #category : #'pager managing' }
+{ #category : 'pager managing' }
 PaginatedMorphTreeModel >> chunkSize [
 	^ pageSize
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PaginatedMorphTreeModel >> chunkSize: anIntegerOrNil [
 	self setPageSize: anIntegerOrNil.
 	self announce: (MorphTreeChangeRequest chunkSize: anIntegerOrNil)
 ]
 
-{ #category : #'pager managing' }
+{ #category : 'pager managing' }
 PaginatedMorphTreeModel >> pageSize [
 	^ pageSize
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PaginatedMorphTreeModel >> pageSize: anIntegerOrNil [
 	self setPageSize: anIntegerOrNil.
 	self announce: (MorphTreeChangeRequest pageSize: anIntegerOrNil)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PaginatedMorphTreeModel >> rootNodes [
 	| computedRootNodes |
 	computedRootNodes := super rootNodes.
-	self defaultChunkSize 
+	self defaultChunkSize
 		ifNotNil: [computedRootNodes size > self defaultChunkSize
 			ifTrue: [self chunkSize: self defaultChunkSize]]
 		ifNil: [
-			self defaultPageSize 
+			self defaultPageSize
 				ifNotNil: [computedRootNodes size > self defaultPageSize
 					ifTrue: [self pageSize: self defaultPageSize]]].
 	^ computedRootNodes
 ]
 
-{ #category : #'pager managing' }
+{ #category : 'pager managing' }
 PaginatedMorphTreeModel >> setPageSize: anIntegerOrNil [
-	pageSize := anIntegerOrNil.
+	pageSize := anIntegerOrNil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PaginatedMorphTreeModel >> treeMorphClass [
 	^ PaginatedMorphTreeMorph
 ]

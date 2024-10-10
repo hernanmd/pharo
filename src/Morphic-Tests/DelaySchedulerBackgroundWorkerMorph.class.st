@@ -17,23 +17,25 @@ Close my instance morphs via halos, or evaluate the following...
 
 "
 Class {
-	#name : #DelaySchedulerBackgroundWorkerMorph,
-	#superclass : #Morph,
+	#name : 'DelaySchedulerBackgroundWorkerMorph',
+	#superclass : 'Morph',
 	#instVars : [
 		'work',
 		'stringMorph',
 		'morphDeleted'
 	],
-	#category : #'Morphic-Tests-Processes'
+	#category : 'Morphic-Tests-Processes',
+	#package : 'Morphic-Tests',
+	#tag : 'Processes'
 }
 
-{ #category : #action }
+{ #category : 'action' }
 DelaySchedulerBackgroundWorkerMorph >> delete [
     morphDeleted := true.
-    super delete.
+    super delete
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 DelaySchedulerBackgroundWorkerMorph >> initialize [
     "DelaySchedulerBackgroundWorkerMorph new openInWorld"
     | workerProcess controllerProcess |
@@ -43,9 +45,9 @@ DelaySchedulerBackgroundWorkerMorph >> initialize [
     self addMorphBack:  (stringMorph := StringMorph new).
     morphDeleted := false.      "see #delete"
 
-    workerProcess :=  
+    workerProcess :=
     [     work := 0.
-        [    10 milliSeconds asDelay wait.
+        [   (Delay forMilliseconds: 10) wait.
             work := work + 1.
             morphDeleted.
         ] whileFalse.
@@ -53,22 +55,22 @@ DelaySchedulerBackgroundWorkerMorph >> initialize [
 
     controllerProcess :=
     [     [    workerProcess resume. self color: Color green.
-            10 milliSeconds asDelay wait.
+            (Delay forMilliseconds: 10) wait.
             workerProcess suspend. self color: Color red.
-            10 milliSeconds asDelay wait.
+				(Delay forMilliseconds: 10) wait.
             morphDeleted.
         ] whileFalse.
     ] newProcess name: 'Controller'.
 
-    controllerProcess resume.
+    controllerProcess resume
 ]
 
-{ #category : #stepping }
+{ #category : 'stepping' }
 DelaySchedulerBackgroundWorkerMorph >> step [
     stringMorph contents: work printString
 ]
 
-{ #category : #stepping }
+{ #category : 'stepping' }
 DelaySchedulerBackgroundWorkerMorph >> stepTime [
     ^ 50
 ]

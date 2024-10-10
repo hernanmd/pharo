@@ -1,7 +1,7 @@
-Extension { #name : #Point }
+Extension { #name : 'Point' }
 
-{ #category : #'*Morphic-Core' }
+{ #category : '*Morphic-Core' }
 Point >> scaledByDisplayScaleFactor [
 
-	^ self * self currentWorld displayScaleFactor.
+	^ self * self currentWorld displayScaleFactor
 ]

@@ -1,20 +1,20 @@
-Extension { #name : #SmallInteger }
+Extension { #name : 'SmallInteger' }
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 SmallInteger >> sqrt [
 	self negative ifTrue: [
 		^ DomainError signal: 'sqrt undefined for number less than zero.' ].
 	^super sqrt
 ]
 
-{ #category : #'*Math-Operations-Extensions' }
+{ #category : '*Math-Operations-Extensions' }
 SmallInteger >> threeDigitName [
 
 	| units answer |
 
 	self = 0 ifTrue: [^''].
-	units := #('one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine' 'ten' 
-		'eleven' 'twelve' 'thirteen' 'fourteen' 'fifteen' 'sixteen' 'seventeen' 
+	units := #('one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine' 'ten'
+		'eleven' 'twelve' 'thirteen' 'fourteen' 'fifteen' 'sixteen' 'seventeen'
 		'eighteen' 'nineteen').
 	self > 99 ifTrue: [
 		answer := (units at: self // 100),' hundred'.

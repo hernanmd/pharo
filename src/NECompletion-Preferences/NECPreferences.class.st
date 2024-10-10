@@ -5,8 +5,8 @@ It is the same for NECompletion and NOCompletion (and other potential completion
 
 "
 Class {
-	#name : #NECPreferences,
-	#superclass : #Object,
+	#name : 'NECPreferences',
+	#superclass : 'Object',
 	#classInstVars : [
 		'enabled',
 		'caseSensitive',
@@ -14,119 +14,115 @@ Class {
 		'smartCharactersMapping',
 		'backgroundColor',
 		'expandPrefixes',
-		'captureNavigationKeys',
 		'useEnterToAccept',
 		'popupShowAutomatic',
 		'popupAutomaticDelay',
 		'popupShowWithShortcut',
 		'smartCharactersWithSingleSpace',
-		'smartCharactersWithDoubleSpace'
+		'smartCharactersWithDoubleSpace',
+		'showCompletionDetails'
 	],
-	#category : #'NECompletion-Preferences'
+	#category : 'NECompletion-Preferences',
+	#package : 'NECompletion-Preferences'
 }
 
-{ #category : #private }
+{ #category : 'private' }
 NECPreferences class >> availableEngines [
 	^ CompletionEngine allSubclasses
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> availablePopupShortcuts [
 	^ {Character space shift . Character tab asKeyCombination}
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 NECPreferences class >> availableSorters [
 	^ CompletionSorter subclasses
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> backgroundColor [
 	^ backgroundColor
 ]
 
-{ #category : #accessing }
-NECPreferences class >> backgroundColor: aColor [ 
+{ #category : 'accessing' }
+NECPreferences class >> backgroundColor: aColor [
 	backgroundColor := aColor
 ]
 
-{ #category : #accessing }
-NECPreferences class >> captureNavigationKeys [
-	^ captureNavigationKeys
-]
-
-{ #category : #accessing }
-NECPreferences class >> captureNavigationKeys: aBoolean [
-	captureNavigationKeys := aBoolean
-]
-
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> caseSensitive [
 	^ caseSensitive
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> caseSensitive: aBoolean [
 	caseSensitive := aBoolean
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 NECPreferences class >> defaultBackgroundColor [
 	^ self theme menuColor
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 NECPreferences class >> defaultPopupDelay [
 	^ 200
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 NECPreferences class >> defaultPopupShortcut [
 	^ Character tab asShortcut
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 NECPreferences class >> defaultPopupShowAutomatic [
 	^ true
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
+NECPreferences class >> defaultShowCompletionDetails [
+
+	^ true
+]
+
+{ #category : 'defaults' }
 NECPreferences class >> defaultSpaceAfterCompletion [
 	^ true
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 NECPreferences class >> defaultUseEnterToAccept [
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> enabled [
 	^ enabled
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> enabled: aBoolean [
-	enabled := aBoolean.
+	enabled := aBoolean
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> expandPrefixes [
 	^ expandPrefixes
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> expandPrefixes: aBoolean [
 	expandPrefixes := aBoolean
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 NECPreferences class >> initialize [
 	enabled := true.
 	caseSensitive := true.
 	smartCharacters := true.
 	expandPrefixes := true.
-	captureNavigationKeys := true.
 	useEnterToAccept := self defaultUseEnterToAccept.
 	smartCharactersMapping := Dictionary new.
 	smartCharactersMapping
@@ -144,40 +140,41 @@ NECPreferences class >> initialize [
 	popupShowWithShortcut := self defaultPopupShortcut.
 	popupShowAutomatic := self defaultPopupShowAutomatic.
 	popupAutomaticDelay := self defaultPopupDelay.
+	showCompletionDetails := self defaultShowCompletionDetails.
 	NECEntry spaceAfterCompletion: true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> popupAutomaticDelay [
 	^ popupAutomaticDelay
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> popupAutomaticDelay: anObject [
 	popupAutomaticDelay := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> popupShowAutomatic [
 	^ popupShowAutomatic
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> popupShowAutomatic: aBoolean [
 	popupShowAutomatic := aBoolean
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> popupShowWithShortcut [
 	^ popupShowWithShortcut
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> popupShowWithShortcut: anObject [
 	popupShowWithShortcut := anObject
 ]
 
-{ #category : #settings }
+{ #category : 'settings' }
 NECPreferences class >> settingsOn: aBuilder [
 	<systemsettings>
 	(aBuilder setting: #'Code Completion')
@@ -187,11 +184,11 @@ NECPreferences class >> settingsOn: aBuilder [
 		default: true;
 		iconName: #smallConfiguration;
 		description: 'Enable or disable code completion in browsers, debuggers and workspaces.';
-		with: [ 
+		with: [
 					| availableControllers availableSorters |
 					availableControllers := self availableEngines.
 					availableControllers size > 1
-						ifTrue: [ 
+						ifTrue: [
 							(aBuilder pickOne: #completionEngineClass)
 								order: -1;
 								label: 'CompletionEngine';
@@ -202,7 +199,7 @@ NECPreferences class >> settingsOn: aBuilder [
 								domainValues: availableControllers ].
 					availableSorters := self availableSorters.
 					availableSorters size > 1
-						ifTrue: [ 
+						ifTrue: [
 							(aBuilder pickOne: #completionSorter)
 								order: -1;
 								label: 'Sorter';
@@ -211,17 +208,18 @@ NECPreferences class >> settingsOn: aBuilder [
 								setSelector: #sorterClass:;
 								domainValues: availableSorters ].
 					(aBuilder setting: #backgroundColor)
-						default: (Color 
-							r: 0.823069403714565 
-							g: 0.823069403714565 
+						default: (Color
+							r: 0.823069403714565
+							g: 0.823069403714565
 							b: 0.823069403714565 alpha: 1.0);
 						label: 'Background Color'.
 					(aBuilder setting: #useEnterToAccept)
 						label: 'Use ENTER to accept a suggested completion';
 						default: self defaultUseEnterToAccept.
-					(aBuilder setting: #captureNavigationKeys)
-						default: true;
-						label: 'Use navigation keys for extended completion functionality'.
+					(aBuilder setting: #showCompletionDetails)
+						label: 'Show completion details';
+						description: 'Show detailed information about completion entries';
+						default: self defaultShowCompletionDetails.
 					(aBuilder setting: #caseSensitive)
 						label: 'Case Sensitive';
 						default: true;
@@ -234,7 +232,7 @@ NECPreferences class >> settingsOn: aBuilder [
 						label: 'Smart Characters with Single Space';
 						default: '';
 				 		description: 'Enumerate the characters which are automatically inserted with a single space in between.'.
-					(aBuilder setting: #smartCharactersWithDoubleSpace) 
+					(aBuilder setting: #smartCharactersWithDoubleSpace)
 						label: 'Smart Characters with Double Space';
 						default: '[]{}';
 				 		description: 'Enumerate the characters which are automatically inserted with a two spaces in between.'.
@@ -245,6 +243,7 @@ NECPreferences class >> settingsOn: aBuilder [
 						default: self defaultPopupDelay;
 						label: 'Popup appearance delay'.
 					(aBuilder pickOne: #popupShowWithShortcut)
+						target: self;
 						default: self defaultPopupShortcut;
 						label: 'Popup appears with this shortcut';
 						domainValues: self availablePopupShortcuts.
@@ -252,67 +251,77 @@ NECPreferences class >> settingsOn: aBuilder [
 						target: NECEntry;
 						default: self defaultSpaceAfterCompletion;
 						label: 'Put a space after completion'
-					 ].
+					 ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
+NECPreferences class >> showCompletionDetails [
+	^ showCompletionDetails
+]
+
+{ #category : 'accessing' }
+NECPreferences class >> showCompletionDetails: aBoolean [
+	showCompletionDetails := aBoolean
+]
+
+{ #category : 'accessing' }
 NECPreferences class >> smartCharacters [
 	^ smartCharacters
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharacters: aBoolean [
 	smartCharacters := aBoolean
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharactersMapping [
 	^ smartCharactersMapping
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharactersMapping: aDictionary [
 	smartCharactersMapping := aDictionary
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharactersWithDoubleSpace [
 	^ smartCharactersWithDoubleSpace
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharactersWithDoubleSpace: aString [
 	smartCharactersWithDoubleSpace := aString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharactersWithSingleSpace [
 	^ smartCharactersWithSingleSpace
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> smartCharactersWithSingleSpace: aString [
 	smartCharactersWithSingleSpace := aString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> spaceAfterCompletion [
-	
+
 	^ NECEntry spaceAfterCompletion
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> theme [
 	self flag: #SmalltalkReference.
 	^ Smalltalk ui theme
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> useEnterToAccept [
 	^ useEnterToAccept
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NECPreferences class >> useEnterToAccept: aBoolean [
 	useEnterToAccept := aBoolean
 ]

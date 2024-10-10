@@ -6,8 +6,8 @@ letters quickly) to go to the next item that begins with that letter.
 Special keys (up, down, home, etc.) are also supported.
 "
 Class {
-	#name : #PluggableListMorph,
-	#superclass : #ScrollPane,
+	#name : 'PluggableListMorph',
+	#superclass : 'ScrollPane',
 	#instVars : [
 		'list',
 		'getListSelector',
@@ -46,10 +46,12 @@ Class {
 		'enabled',
 		'getEnabledSelector'
 	],
-	#category : #'Morphic-Widgets-Pluggable-Lists'
+	#category : 'Morphic-Widgets-Pluggable-Lists',
+	#package : 'Morphic-Widgets-Pluggable',
+	#tag : 'Lists'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 PluggableListMorph class >> on: anObject list: listSel primarySelection: getSelectionSel changePrimarySelection: setSelectionSel listSelection: getListSel changeListSelection: setListSel menu: getMenuSel [
 	^ self new
 		on: anObject
@@ -62,8 +64,8 @@ PluggableListMorph class >> on: anObject list: listSel primarySelection: getSele
 		keystroke: #arrowKey:from:		"default"
 ]
 
-{ #category : #'instance creation' }
-PluggableListMorph class >> on: anObject list: listSel primarySelection: getSelectionSel changePrimarySelection: setSelectionSel listSelection: getListSel changeListSelection: setListSel menu: getMenuSel keystroke: keyActionSel [ 
+{ #category : 'instance creation' }
+PluggableListMorph class >> on: anObject list: listSel primarySelection: getSelectionSel changePrimarySelection: setSelectionSel listSelection: getListSel changeListSelection: setListSel menu: getMenuSel keystroke: keyActionSel [
 	^ self new
 		on: anObject
 		list: listSel
@@ -75,7 +77,7 @@ PluggableListMorph class >> on: anObject list: listSel primarySelection: getSele
 		keystroke: keyActionSel
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 PluggableListMorph class >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel [
 	"Create a 'pluggable' list view on the given model parameterized by the given message selectors."
 
@@ -88,7 +90,7 @@ PluggableListMorph class >> on: anObject list: getListSel selected: getSelection
 		keystroke: #arrowKey:from:		"default"
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 PluggableListMorph class >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel [
 	"Create a 'pluggable' list view on the given model parameterized by the given message selectors."
 
@@ -101,7 +103,7 @@ PluggableListMorph class >> on: anObject list: getListSel selected: getSelection
 		keystroke: #arrowKey:from:		"default"
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 PluggableListMorph class >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel keystroke: keyActionSel [
 	"Create a 'pluggable' list view on the given model parameterized by the given message selectors."
 
@@ -114,33 +116,33 @@ PluggableListMorph class >> on: anObject list: getListSel selected: getSelection
 		keystroke: keyActionSel
 ]
 
-{ #category : #'drag and drop' }
-PluggableListMorph >> acceptDroppingMorph: aMorph event: evt [ 
-	"This message is sent when a morph is dropped onto a morph that has     
-	agreed to accept the dropped morph by responding 'true' to the     
-	wantsDroppedMorph:Event: message. The default implementation just     
+{ #category : 'drag and drop' }
+PluggableListMorph >> acceptDroppingMorph: aMorph event: evt [
+	"This message is sent when a morph is dropped onto a morph that has
+	agreed to accept the dropped morph by responding 'true' to the
+	wantsDroppedMorph:Event: message. The default implementation just
 	adds the given morph to the receiver."
 	"Here we let the model do its work."
 
-	dropItemSelector 
+	dropItemSelector
 		ifNotNil: [| item |
 			dropItemSelector ifNil:[^self].
 			item := aMorph passenger.
 			model perform: dropItemSelector with: item with: potentialDropRow ]
-		ifNil: [ 
+		ifNil: [
 			self model
 				acceptDroppingMorph: aMorph
 				event: evt
-				inMorph: self ].			
+				inMorph: self ].
 	self resetPotentialDropRow.
 	evt hand releaseMouseFocus: self.
-	Cursor normal show.
+	Cursor normal show
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 PluggableListMorph >> adoptPaneColor: paneColor [
 	"Pass on to the border too."
-	
+
 	super adoptPaneColor: paneColor.
 	paneColor ifNil: [^self].
 	self selectionColor: self selectionColor.
@@ -149,28 +151,28 @@ PluggableListMorph >> adoptPaneColor: paneColor [
 		self borderStyle: self borderStyleToUse]
 ]
 
-{ #category : #'submorphs - accessing' }
+{ #category : 'submorphs - accessing' }
 PluggableListMorph >> allSubmorphNamesDo: nameBlock [
 	"Assume list morphs do not have named parts -- saves MUCH time"
 
 	^ self
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> autoDeselect [
 
 	^ autoDeselect
-		ifNil: [ self resetListSelector notNil ]
+		ifNil: [ self resetListSelector isNotNil ]
 		ifNotNil: [ autoDeselect ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> autoDeselect: trueOrFalse [
 	"Enable/disable autoDeselect (see class comment)"
-	autoDeselect := trueOrFalse.
+	autoDeselect := trueOrFalse
 ]
 
-{ #category : #'background coloring' }
+{ #category : 'background coloring' }
 PluggableListMorph >> backgroundColorFor: aRow [
 
 	| return |
@@ -191,31 +193,31 @@ PluggableListMorph >> backgroundColorFor: aRow [
 									ifTrue: [ anItem perform: blockOrSelector ]
 									ifFalse: [ self model perform: blockOrSelector withEnoughArguments: { anItem. aRow} ]]
 						ifFalse: [ nil ]]].
-		
+
 		^ return isColor
 			ifTrue: [ return ]
 			ifFalse: [ nil ]
 ]
 
-{ #category : #'background coloring' }
+{ #category : 'background coloring' }
 PluggableListMorph >> backgroundColoringBlockOrSelector [
 
 	^ backgroundColoringBlockOrSelector
 ]
 
-{ #category : #'background coloring' }
+{ #category : 'background coloring' }
 PluggableListMorph >> backgroundColoringBlockOrSelector: aSelector [
 
 	backgroundColoringBlockOrSelector := aSelector
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> basicGetListElementSelector: aSymbol [
 	"specify a selector that can be used to obtain a single element in the underlying list"
-	getListElementSelector := aSymbol.
+	getListElementSelector := aSymbol
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> basicKeyPressed: aChar [
 	"Return the index of the element matching the keystrokes.
 	Returns 0 if nothing found"
@@ -241,52 +243,52 @@ PluggableListMorph >> basicKeyPressed: aChar [
 	^ nextSelection
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> basicWrapSelector: aSymbol [
-	wrapSelector := aSymbol.
+	wrapSelector := aSymbol
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> beMultipleSelection [
 
 	multipleSelection := true
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> beSingleSelection [
 
 	multipleSelection := false
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> borderStyleToUse [
 	"Answer the borderStyle that should be used for the receiver."
-	
+
 	^self enabled
 		ifTrue: [self theme listNormalBorderStyleFor: self]
 		ifFalse: [self theme listDisabledBorderStyleFor: self]
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> changeModelSelection: anInteger [
 	"Change the model's selected item index to be anInteger."
 
 	setIndexSelector ifNotNil:
 		[model perform: setIndexSelector with: anInteger].
 	self isMultipleSelection
-		ifTrue: [ 
+		ifTrue: [
 			self listSelectionAt: self lastNonZeroIndex put: false.
 			self listSelectionAt: anInteger put: true ]
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> commandKeyTypedIntoMenu: evt [
 	"The user typed a command-key into a menu which has me as its command-key handler"
 
 	^ self modifierKeyPressed: evt
 ]
 
-{ #category : #menus }
+{ #category : 'menus' }
 PluggableListMorph >> copyListToClipboard [
 	"Copy my items to the clipboard as a multi-line string"
 
@@ -296,52 +298,52 @@ PluggableListMorph >> copyListToClipboard [
 	Clipboard clipboardText: stream contents
 ]
 
-{ #category : #menus }
+{ #category : 'menus' }
 PluggableListMorph >> copySelectionToClipboard [
 	"Copy my selected item to the clipboard as a string"
 
 	self selection ifNotNil: [ Clipboard clipboardText: self selection asString ] ifNil: [ self flash ]
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> defaultMultipleSelectionValue [
 
 	^ false
 ]
 
-{ #category : #'scroll cache' }
+{ #category : 'scroll cache' }
 PluggableListMorph >> deriveHScrollRange [
 
 	|  unadjustedRange totalRange |
-	(list isNil or: [list isEmpty]) 
+	(list isNil or: [list isEmpty])
 		ifTrue:[hScrollRangeCache := Array with: 0 with: 0 with: 0 with: 0 with: 0 ]
-		ifFalse:[ 
+		ifFalse:[
 			unadjustedRange := self listMorph hUnadjustedScrollRange.
 			totalRange := unadjustedRange + self hExtraScrollRange + self hMargin.
-			hScrollRangeCache := Array 
-										with: totalRange 
-										with: unadjustedRange 
-										with: list size 
-										with: list first 
+			hScrollRangeCache := Array
+										with: totalRange
+										with: unadjustedRange
+										with: list size
+										with: list first
 										with: list last .
-		].
+		]
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> deselectAll [
 
 	self isMultipleSelection ifFalse: [ ^ self ].
 	self resetListSelection
 ]
 
-{ #category : #configuration }
+{ #category : 'configuration' }
 PluggableListMorph >> disable [
 	"Disable the receiver."
-	
+
 	self enabled: false
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 PluggableListMorph >> doubleClick: event [
 	| index |
 	doubleClickSelector ifNil: [^super doubleClick: event].
@@ -351,48 +353,48 @@ PluggableListMorph >> doubleClick: event [
 	^ self model perform: doubleClickSelector
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> doubleClickSelector: aSymbol [
 	doubleClickSelector := aSymbol
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> dragItemSelector [
 	^dragItemSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> dragItemSelector: aSymbol [
 	dragItemSelector := aSymbol.
-	aSymbol ifNotNil:[self dragEnabled: true].
+	aSymbol ifNotNil:[self dragEnabled: true]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> dropItemSelector [
 	^dropItemSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> dropItemSelector: aSymbol [
 	dropItemSelector := aSymbol.
-	aSymbol ifNotNil:[self dropEnabled: true].
+	aSymbol ifNotNil:[self dropEnabled: true]
 ]
 
-{ #category : #configuration }
+{ #category : 'configuration' }
 PluggableListMorph >> enable [
 	"Enable the receiver."
-	
+
 	self enabled: true
 ]
 
-{ #category : #configuration }
+{ #category : 'configuration' }
 PluggableListMorph >> enabled [
 	"Answer the enablement state of the receiver."
 
 	^enabled ifNil: [true]
 ]
 
-{ #category : #configuration }
+{ #category : 'configuration' }
 PluggableListMorph >> enabled: aBoolean [
 	"Set the enablement state of the receiver."
 
@@ -402,43 +404,43 @@ PluggableListMorph >> enabled: aBoolean [
 					changed]
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> extent: newExtent [
 	super extent: newExtent.
-	
+
 	"Change listMorph's bounds to the new width. It is either the size
 	of the widest list item, or the size of self, whatever is bigger"
-	self listMorph width: ((self width max: listMorph hUnadjustedScrollRange) + 20).
+	self listMorph width: ((self width max: listMorph hUnadjustedScrollRange) + 20)
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> fillStyleToUse [
 	"Answer the fillStyle that should be used for the receiver."
-	
+
 	^self enabled
 		ifTrue: [self theme listNormalFillStyleFor: self]
 		ifFalse: [self theme listDisabledFillStyleFor: self]
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> focusBounds [
 	"Answer the bounds for drawing the focus indication."
 
 	^self theme listFocusBoundsFor: self
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> font [
 
 	^ self listMorph font
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> font: aFontOrNil [
-	self listMorph font: aFontOrNil.
+	self listMorph font: aFontOrNil
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> getCurrentSelectionIndex [
 	"Answer the index of the current selection."
 
@@ -446,14 +448,14 @@ PluggableListMorph >> getCurrentSelectionIndex [
 	^model perform: getIndexSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> getEnabledSelector [
 	"Answer the value of getEnabledSelector"
 
 	^ getEnabledSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> getEnabledSelector: aSymbol [
 	"Set the value of getEnabledSelector"
 
@@ -461,75 +463,76 @@ PluggableListMorph >> getEnabledSelector: aSymbol [
 	self updateEnabled
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> getIndexSelector: aSelector [
 
 	getIndexSelector := aSelector
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> getList [
 	"Answer the list to be displayed.  Caches the returned list in the 'list' ivar"
-	getListSelector == nil ifTrue: [^ #()].
+
+	getListSelector ifNil: [ ^ #(  ) ].
 	list := model perform: getListSelector.
-	list == nil ifTrue: [^ #()].
+	list ifNil: [ ^ #(  ) ].
 	list := list collectWithIndex: [ :item :index | self wrapItem: item index: index ].
 	^ list
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> getListElementSelector [
 
 	^ getListElementSelector
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> getListElementSelector: aSymbol [
 	"specify a selector that can be used to obtain a single element in the underlying list"
 	self basicGetListElementSelector: aSymbol.
 	list := nil.  "this cache will not be updated if getListElementSelector has been specified, so go ahead and remove it"
-	self updateList.
+	self updateList
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> getListItem: index [
 	"get the index-th item in the displayed list"
 	| element |
 	getListElementSelector ifNotNil: [ ^ self wrapItem: (model perform: getListElementSelector with: index) index: index ].
 	list ifNotNil: [ ^ list at: index ].
-	
+
 	element := self getList at: index.
 	^ self wrapItem: element index: index
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> getListSelector [
 	^ getListSelector
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> getListSelector: sel [
 	"Set the receiver's getListSelector as indicated, and trigger a recomputation of the list"
 
 	getListSelector := sel.
 	self changed.
-	self updateList.
+	self updateList
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> getListSize [
 	"return the current number of items in the displayed list"
 	getListSizeSelector ifNotNil: [ ^model perform: getListSizeSelector ].
 	^self getList size
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> getListSizeSelector: aSymbol [
 	"specify a selector that can be used to specify the list's size"
 	getListSizeSelector := aSymbol
 ]
 
-{ #category : #menu }
+{ #category : 'menu' }
 PluggableListMorph >> getMenu: shiftKeyState [
 	"Answer the menu for this text view, supplying an empty menu to be filled in. If the menu selector takes an extra argument, pass in the current state of the shift key."
 
@@ -539,35 +542,35 @@ PluggableListMorph >> getMenu: shiftKeyState [
 	^ aMenu
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> getSelectionListSelector: getListSel [
 
 	getSelectionListSelector := getListSel
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 PluggableListMorph >> hExtraScrollRange [
 	"Return the amount of extra blank space to include to the right of the scroll content."
 	^5
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 PluggableListMorph >> hUnadjustedScrollRange [
 	"Return the entire scrolling range."
 
 	^self listMorph hUnadjustedScrollRange
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 PluggableListMorph >> handleBasicKeys: aBoolean [
 	"set whether the list morph should handle basic keys like arrow keys, or whether everything should be passed to the model"
 	handlesBasicKeys := aBoolean
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> handleFocusEvent: anEvent [
 	"Handle the given event. This message is sent if the receiver currently has the focus and is therefore receiving events directly from some hand."
-	
+
 	self processEvent: anEvent. "give submorphs a chance"
 	(anEvent isMouse and: [anEvent isMouseDown and: [(self fullContainsPoint: anEvent position) not]])
 		ifFalse: [^super handleFocusEvent: anEvent].
@@ -576,7 +579,7 @@ PluggableListMorph >> handleFocusEvent: anEvent [
 		ifNotNil: [self eventHandler mouseDown: anEvent fromMorph: self]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> handleMouseMove: anEvent [
 	"Reimplemented because we really want #mouseMove when a morph is dragged around"
 	anEvent wasHandled ifTrue:[^self]. "not interested"
@@ -585,68 +588,68 @@ PluggableListMorph >> handleMouseMove: anEvent [
 	self mouseMove: anEvent.
 	(self handlesMouseStillDown: anEvent) ifTrue:[
 		"Step at the new location"
-		self startStepping: #handleMouseStillDown: 
+		self startStepping: #handleMouseStillDown:
 			at: Time millisecondClockValue
 			arguments: {anEvent copy resetHandlerFields}
-			stepTime: 1].
+			stepTime: 1]
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 PluggableListMorph >> handlesBasicKeys [
-	" if ya don't want the list to automatically handle non-modifier key 
+	" if ya don't want the list to automatically handle non-modifier key
 	(excluding shift key) input, return false"
 	^ handlesBasicKeys ifNil: [ true ]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> handlesKeyboard: evt [
 	^true
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> handlesMouseOverDragging: evt [
 	"Yes, for mouse down highlight."
-	
+
 	^true
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 PluggableListMorph >> highlightSelection [
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> initForKeystrokes [
 	canMove := true.
 	lastKeystrokeTime := 0.
 	lastKeystrokes := ''
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> initialize [
 
 	super initialize.
-	self initForKeystrokes.
+	self initForKeystrokes
 ]
 
-{ #category : #keymapping }
+{ #category : 'keymapping' }
 PluggableListMorph >> initializeShortcuts: aKMDispatcher [
 	super initializeShortcuts: aKMDispatcher.
 	aKMDispatcher attachCategory: #MorphFocusNavigation
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> isMultipleSelection [
 
 	^ self multipleSelection
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> isSingleSelection [
 
 	^ self multipleSelection not
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> itemSelectedAmongMultiple: index [
 	"return whether the index-th row is selected.  Always false in PluggableListMorph, but sometimes true in PluggableListMorphOfMany"
 
@@ -655,16 +658,16 @@ PluggableListMorph >> itemSelectedAmongMultiple: index [
 		ifFalse: [ false ]
 ]
 
-{ #category : #'event handling' }
-PluggableListMorph >> keyDown: event [ 
-	"Process keys 
-	specialKeys are things like up, down, etc. ALWAYS HANDLED 
-	modifierKeys are regular characters either 1) accompanied with ctrl, 
-	cmd or 2) any character if the list doesn't want to handle basic 
-	keys (handlesBasicKeys returns false) 
+{ #category : 'event handling' }
+PluggableListMorph >> keyDown: event [
+	"Process keys
+	specialKeys are things like up, down, etc. ALWAYS HANDLED
+	modifierKeys are regular characters either 1) accompanied with ctrl,
+	cmd or 2) any character if the list doesn't want to handle basic
+	keys (handlesBasicKeys returns false)
 	basicKeys are any characters"
 	| aChar |
-	
+
 	(self scrollByKeyboard: event) ifTrue: [^self].
 	(self navigationKey: event) ifTrue: [^self].
 	aChar := event keyCharacter.
@@ -674,25 +677,25 @@ PluggableListMorph >> keyDown: event [
 	^ false
 ]
 
-{ #category : #'event handling' }
-PluggableListMorph >> keyStroke: event [ 
-	"Process keys 
-	specialKeys are things like up, down, etc. ALWAYS HANDLED 
-	modifierKeys are regular characters either 1) accompanied with ctrl, 
-	cmd or 2) any character if the list doesn't want to handle basic 
-	keys (handlesBasicKeys returns false) 
+{ #category : 'event handling' }
+PluggableListMorph >> keyStroke: event [
+	"Process keys
+	specialKeys are things like up, down, etc. ALWAYS HANDLED
+	modifierKeys are regular characters either 1) accompanied with ctrl,
+	cmd or 2) any character if the list doesn't want to handle basic
+	keys (handlesBasicKeys returns false)
 	basicKeys are any characters"
 	| aChar |
-	
+
 	aChar := event keyCharacter.
 
-	keystrokeSelector ifNotNil: [ 
+	keystrokeSelector ifNotNil: [
 		(self keystrokeAction: event) ifTrue: [ ^ self ] ].
-	
+
 	^ self basicKeyPressed: aChar
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> keyboardFocusChange: aBoolean [
 	"The message is sent to a morph when its keyboard focus changes.
 	Update for focus feedback."
@@ -700,55 +703,55 @@ PluggableListMorph >> keyboardFocusChange: aBoolean [
 	self focusChanged
 ]
 
-{ #category : #'model access' }
-PluggableListMorph >> keystrokeAction: event [ 
+{ #category : 'model access' }
+PluggableListMorph >> keystrokeAction: event [
 	| returnValue |
-	
+
 	keystrokeSelector ifNil: [ ^ nil ].
 
-	returnValue := model 
+	returnValue := model
 						perform: keystrokeSelector
 						withEnoughArguments: { event. self }.
-	
+
 	^ returnValue = true
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> keystrokeActionSelector: keyActionSel [
 	"Set the keystroke action selector as specified"
 
 	keystrokeActionSelector := keyActionSel
 ]
 
-{ #category : #'model access' }
+{ #category : 'model access' }
 PluggableListMorph >> keystrokeSelector: aSymbol [
 	keystrokeSelector := aSymbol
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> lastNonZeroIndex [
 
 	^ lastNonZeroIndex ifNil: [ lastNonZeroIndex := 0 ]
 ]
 
-{ #category : #searching }
+{ #category : 'searching' }
 PluggableListMorph >> listForSearching [
 
 	^ getListSelector
 		ifNotNil: [ self getList ]
 		ifNil: [ getListElementSelector
 				ifNil: [ #() ]
-				ifNotNil: [ 
+				ifNotNil: [
 					(1 to: self getListSize) collect: [:index | self getListItem: index ]]]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> listItemHeight [
 	"This should be cleaned up.  The list should get spaced by this parameter."
 	^ 12
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> listMorph [
 	listMorph ifNil: [
 		"crate this lazily, in case the morph is legacy"
@@ -765,12 +768,12 @@ PluggableListMorph >> listMorph [
 	^listMorph
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> listMorphClass [
 	^LazyListMorph
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> listSelectionAt: index [
 
 	index isZero ifFalse:[ lastNonZeroIndex := index ].
@@ -778,7 +781,7 @@ PluggableListMorph >> listSelectionAt: index [
 	^model perform: getSelectionListSelector with: index
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> listSelectionAt: index put: value [
 
 	self searchedElement: nil.
@@ -786,48 +789,48 @@ PluggableListMorph >> listSelectionAt: index put: value [
 	^model perform: setSelectionListSelector with: index with: value
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> maximumSelection [
 	^ self getListSize
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> minimumSelection [
 	^ 1
 ]
 
-{ #category : #'model access' }
-PluggableListMorph >> modifierKeyPressed: event [ 
+{ #category : 'model access' }
+PluggableListMorph >> modifierKeyPressed: event [
 	| args aChar |
 	aChar := event keyCharacter.
 	keystrokeActionSelector ifNil: [ ^ nil ].
 	args := keystrokeActionSelector numArgs.
 	args = 1 ifTrue: [^ model perform: keystrokeActionSelector with: aChar].
-	args = 2 
-		ifTrue: 
-			[^model 
+	args = 2
+		ifTrue:
+			[^model
 				perform: keystrokeActionSelector
 				with: aChar
 				with: self].
 	^self error: 'keystrokeActionSelector must be a 1- or 2-keyword symbol'
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> mouseDown: evt [
 	"Changed to only take focus if wanted."
 
 	| selectors row |
 	row := self rowAtLocation: evt position.
 	evt yellowButtonPressed
-		ifTrue: [ 
+		ifTrue: [
 			self isMultipleSelection
-				ifTrue: [ 
+				ifTrue: [
 					evt commandKeyPressed
-						ifFalse: [ 
+						ifFalse: [
 							"right click"
 							(self yellowButtonActivity: evt shiftPressed)
 								ifTrue: [ ^ super mouseDown: evt ] ] ]
-				ifFalse: [ 
+				ifFalse: [
 					(self yellowButtonActivity: evt shiftPressed)
 						ifTrue: [ ^ super mouseDown: evt ] ] ].	"First check for option (menu) click"
 	self enabled
@@ -856,19 +859,19 @@ PluggableListMorph >> mouseDown: evt [
 	super mouseDown: evt
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> mouseDownOnMultiple: event forRow: row [
 
 	| anInteger oldIndex oldVal valueKeeper |
-	
+
 	"Set meaning for subsequent dragging of selection"
 	canMove ifFalse: [ ^ self ].
 	canMove := false.
-	model okToChange ifFalse: [ 
+	model okToChange ifFalse: [
 		canMove := true.
 		^ self ].
 	canMove := true.
-	
+
 	dragOnOrOff := (self listSelectionAt: row) not.
 	valueKeeper := dragOnOrOff.
 	" I store the value because #mouseUpOnMultiple: can reset dragOnOrOff before the end of this method (in case of halt by example)"
@@ -881,51 +884,51 @@ PluggableListMorph >> mouseDownOnMultiple: event forRow: row [
 	anInteger := valueKeeper
 					ifTrue: [ row ]
 					ifFalse: [ 0 ].
-	
+
 	setIndexSelector ifNotNil:
 		[ model perform: setIndexSelector with: anInteger ].
-	
+
 	"Need to restore the old one, due to how model works, and set new one."
 	oldIndex ~= 0 ifTrue: [self listSelectionAt: oldIndex put: oldVal].
-	
+
 	event shiftPressed
 		ifTrue: [((oldIndex max: 1) min: row) to: (oldIndex max: row) do: [:i |
 					self listSelectionAt: i put: valueKeeper].
 				self changed]
-		ifFalse: [self listSelectionAt: row put: valueKeeper].
+		ifFalse: [self listSelectionAt: row put: valueKeeper]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> mouseDownRow [
 	"Answer the mouse down row or nil if none."
 
 	^self listMorph mouseDownRow
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 PluggableListMorph >> mouseDownRow: anIntegerOrNil [
 	"Set the mouse down row or nil if none."
 
 	self listMorph mouseDownRow: anIntegerOrNil
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> mouseEnter: event [
 	"Changed to take keyboardFocusOnMouseDown  into account."
-	
+
 	super mouseEnter: event.
 	self wantsKeyboardFocus ifFalse: [^self].
 	self keyboardFocusOnMouseDown
 		ifFalse: [self takeKeyboardFocus]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> mouseEnterDragging: evt [
 	"The mouse has entered with a button down.
 	Workaround for apparent flaw in MouseOverHandler constantly
 	sending this message when dragging.
 	Do nothing if disabled."
-	
+
 	|row oldPDR|
 	self enabled ifFalse: [^self].
 	row := self rowAtLocation: evt position.
@@ -946,10 +949,10 @@ PluggableListMorph >> mouseEnterDragging: evt [
 				ifFalse: [potentialDropRow := 0]]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> mouseLeaveDragging: anEvent [
 	"The mouse has left with a button down."
-	
+
 	(self dragEnabled or: [anEvent hand hasSubmorphs]) ifFalse: [
 		self listMorph mouseDownRow: nil].
 	(self dropEnabled and: [anEvent hand hasSubmorphs]) ifFalse: ["no d&d"
@@ -959,7 +962,7 @@ PluggableListMorph >> mouseLeaveDragging: anEvent [
 	"above is ugly but necessary for now"
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> mouseMove: evt [
 
 	self isMultipleSelection
@@ -967,29 +970,29 @@ PluggableListMorph >> mouseMove: evt [
 		ifFalse: [ self mouseMoveOnSingle:evt ]
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> mouseMoveOnMultiple: event [
 
 	"The mouse has moved, as characterized by the event provided.  Adjust the scrollbar, and alter the selection as appropriate"
 	| oldIndex oldVal row |
 	canMove ifFalse: [ ^ self ].
-	
-	event position y < self top 
-		ifTrue: 
+
+	event position y < self top
+		ifTrue:
 			[ scrollBar scrollUp: 1.
 			row := self rowAtLocation: scroller topLeft + (1 @ 1)]
-		ifFalse: 
-			[ row := event position y > self bottom 
-				ifTrue: 
+		ifFalse:
+			[ row := event position y > self bottom
+				ifTrue:
 					[scrollBar scrollDown: 1.
 					self rowAtLocation: scroller bottomLeft + (1 @ -1)]
 				ifFalse: [ self rowAtLocation: event position ]].
-	
+
 	row = 0 ifTrue: [ ^ super mouseDown: event ].
 
-	(self potentialDropItem notNil and: [ self dropEnabled ]) ifTrue: [ ^ self ].
-	
-	dragOnOrOff ifNil: 
+	(self potentialDropItem isNotNil and: [ self dropEnabled ]) ifTrue: [ ^ self ].
+
+	dragOnOrOff ifNil:
 			["Was not set at mouse down, which means the mouse must have gone down in an area where there was no list item"
 				dragOnOrOff := (self listSelectionAt: row) not ].
 
@@ -1003,7 +1006,7 @@ PluggableListMorph >> mouseMoveOnMultiple: event [
 	row changed
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> mouseMoveOnSingle: evt [
 	"The mouse has moved with a button down.
 	Do nothing if disabled."
@@ -1012,18 +1015,18 @@ PluggableListMorph >> mouseMoveOnSingle: evt [
 	self enabled ifFalse: [^self].
 	row := self rowAtLocation: evt position.
 	evt hand hasSubmorphs ifFalse: [
-		((self containsPoint: evt position) and: [ row ~= 0 ]) 
+		((self containsPoint: evt position) and: [ row ~= 0 ])
 			ifTrue: [self mouseDownRow: row]
 			ifFalse: [self mouseDownRow: nil]].
-	(self dropEnabled and:[evt hand hasSubmorphs]) 
+	(self dropEnabled and:[evt hand hasSubmorphs])
 		ifFalse: [^self eventHandler ifNotNil:
 				[self eventHandler mouseMove: evt fromMorph: self]].
-	(self containsPoint: evt position) 
+	(self containsPoint: evt position)
 		ifTrue: [self mouseEnterDragging: evt]
 		ifFalse: [self mouseLeaveDragging: evt]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> mouseUp: evt [
 
 	self isMultipleSelection
@@ -1031,19 +1034,19 @@ PluggableListMorph >> mouseUp: evt [
 		ifFalse: [ self mouseUpOnSingle: evt ]
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> mouseUpOnMultiple: event [
 	"Reset the mouseDownRow."
-	
+
 	dragOnOrOff := nil.  "So improperly started drags will have not effect".
 	event hand hasSubmorphs ifFalse: [
 		self mouseDownRow: nil]
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> mouseUpOnSingle: event [
 	"The mouse came up within the list; take appropriate action"
-	
+
 	| row mdr |
 	row := self rowAtLocation: event position.
 	event hand hasSubmorphs ifFalse: [
@@ -1057,50 +1060,50 @@ PluggableListMorph >> mouseUpOnSingle: event [
 	"No change if model is locked or receiver disabled"
 	row == self selectionIndex
 		ifTrue: [
-			self autoDeselect 
+			self autoDeselect
 				ifTrue: [ row = 0 ifFalse: [ self changeModelSelection: 0 ] ]
 				ifFalse: [ self changeModelSelection: row ] ]
 		ifFalse: [ self changeModelSelection: row ].
 	Cursor normal show
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> multipleSelection [
 
 	^ multipleSelection ifNil: [ multipleSelection := self defaultMultipleSelectionValue ]
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 PluggableListMorph >> navigationKey: anEvent [
 
 	self isMultipleSelection
 		ifTrue: [ | keyString |
 			keyString := anEvent keyString.
 			keyString = '<Cmd-a>'
-				ifTrue: [ 
+				ifTrue: [
 					self selectAll.
 					^ true ].
 			keyString = '<Cmd-A>'
-				ifTrue: [ 
+				ifTrue: [
 					self deselectAll.
 					^ true ]	].
-				
+
 	^ super navigationKey: anEvent
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 PluggableListMorph >> numSelectionsInView [
 	"Answer the scroller's height based on the average number of submorphs."
-		
+
 	"ugly hack, due to code smell.
-	PluggableListMorph added another level of indirection, 
+	PluggableListMorph added another level of indirection,
 	There is always only one submorph - a LazyListMorph which holds the actual list,
 	but TransformMorph doesn't know that and we are left with a breach of interface."
-		
-	^scroller numberOfItemsPotentiallyInViewWith: scroller submorphs last getListSize.
+
+	^scroller numberOfItemsPotentiallyInViewWith: scroller submorphs last getListSize
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> on: anObject list: listSel primarySelection: getSelectionSel changePrimarySelection: setSelectionSel listSelection: getListSel changeListSelection: setListSel menu: getMenuSel keystroke: keyActionSel [
 	"setup a whole load of pluggability options"
 	getSelectionListSelector := getListSel.
@@ -1110,8 +1113,8 @@ PluggableListMorph >> on: anObject list: listSel primarySelection: getSelectionS
 	^ self
 ]
 
-{ #category : #initialization }
-PluggableListMorph >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel keystroke: keyActionSel [ 
+{ #category : 'initialization' }
+PluggableListMorph >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel keystroke: keyActionSel [
 	self model: anObject.
 	getListSelector := getListSel.
 	getIndexSelector := getSelectionSel.
@@ -1125,39 +1128,39 @@ PluggableListMorph >> on: anObject list: getListSel selected: getSelectionSel ch
 	self initForKeystrokes
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> optimalExtent [
 	"Answer the extent of the list morph."
 
 	^self listMorph extent + (self borderWidth * 2) + self scrollBarThickness
 ]
 
-{ #category : #'drag and drop' }
+{ #category : 'drag and drop' }
 PluggableListMorph >> potentialDropItem [
 	"return the item that the most recent drop hovered over, or nil if there is no potential drop target"
 	self potentialDropRow = 0 ifTrue: [ ^self ].
 	^self getListItem: self potentialDropRow
 ]
 
-{ #category : #'drag and drop' }
+{ #category : 'drag and drop' }
 PluggableListMorph >> potentialDropRow [
 	"return the row of the item that the most recent drop hovered over, or 0 if there is no potential drop target"
-	^potentialDropRow ifNil: [ 0 ].
+	^potentialDropRow ifNil: [ 0 ]
 ]
 
-{ #category : #'scroll cache' }
+{ #category : 'scroll cache' }
 PluggableListMorph >> resetHScrollRange [
 
 	hScrollRangeCache := nil.
-	self deriveHScrollRange.
+	self deriveHScrollRange
 ]
 
-{ #category : #'scroll cache' }
+{ #category : 'scroll cache' }
 PluggableListMorph >> resetHScrollRangeIfNecessary [
 
 	hScrollRangeCache ifNil: [ ^self deriveHScrollRange ].
 
-	(list isNil or: [list isEmpty]) 
+	(list isNil or: [list isEmpty])
 		ifTrue:[^hScrollRangeCache := Array with: 0 with: 0 with: 0 with: 0 with: 0].
 
 "Make a guess as to whether the scroll ranges need updating based on whether the size, first item, or last item of the list has changed"
@@ -1166,35 +1169,35 @@ PluggableListMorph >> resetHScrollRangeIfNecessary [
 		(hScrollRangeCache fourth == list first) and: [
 		(hScrollRangeCache fifth == list last)
 	]])
-		ifFalse:[self deriveHScrollRange].
+		ifFalse:[self deriveHScrollRange]
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> resetListSelection [
 
 	self resetListSelectionSilently.
 	self changed
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> resetListSelectionSilently [
 
 	self resetListSelector ifNotNil: [:sel | self model perform: sel ]
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> resetListSelector [
 
 	^ resetListSelector
 ]
 
-{ #category : #'multi-selection' }
+{ #category : 'multi-selection' }
 PluggableListMorph >> resetListSelector: aSelector [
 
 	resetListSelector := aSelector
 ]
 
-{ #category : #'drag and drop' }
+{ #category : 'drag and drop' }
 PluggableListMorph >> resetPotentialDropRow [
 	potentialDropRow ifNotNil: [
 	potentialDropRow ~= 0 ifTrue: [
@@ -1202,7 +1205,7 @@ PluggableListMorph >> resetPotentialDropRow [
 		self changed. ] ]
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 PluggableListMorph >> resizeScrollBars [
 	"Fixed to not use deferred message that incorrectly
 	sets scroll deltas/interval."
@@ -1211,27 +1214,27 @@ PluggableListMorph >> resizeScrollBars [
 		ifFalse: [super resizeScrollBars]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> rowAtLocation: aPoint [
 	"Return the row at the given point or 0 if outside"
 	| pointInListMorphCoords |
 	pointInListMorphCoords := (self scroller transformFrom: self) transform: aPoint.
-	^self listMorph rowAtLocation: pointInListMorphCoords.
+	^self listMorph rowAtLocation: pointInListMorphCoords
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> scrollDeltaHeight [
 	"Return the increment in pixels which this pane should be scrolled."
 	^ self font height
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 PluggableListMorph >> scrollDeltaWidth [
 "A guess -- assume that the width of a char is approx 1/2 the height of the font"
 	^ self scrollDeltaHeight // 2
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> scrollSelectionIntoView [
 	"make sure that the current selection is visible"
 	| row |
@@ -1239,7 +1242,7 @@ PluggableListMorph >> scrollSelectionIntoView [
 	self scrollSelectionToRow: row
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> scrollSelectionToRow: row [
 	"make sure that the current selection is visible"
 
@@ -1247,13 +1250,13 @@ PluggableListMorph >> scrollSelectionToRow: row [
 	self scrollToShow: (self listMorph drawBoundsForRow: row)
 ]
 
-{ #category : #searching }
+{ #category : 'searching' }
 PluggableListMorph >> searchedElement [
 
 	^ searchedElement
 ]
 
-{ #category : #searching }
+{ #category : 'searching' }
 PluggableListMorph >> searchedElement: anInteger [
 
 	searchedElement := anInteger.
@@ -1264,22 +1267,22 @@ PluggableListMorph >> searchedElement: anInteger [
 		ifNotNil: [ self vScrollValue: ((anInteger-1)/self getListSize) ]
 ]
 
-{ #category : #searching }
+{ #category : 'searching' }
 PluggableListMorph >> secondarySelectionColor [
 	^ self theme secondarySelectionColor
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> selectAll [
 
 	self isMultipleSelection ifFalse: [ ^ self ].
 	1 to: self maximumSelection do: [: i | self listSelectionAt: i put: true ]
 ]
 
-{ #category : #searching }
+{ #category : 'searching' }
 PluggableListMorph >> selectSearchedElement [
 
-	self searchedElement ifNotNil: [: index |	
+	self searchedElement ifNotNil: [: index |
 		self activeHand lastEvent commandKeyPressed	ifFalse: [ self resetListSelectionSilently ].
 		self changeModelSelection: index.
 		self isMultipleSelection
@@ -1287,34 +1290,34 @@ PluggableListMorph >> selectSearchedElement [
 		self vScrollValue: ((index-1)/self getListSize) ]
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> selectedMorph [
 	"this doesn't work with the LargeLists patch!  Use #selectionIndex and #selection instead."
 	^self scroller submorphs at: self selectionIndex
 ]
 
-{ #category : #selection }
-PluggableListMorph >> selection [ 
+{ #category : 'selection' }
+PluggableListMorph >> selection [
 	self selectionIndex = 0 ifTrue: [ ^nil ].
 	list ifNotNil: [ ^list at: self selectionIndex ].
 	^ self getListItem: self selectionIndex
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> selection: item [
 	"Called from outside to request setting a new selection."
 
 	self selectionIndex: (self getList indexOf: item)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> selectionColor [
 	"Answer the colour to use for selected items."
 
 	^ selectionColor ifNil: [self theme selectionColor]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> selectionColor: aColor [
 	"Set the colour for selected items."
 
@@ -1327,14 +1330,14 @@ PluggableListMorph >> selectionColor: aColor [
 		ifFalse: [ self theme unfocusedSelectionColor ])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> selectionColorToUse [
 	"Answer the colour to use for selected items."
 
 	^ selectionColorToUse ifNil: [ self theme selectionColor ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> selectionColorToUse: aColor [
 	"Set the colour for selected items."
 
@@ -1343,30 +1346,30 @@ PluggableListMorph >> selectionColorToUse: aColor [
 	self listMorph selectionFrameChanged
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> selectionIndex [
 	"return the index we have currently selected, or 0 if none"
 	^self listMorph selectedRow ifNil: [ 0 ]
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> selectionIndex: index [
 	"Called internally to select the index-th item."
 	| row |
-	
+
 	self unhighlightSelection.
 	row := index ifNil: [ 0 ].
 	row := row min: self maximumSelection.  "make sure we don't select past the end"
 	self listMorph selectedRow: row.
 	self highlightSelection.
-	self scrollSelectionToRow: row.
+	self scrollSelectionToRow: row
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorAfterARow: aRow [
 
-	
-	
+
+
 	aRow ifNil: [ ^ false ].
 
 	self separatorBlockOrSelector
@@ -1374,7 +1377,7 @@ PluggableListMorph >> separatorAfterARow: aRow [
 			anItem := getListElementSelector
 						ifNil: [ list at: aRow ifAbsent: [ ^ false ]]
 						ifNotNil: [ model perform: getListElementSelector with: aRow ].
-						
+
 			^ blockOrSelector isBlock
 				ifTrue: [ blockOrSelector cull: anItem cull: aRow ]
 				ifFalse: [
@@ -1383,99 +1386,99 @@ PluggableListMorph >> separatorAfterARow: aRow [
 									ifTrue: [ anItem perform: blockOrSelector ]
 									ifFalse: [ self model perform: blockOrSelector withEnoughArguments: { anItem. aRow} ]]
 						ifFalse: [ false ]]].
-	
+
 	^ false
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorBlockOrSelector [
 
 	^ separatorBlockOrSelector
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorBlockOrSelector: aBlockOrSelector [
 
 	separatorBlockOrSelector := aBlockOrSelector
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorColor [
 
 	^ separatorColor ifNil: [ separatorColor := Color gray ]
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorColor: aColor [
 
 	separatorColor := aColor
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorSize [
 
 	^ separatorSize ifNil: [ separatorSize := 1 ]
 ]
 
-{ #category : #separator }
+{ #category : 'separator' }
 PluggableListMorph >> separatorSize: anInteger [
 
 	separatorSize := anInteger
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> setIndexSelector: aSelector [
 
 	setIndexSelector := aSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> setMultipleSelection: aBoolean [
 
 	multipleSelection := aBoolean
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 PluggableListMorph >> setSelectedMorph: aMorph [
 	self changeModelSelection: (scroller submorphs indexOf: aMorph)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> setSelectionListSelector: getListSel [
 
 	setSelectionListSelector := getListSel
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 PluggableListMorph >> specialKeyPressed: anEvent [
 	"A special key with the given ascii-value was pressed; dispatch it"
 	| keyString max nextSelection oldSelection howManyItemsShowing |
-	
+
 	keyString := anEvent keyString.
 	keyString = '<escape>'
 		ifTrue: [" escape key"
 			^ self activeHand lastEvent shiftPressed
 				ifTrue:
 					[self world invokeWorldMenuFromEscapeKey]
-				ifFalse:[ 
-					(self yellowButtonActivity: false) 
+				ifFalse:[
+					(self yellowButtonActivity: false)
 						ifTrue: [ ^ self ]]].
 
 	keyString = '<cr>'
-		ifTrue: [ 
-			"enter pressed" 
+		ifTrue: [
+			"enter pressed"
 			self selectSearchedElement ].
 
 	max := self maximumSelection.
 	max > 0 ifFalse: [^ self].
 	nextSelection := oldSelection := self getCurrentSelectionIndex.
-	
+
 	keyString = '<down>'
 		ifTrue: [" down arrow"
 			self resetListSelectionSilently.
 			nextSelection := oldSelection + 1.
 			nextSelection > max ifTrue: [nextSelection := max]].
-	
+
 	keyString = '<up>'
 		ifTrue: [ " up arrow"
 			self resetListSelectionSilently.
@@ -1485,14 +1488,14 @@ PluggableListMorph >> specialKeyPressed: anEvent [
 		ifTrue: [" home"
 			self resetListSelectionSilently.
 			nextSelection := 1].
-		
-	keyString = '<end>' 
+
+	keyString = '<end>'
 		ifTrue: [" end"
 			self resetListSelectionSilently.
 			nextSelection := max].
-	
+
 	howManyItemsShowing := self numSelectionsInView.
-	
+
 	keyString = '<pageUp>'
 		ifTrue: 	[" page up"
 			self resetListSelectionSilently.
@@ -1503,44 +1506,44 @@ PluggableListMorph >> specialKeyPressed: anEvent [
 			nextSelection := oldSelection + howManyItemsShowing min: max].
 
 	(self enabled and: [model okToChange]) ifFalse: [^ self].
-	
+
 	"No change if model is locked"
-	
+
 	oldSelection = nextSelection ifTrue: [^ self].
 	^ self changeModelSelection: nextSelection
 ]
 
-{ #category : #'drag and drop' }
-PluggableListMorph >> startDrag: evt [ 
+{ #category : 'drag and drop' }
+PluggableListMorph >> startDrag: evt [
 	| transferMorph draggedItem passenger |
 
 	dragItemSelector ifNotNil: [ ^self startDragExtended: evt ].
-	evt hand hasSubmorphs ifTrue: [^ self]. 
+	evt hand hasSubmorphs ifTrue: [^ self].
 	self dragEnabled ifFalse: [^ self].
 	"Here I ensure at least one element is selected "
 	self activeHand anyButtonPressed ifFalse: [ ^self ].
-			
+
 	draggedItem := self getListItem: (self mouseDownRow ifNil: [ self lastNonZeroIndex ]).
 	draggedItem ifNil: [ ^ self ].
 	passenger := self model dragPassengersFor: draggedItem inMorph: self.
 	passenger ifNil: [ ^ self ].
-		
+
 	transferMorph := self model transferFor: passenger from: self.
 	transferMorph align: transferMorph draggedMorph bottomLeft  with: evt position.
-	
+
 	self mouseDownRow: nil.
 	transferMorph dragTransferType: (self model dragTransferTypeForMorph: self).
-	
-	[evt hand grabMorph: transferMorph ] 
+
+	[evt hand grabMorph: transferMorph ]
 		ensure: [
 			Cursor normal show.
 			evt hand releaseMouseFocus: self]
 ]
 
-{ #category : #'drag and drop' }
+{ #category : 'drag and drop' }
 PluggableListMorph >> startDragExtended: evt [
-	"This method was defined in PluggableListMorphPlus (a subclass that got merged)" 
-	
+	"This method was defined in PluggableListMorphPlus (a subclass that got merged)"
+
 	dragItemSelector ifNil: [^self].
 	evt hand hasSubmorphs ifTrue: [^ self].
 	[ | dragIndex draggedItem ddm ddRect |
@@ -1559,45 +1562,45 @@ PluggableListMorph >> startDragExtended: evt [
 			evt hand newMouseFocus: self]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 PluggableListMorph >> takesKeyboardFocus [
 	"Answer whether the receiver can normally take keyboard focus."
 
 	^true
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> textColor [
 	"Answer my default text color."
-	^ self 
-		valueOfProperty: #textColor 
+	^ self
+		valueOfProperty: #textColor
 		ifAbsent: [ self theme textColor ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> textColor: aColor [
 	"Set my default text color."
 	self setProperty: #textColor toValue: aColor.
-	self listMorph color: aColor.
+	self listMorph color: aColor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> textHighlightColor [
 	"Answer my default text highlight color."
-	^self valueOfProperty: #textHighlightColor ifAbsent: [ Color red ].
+	^self valueOfProperty: #textHighlightColor ifAbsent: [ Color red ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableListMorph >> textHighlightColor: aColor [
 	"Set my default text highlight color."
-	self setProperty: #textHighlightColor toValue: aColor.
+	self setProperty: #textHighlightColor toValue: aColor
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 PluggableListMorph >> themeChanged [
 
 	self setProperty: #textColor toValue: self theme textColor; updateList.
-	
+
 	self selectionColor ifNotNil: [
 		self selectionColor: self theme selectionColor
 	].
@@ -1605,17 +1608,17 @@ PluggableListMorph >> themeChanged [
 	super themeChanged
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 PluggableListMorph >> unhighlightSelection [
 
-	self searchedElement: nil.
+	self searchedElement: nil
 ]
 
-{ #category : #updating }
-PluggableListMorph >> update: aParameter [ 
+{ #category : 'updating' }
+PluggableListMorph >> update: aParameter [
 	"Refer to the comment in View|update:."
 
-	(aParameter == getListSelector or: [ aParameter == getListElementSelector ]) ifTrue: 
+	(aParameter == getListSelector or: [ aParameter == getListElementSelector ]) ifTrue:
 		[self updateList.
 		^ self].
 	aParameter == getIndexSelector ifTrue:
@@ -1624,14 +1627,14 @@ PluggableListMorph >> update: aParameter [
 	aParameter == #allSelections ifTrue:
 		[self selectionIndex: self getCurrentSelectionIndex.
 		^ self changed].
-	
+
 	aParameter isArray ifFalse: [ ^ self ].
 	aParameter size == 2 ifFalse: [ ^ self ].
-	
+
 	aParameter first = #setMultipleSelection: ifTrue: [ self setMultipleSelection: aParameter second ]
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 PluggableListMorph >> updateEnabled [
 	"Update the enablement state."
 
@@ -1640,7 +1643,7 @@ PluggableListMorph >> updateEnabled [
 			self enabled: (self model perform: self getEnabledSelector)]]
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 PluggableListMorph >> updateList [
 	| index |
 	"the list has changed -- update from the model"
@@ -1649,17 +1652,17 @@ PluggableListMorph >> updateList [
 	scrollBar setValue: 0.0.
 	index := self getCurrentSelectionIndex.
 	self resetPotentialDropRow.
-	index ifNotNil: [ 
+	index ifNotNil: [
 		index := index min: self getListSize.
 		index > 0 ifTrue: [	self selectionIndex: index].
 	].
-	
-	self searchedElement: nil.
+
+	self searchedElement: nil
 ]
 
-{ #category : #'debug and other' }
+{ #category : 'debug and other' }
 PluggableListMorph >> userString [
-	^list ifNotNil: [ 
+	^list ifNotNil: [
 		String streamContents: [:strm |
 			list do: [:i |
 				strm nextPutAll: (i string); cr
@@ -1668,21 +1671,21 @@ PluggableListMorph >> userString [
 	]
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 PluggableListMorph >> vExtraScrollRange [
 	"Return the amount of extra blank space to include below the bottom of the scroll content."
 
 	^8
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 PluggableListMorph >> vUnadjustedScrollRange [
 	"Return the height extent of the receiver's submorphs."
 	(scroller submorphs size > 0) ifFalse:[ ^0 ].
 	^(scroller submorphs last fullBounds bottom)
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 PluggableListMorph >> verifyContents [
 	"Verify the contents of the receiver, reconstituting if necessary.  Called whenever window is reactivated, to react to possible structural changes.  Also called periodically in morphic if the smartUpdating setting is true"
 	| newList existingSelection oldList |
@@ -1695,51 +1698,51 @@ PluggableListMorph >> verifyContents [
 					ifTrue: [self selectionIndex]
 					ifFalse: [nil]].
 	self updateList.
-	existingSelection notNil
+	existingSelection isNotNil
 		ifTrue: [	self selectionIndex: existingSelection]
 		ifFalse:	[self changeModelSelection: 0]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> wantsDropSelector [
 	^wantsDropSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> wantsDropSelector: aSymbol [
 	wantsDropSelector := aSymbol
 ]
 
-{ #category : #'drag and drop' }
+{ #category : 'drag and drop' }
 PluggableListMorph >> wantsDroppedMorph: aMorph event: anEvent [
-	^ aMorph dragTransferType == #dragTransfer 
+	^ aMorph dragTransferType == #dragTransfer
 		ifTrue: [ dropItemSelector ifNil: [^false].
 			wantsDropSelector ifNil: [^true].
 			(model perform: wantsDropSelector with: aMorph passenger)]
 		ifFalse: [ self model wantsDroppedMorph: aMorph event: anEvent inMorph: self]
 ]
 
-{ #category : #wrapping }
+{ #category : 'wrapping' }
 PluggableListMorph >> wrapItem: anItem index: anIndex [
 	"Use the wrapSelector to get the text or string representation of a list item."
-	
-	^ self wrapSelector 
+
+	^ self wrapSelector
 		ifNil: [ anItem asStringOrText]
-		ifNotNil: [:selector | 
+		ifNotNil: [:selector |
 			selector numArgs == 0
 				ifTrue: [ anItem perform: selector ]
-				ifFalse: [ self model perform: selector withEnoughArguments: { anItem. anIndex } ]].
+				ifFalse: [ self model perform: selector withEnoughArguments: { anItem. anIndex } ]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> wrapSelector [
 
 	^ wrapSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableListMorph >> wrapSelector: aSymbol [
 
 	self basicWrapSelector: aSymbol.
-	self updateList.
+	self updateList
 ]

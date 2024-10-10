@@ -1,19 +1,72 @@
 Class {
-	#name : #ClassHierarchyPrinterTest,
-	#superclass : #TestCase,
+	#name : 'ClassHierarchyPrinterTest',
+	#superclass : 'TestCase',
 	#instVars : [
 		'printer'
 	],
-	#category : #'Kernel-ExtraUtils-ForPharo'
+	#category : 'Kernel-ExtraUtils-ForPharo',
+	#package : 'Kernel-ExtraUtils',
+	#tag : 'ForPharo'
 }
 
-{ #category : #running }
+{ #category : 'running' }
 ClassHierarchyPrinterTest >> setUp [
 	super setUp.
 	printer := ClassHierarchyPrinter new
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
+ClassHierarchyPrinterTest >> testOnlyASTNodes [
+
+	printer
+		forClass: ASTNode;
+		doNotShowState;
+		doNotShowSuperclasses;
+		excludedClasses: (ASTNode withAllSubclasses select: [ :each | each name beginsWith: 'RBPattern' ]);
+		limitedToClasses: (ASTNode withAllSubclasses select: [:each | (each name beginsWith: 'RB') or: [ each name beginsWith: 'AST' ]]).
+	self assert: printer print equals:
+	'ASTNode
+	ASTProgramNode
+		ASTCommentNode
+		ASTMethodNode
+			ASTDoItMethodNode
+			ASTPatternMethodNode
+		ASTPragmaNode
+			ASTPatternPragmaNode
+		ASTReturnNode
+		ASTSequenceNode
+		ASTValueNode
+			ASTAnnotationMarkNode
+			ASTArrayNode
+			ASTAssignmentNode
+			ASTBlockNode
+				ASTPatternBlockNode
+					ASTPatternWrapperBlockNode
+			ASTCascadeNode
+			ASTLiteralNode
+				ASTLiteralArrayNode
+				ASTLiteralValueNode
+			ASTMessageNode
+				ASTPatternMessageNode
+			ASTParseErrorNode
+				ASTEnglobingErrorNode
+					ASTArrayErrorNode
+					ASTAssignmentErrorNode
+					ASTBlockErrorNode
+					ASTInvalidCascadeErrorNode
+					ASTLiteralArrayErrorNode
+					ASTLiteralByteArrayErrorNode
+					ASTParenthesesErrorNode
+					ASTPragmaErrorNode
+					ASTTemporariesErrorNode
+					ASTUnfinishedStatementErrorNode
+			ASTSelectorNode
+			ASTVariableNode
+				ASTPatternVariableNode
+'
+]
+
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testOnlyFreeText [
 
 	printer
@@ -30,52 +83,7 @@ ClassHierarchyPrinterTest >> testOnlyFreeText [
 End'
 ]
 
-{ #category : #tests }
-ClassHierarchyPrinterTest >> testOnlyRBASTNodes [
-
-	printer
-		forClass: RBNode;
-		doNotShowState;
-		doNotShowSuperclasses;
-		excludedClasses: (RBNode withAllSubclasses select: [ :each | each name beginsWith: 'RBPattern' ]);
-		limitedToClasses: (RBNode withAllSubclasses select: [:each | each name beginsWith: 'RB']).
-	self assert: printer print equals:
-	'RBNode
-	RBProgramNode
-		RBComment
-		RBMethodNode
-			RBDoItMethodNode
-		RBPragmaNode
-		RBReturnNode
-		RBSequenceNode
-		RBValueNode
-			RBArrayNode
-			RBAssignmentNode
-			RBBlockNode
-			RBCascadeNode
-			RBLiteralNode
-				RBLiteralArrayNode
-				RBLiteralValueNode
-			RBMessageNode
-			RBParseErrorNode
-				RBEnglobingErrorNode
-					RBArrayErrorNode
-					RBBlockErrorNode
-					RBInvalidCascadeErrorNode
-					RBLiteralArrayErrorNode
-					RBLiteralByteArrayErrorNode
-					RBParenthesesErrorNode
-					RBPragmaErrorNode
-					RBTemporariesErrorNode
-					RBUnfinishedStatementErrorNode
-					RBUnreachableStatementErrorNode
-			RBSelectorNode
-			RBVariableNode
-	RBSlotInitializationNode
-'
-]
-
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintClassNamesOnly [
 
 	printer
@@ -90,7 +98,7 @@ ClassHierarchyPrinterTest >> testPrintClassNamesOnly [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintFullHierarchyOfRectangle [
 
 	printer forClass: Rectangle.
@@ -104,7 +112,7 @@ ClassHierarchyPrinterTest >> testPrintFullHierarchyOfRectangle [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintHierarchyOfPoint [
 
 	printer forClass: Point.
@@ -118,7 +126,7 @@ ClassHierarchyPrinterTest >> testPrintHierarchyOfPoint [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintHierarchyOfPointNoState [
 
 	printer
@@ -134,7 +142,7 @@ ClassHierarchyPrinterTest >> testPrintHierarchyOfPointNoState [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintHierarchyOfPointNoSuperclasses [
 
 	printer
@@ -146,7 +154,7 @@ ClassHierarchyPrinterTest >> testPrintHierarchyOfPointNoSuperclasses [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintHierarchyOfRectangle [
 
 	printer forClass: Rectangle.
@@ -161,7 +169,7 @@ ClassHierarchyPrinterTest >> testPrintHierarchyOfRectangle [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintHierarchyOfRectangleNoSuperclasses [
 
 	printer
@@ -175,7 +183,7 @@ ClassHierarchyPrinterTest >> testPrintHierarchyOfRectangleNoSuperclasses [
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ClassHierarchyPrinterTest >> testPrintHierarchyOfRectangleWithFilteredClasses [
 
 	printer forClass: Rectangle.

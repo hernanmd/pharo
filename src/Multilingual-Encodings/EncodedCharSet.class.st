@@ -5,29 +5,31 @@ An abstract superclasss of the classes that represent encoded character sets.  I
 
 "
 Class {
-	#name : #EncodedCharSet,
-	#superclass : #Object,
+	#name : 'EncodedCharSet',
+	#superclass : 'Object',
 	#classVars : [
 		'EncodedCharSets'
 	],
 	#classInstVars : [
 		'ucsTable'
 	],
-	#category : #'Multilingual-Encodings-CharSets'
+	#category : 'Multilingual-Encodings-CharSets',
+	#package : 'Multilingual-Encodings',
+	#tag : 'CharSets'
 }
 
-{ #category : #'class methods' }
+{ #category : 'class methods' }
 EncodedCharSet class >> charsetAt: encoding [
 
-	^ EncodedCharSets at: encoding + 1 ifAbsent: [Unicode].
+	^ EncodedCharSets at: encoding + 1 ifAbsent: [Unicode]
 ]
 
-{ #category : #initialize }
+{ #category : 'initialize' }
 EncodedCharSet class >> declareEncodedCharSet: anEncodedCharSetOrLanguageEnvironmentClass atIndex: aNumber [
-	
+
 	EncodedCharSets at: aNumber put: anEncodedCharSetOrLanguageEnvironmentClass
-	
-	"this method is used to modularize the old initialize method: 
+
+	"this method is used to modularize the old initialize method:
 	EncodedCharSets at: 0+1 put: Unicode.
 	EncodedCharSets at: 1+1 put: JISX0208.
 	EncodedCharSets at: 2+1 put: GB2312.
@@ -47,103 +49,103 @@ EncodedCharSet class >> declareEncodedCharSet: anEncodedCharSetOrLanguageEnviron
 	"
 ]
 
-{ #category : #'class methods' }
+{ #category : 'class methods' }
 EncodedCharSet class >> digitValueOf: char [
-	"Answer 0-9 if the receiver is $0-$9, 10-35 if it is $A-$Z, and < 0 
+	"Answer 0-9 if the receiver is $0-$9, 10-35 if it is $A-$Z, and < 0
 	otherwise. This is used to parse literal numbers of radix 2-36."
 
 	| value |
 	value := char charCode.
-	value <= $9 asciiValue 
+	value <= $9 asciiValue
 		ifTrue: [^value - $0 asciiValue].
-	value >= $A asciiValue 
+	value >= $A asciiValue
 		ifTrue: [ value <= $Z asciiValue ifTrue: [^value - $A asciiValue + 10].
 				(value >= $a asciiValue and: [value <= $z asciiValue])
 					 ifTrue: [^value - $a asciiValue + 10]].
 	^ -1
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 EncodedCharSet class >> initialize [
-	
+
 	EncodedCharSets := Array new: 256.
 	self allSubclassesDo: [:each | each initialize]
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 EncodedCharSet class >> isAbstract [
 
 	^ self == EncodedCharSet
 ]
 
-{ #category : #'accessing - displaying' }
+{ #category : 'accessing - displaying' }
 EncodedCharSet class >> isBreakableAt: index in: text [
 
-	self subclassResponsibility.
+	self subclassResponsibility
 ]
 
-{ #category : #'class methods' }
+{ #category : 'class methods' }
 EncodedCharSet class >> isCharset [
 
-	^ true.
+	^ true
 ]
 
-{ #category : #'character classification' }
+{ #category : 'character classification' }
 EncodedCharSet class >> isDigit: char [
 	"Answer whether the receiver is a digit."
 
 	| value |
 	value := char asciiValue.
-	^ value >= 48 and: [value <= 57].
+	^ value >= 48 and: [value <= 57]
 ]
 
-{ #category : #'character classification' }
+{ #category : 'character classification' }
 EncodedCharSet class >> isLetter: char [
 	"Answer whether the receiver is a letter."
 
 	| value |
 	value := char asciiValue.
-	^ (8r141 <= value and: [value <= 8r172]) or: [8r101 <= value and: [value <= 8r132]].
+	^ (8r141 <= value and: [value <= 8r172]) or: [8r101 <= value and: [value <= 8r132]]
 ]
 
-{ #category : #'character classification' }
+{ #category : 'character classification' }
 EncodedCharSet class >> isLowercase: char [
 	"Answer whether the receiver is a lowercase letter.
 	(The old implementation answered whether the receiver is not an uppercase letter.)"
 
 	| value |
 	value := char asciiValue.
-	^ 8r141 <= value and: [value <= 8r172].
+	^ 8r141 <= value and: [value <= 8r172]
 ]
 
-{ #category : #'character classification' }
+{ #category : 'character classification' }
 EncodedCharSet class >> isUppercase: char [
 	"Answer whether the receiver is an uppercase letter.
 	(The old implementation answered whether the receiver is not a lowercase letter.)"
 
 	| value |
 	value := char asciiValue.
-	^ 8r101 <= value and: [value <= 8r132].
+	^ 8r101 <= value and: [value <= 8r132]
 ]
 
-{ #category : #'class methods' }
+{ #category : 'class methods' }
 EncodedCharSet class >> nextPutValue: ascii toStream: aStream withShiftSequenceIfNeededForTextConverterState: state [
 
-	self subclassResponsibility.
+	self subclassResponsibility
 ]
 
-{ #category : #'accessing - displaying' }
+{ #category : 'accessing - displaying' }
 EncodedCharSet class >> printingDirection [
 
-	self subclassResponsibility.
+	self subclassResponsibility
 ]
 
-{ #category : #'accessing - displaying' }
+{ #category : 'accessing - displaying' }
 EncodedCharSet class >> scanSelector [
 	^ #scanMultiCharactersFrom:to:in:rightX:stopConditions:kern:
 ]
 
-{ #category : #'class methods' }
+{ #category : 'class methods' }
 EncodedCharSet class >> ucsTable [
 
 	^ ucsTable

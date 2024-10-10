@@ -48,86 +48,88 @@ currentRoot
 
 "
 Class {
-	#name : #PragmaMenuBuilder,
-	#superclass : #MenuRegistration,
+	#name : 'PragmaMenuBuilder',
+	#superclass : 'MenuRegistration',
 	#instVars : [
 		'pragmaKeywords',
 		'model',
 		'currentRoot'
 	],
-	#category : #'MenuRegistration-Core'
+	#category : 'MenuRegistration-Core',
+	#package : 'MenuRegistration',
+	#tag : 'Core'
 }
 
-{ #category : #private }
+{ #category : 'private' }
 PragmaMenuBuilder class >> itemSortBlock [
 	"The block which is used to sort a menu tree"
-	^ [:a :b | 
-		((a order notNil and: [b order notNil]) and: [a order ~= b order])
+	^ [:a :b |
+		((a order isNotNil and: [b order isNotNil]) and: [a order ~= b order])
 			ifTrue: [a order < b order]
 			ifFalse: [((a order isNil and: [b order isNil]) or: [a order = b order])
 				ifTrue: [true]
 				ifFalse: [a order ifNil: [false] ifNotNil: [true]]]]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 PragmaMenuBuilder class >> orderAssignBlock [
 	"The block which is used to set MenuRegistration tree node order inst var (which is used to sort the tree)"
 
-	^ [ :list | 
+	^ [ :list |
 	list
-		detect: [ :n | n order notNil ]
-		ifFound: [ :firstWithOrder | 
+		detect: [ :n | n order isNotNil ]
+		ifFound: [ :firstWithOrder |
 			| idx order |
 			"A menu registration with an order indication hase been found - then compute order of previous and next nodes"
 			idx := list indexOf: firstWithOrder.
 			order := firstWithOrder order.
 			idx > 1
-				ifTrue: [ 
-					idx - 1 to: 1 do: [ :pos | 
+				ifTrue: [
+					idx - 1 to: 1 do: [ :pos |
 						(list at: pos) order: order - 1.
 						order := order - 1 ] ].
 			order := firstWithOrder order.
-			idx + 1 to: list size do: [ :pos | 
+			idx + 1 to: list size do: [ :pos |
 				(list at: pos) order ifNil: [ (list at: pos) order: order + 1 ] ifNotNil: [ order := (list at: pos) order ].
 				order := order + 1 ].
 			list ]
 		ifNone: [ list ]	"No order has been set - do not touch anything, the list order is ok" ]
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 PragmaMenuBuilder class >> pragmaKeyword: aPragmaKeyword model: aModel [
 	"Build a builder using aPragmaKeyword as the pragma keyword and aModel a the model of the resulting builder"
-	^ self withAllPragmaKeywords: (Array with: aPragmaKeyword) model: aModel
+	^ self withAllPragmaKeywords: {aPragmaKeyword} model: aModel
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 PragmaMenuBuilder class >> withAllPragmaKeywords: aCollection model: aModel [
 	"Build a builder using aPragmaKeyword as the pragma keyword and aModel a the model of the resulting builder"
-	^ self new 
+	^ self new
 		pragmaKeywords: aCollection;
 		model: aModel;
-		yourself.
+		yourself
 ]
 
-{ #category : #'registrations handling' }
+{ #category : 'registrations handling' }
 PragmaMenuBuilder >> allMisplacedItems [
 	| misplaced |
 	self collectMisplacedItemsIn: (misplaced := OrderedCollection new).
 	^ misplaced
 ]
 
-{ #category : #'registrations handling' }
+{ #category : 'registrations handling' }
 PragmaMenuBuilder >> arrangeRegistrations [
 	self allMisplacedItems do: [:item |
 		(self itemNamed: item parentName)
 			ifNotNil: [:newOwner | item owner removeItem: item.
 				item owner: newOwner.
-				newOwner addItem: item]].
+				newOwner addItem: item]]
 ]
 
-{ #category : #'menu building' }
+{ #category : 'menu building' }
 PragmaMenuBuilder >> buildTree [
-	"Retrieve all menu registrations with the help of a PragmaCollector then, 
+	"Retrieve all menu registrations with the help of a PragmaCollector then,
 	reorganise the tree and sort it  - see class comment for more informations"
 	itemList := OrderedCollection new.
 	self collectRegistrations.
@@ -135,21 +137,21 @@ PragmaMenuBuilder >> buildTree [
 	self sortRegistrations
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> builder [
 	^ self
 ]
 
-{ #category : #'registrations handling' }
+{ #category : 'registrations handling' }
 PragmaMenuBuilder >> collectRegistrations [
-	"Retrieve all pragma methods and evaluate them by passing the 
+	"Retrieve all pragma methods and evaluate them by passing the
 	MenuRegistration class as argument. The result is a list of trees
 	stored in my itemList inst var"
 
 	| menu |
 	menu := PragmaMenuAndShortcutRegistration model: self model.
 	self pragmas
-		do: [ :prg | 
+		do: [ :prg |
 			self
 				currentRoot: self
 				while: [ prg methodClass instanceSide
@@ -158,7 +160,7 @@ PragmaMenuBuilder >> collectRegistrations [
 	self interpretRegistration: menu
 ]
 
-{ #category : #'menu building' }
+{ #category : 'menu building' }
 PragmaMenuBuilder >> currentRoot: anItem while: aBlock [
 	| old |
 	old := currentRoot.
@@ -166,16 +168,16 @@ PragmaMenuBuilder >> currentRoot: anItem while: aBlock [
 	[aBlock value] ensure: [currentRoot := old]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PragmaMenuBuilder >> initialize [
 	super initialize.
 	isGroup := true.
 	currentRoot := self.
-	pragmaKeywords := OrderedCollection new.
+	pragmaKeywords := OrderedCollection new
 ]
 
-{ #category : #private }
-PragmaMenuBuilder >> interpretRegistration: aRegistration [ 
+{ #category : 'private' }
+PragmaMenuBuilder >> interpretRegistration: aRegistration [
 	| root |
 	root := MenuRegistration owner: self.
 	aRegistration handOutItems do: [:item || node |
@@ -185,23 +187,23 @@ PragmaMenuBuilder >> interpretRegistration: aRegistration [
 			item with
 				ifNil: [
 					item action
-						ifNil: [ 
-							node 
+						ifNil: [
+							node
 								target: item target;
 								arguments: item arguments;
 								selector: item selector ]
-						ifNotNil:[ 
-							node 
+						ifNotNil:[
+							node
 								action: item action ]].
 			node
 				keyText: item keyText;
 				help: item help;
-				icon: item icon;
+				iconFormSet: item iconFormSet;
 				order: item order;
 				parent: item parent.
 			item enabled
 				ifNil: [ node enabledBlock: item enabledBlock ]
-				ifNotNil: [:boolean | node enabled: boolean ].	
+				ifNotNil: [:boolean | node enabled: boolean ].
 			item label
 				ifNotNil: [ node label: item label ].
 			item default ifNotNil: [ :d |
@@ -210,40 +212,40 @@ PragmaMenuBuilder >> interpretRegistration: aRegistration [
 				ifTrue: [ node withSeparatorAfter ]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> itemReceiver [
 	^ model
 ]
 
-{ #category : #'public menu building' }
+{ #category : 'public menu building' }
 PragmaMenuBuilder >> menuSpec [
 	"returns a PluggableMenuSpec build from my contents"
 	^ self menuSpecAt: nil
 ]
 
-{ #category : #'public menu building' }
+{ #category : 'public menu building' }
 PragmaMenuBuilder >> menuSpecAt: aName [
-	"returns a PluggableMenuSpec build from my contents starting at 
+	"returns a PluggableMenuSpec build from my contents starting at
 	the inner MenuRegistration named aName or from here if aName is nil"
 	| root |
 	self buildTree.
 	root := PluggableMenuSpec withModel: nil.
-	(aName ifNil: [self] ifNotNil: [self itemNamed: aName]) 
+	(aName ifNil: [self] ifNotNil: [self itemNamed: aName])
 		ifNotNil: [:top | top precondition value ifTrue: [top buildMenuSpec: root]].
 	^ root
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> model [
 	^ model
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> model: anObject [
 	model := anObject
 ]
 
-{ #category : #'menu building' }
+{ #category : 'menu building' }
 PragmaMenuBuilder >> newSubItem [
 	| reg |
 	reg := MenuRegistration owner: currentRoot.
@@ -251,34 +253,34 @@ PragmaMenuBuilder >> newSubItem [
 	^ reg
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> pragmaKeyword: aString [
 	"Set the pragma keyword used to select pragmas"
 	pragmaKeywords add: aString asSymbol
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> pragmaKeywords [
 	"Returns the pragma keyword used to select pragmas (see #pragmaCollector)"
 	^  pragmaKeywords
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PragmaMenuBuilder >> pragmaKeywords: aCollection [
 	"Returns the pragma keyword used to select pragmas (see #pragmaCollector)"
 	pragmaKeywords addAll: (aCollection collect: [:k | k asSymbol])
 ]
 
-{ #category : #'registrations handling' }
+{ #category : 'registrations handling' }
 PragmaMenuBuilder >> pragmas [
 
 	"Return all pragmas which keyword is self pragmaKeyword"
 
-	^ (self pragmaKeywords flatCollect: [ :each | Pragma allNamed: each ]) 
+	^ (self pragmaKeywords flatCollect: [ :each | Pragma allNamed: each ])
 		  select: [ :prg | prg methodSelector numArgs = 1 ]
 ]
 
-{ #category : #'registrations handling' }
+{ #category : 'registrations handling' }
 PragmaMenuBuilder >> sortRegistrations [
 	"Try to update MenuRegistration order inst. var and the sort the trees"
 	self assignOrderWithBlock: self class orderAssignBlock.

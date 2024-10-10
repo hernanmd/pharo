@@ -9,21 +9,23 @@ self example5.
 
 "
 Class {
-	#name : #FTExampleMethodListDataSource,
-	#superclass : #FTSimpleDataSource,
-	#category : #'Morphic-Widgets-FastTable-Examples'
+	#name : 'FTExampleMethodListDataSource',
+	#superclass : 'FTSimpleDataSource',
+	#category : 'Morphic-Widgets-FastTable-Examples',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Examples'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 FTExampleMethodListDataSource class >> for: aClass [
-	^ self basicNew 
+	^ self basicNew
 		initializeClass: aClass;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodListDataSource >> cellColumn: column row: rowIndex [
- 
+
 	^ FTCellMorph new
 		cellInset: 5;
 		addMorphBack: (self iconFor: rowIndex) asMorph;
@@ -31,36 +33,36 @@ FTExampleMethodListDataSource >> cellColumn: column row: rowIndex [
 		yourself
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTExampleMethodListDataSource >> colorFor: index [
 	index odd ifTrue: [ ^ Smalltalk ui theme lightBackgroundColor ].
 	^ Smalltalk ui theme backgroundColor
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTExampleMethodListDataSource >> iconFor: rowIndex [
 	^ (self elementAt: rowIndex) actionOn: self
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTExampleMethodListDataSource >> initializeClass: aClass [
 	self initialize.
 	self elements: ((aClass selectors sorted: [ :a :b | a < b ])
 		collect: [ :each | FTExampleMethodModel method: aClass>>each ])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodListDataSource >> menuColumn: column row: rowIndex [
 	| menu method |
-	
-	rowIndex = 0 ifTrue: [ 
-		"I could answer a menu without selection, but in this case I will just answer nil, 
+
+	rowIndex = 0 ifTrue: [
+		"I could answer a menu without selection, but in this case I will just answer nil,
 		 which means 'no menu'"
 		^ nil ].
-	
+
 	method := (self elementAt: rowIndex) method.
-	menu := UIManager default newMenuIn: self table for: self.
-	menu add: ('Browse ', (method methodClass name), '>>#', method selector) 
+	menu := self morphicUIManager newMenuIn: self table for: self.
+	menu add: ('Browse ', (method methodClass name), '>>#', method selector)
 		target: method
 		selector: #browse.
 	menu add: ('Inspect #', (method methodClass name), '>>#', method selector)
@@ -70,10 +72,10 @@ FTExampleMethodListDataSource >> menuColumn: column row: rowIndex [
 	^ menu
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodListDataSource >> searchText: aString [
 	aString isEmptyOrNil ifTrue: [ ^ #() ].
-	
+
 	self elements withIndexDo: [ :each :index |
 		( each name beginsWith: aString)
 			ifTrue: [ ^ { index } ] ].

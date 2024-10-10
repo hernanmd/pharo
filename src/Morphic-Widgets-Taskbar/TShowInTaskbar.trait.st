@@ -8,99 +8,100 @@ Adding a menu when the taskbarbutton is right clicked can be done by implemenent
 For mouseOver action, #taskbarCanShowThumbnail must be implemented to return true, and the behaviour when the mouse enters and leaves the taskbar button in their respective methods.
 "
 Trait {
-	#name : #TShowInTaskbar,
-	#category : #'Morphic-Widgets-Taskbar'
+	#name : 'TShowInTaskbar',
+	#category : 'Morphic-Widgets-Taskbar',
+	#package : 'Morphic-Widgets-Taskbar'
 }
 
-{ #category : #'taskbar-private' }
+{ #category : 'taskbar-private' }
 TShowInTaskbar >> customizeTaskbarButton: aButton [
 
 	self taskbarCanShowThumbnail ifFalse: [ ^ self ].
-	
-	aButton 
-	
-		on: #mouseEnter 
-		send: #taskbarButtonEntered:event:in: 
-		to: self 
+
+	aButton
+
+		on: #mouseEnter
+		send: #taskbarButtonEntered:event:in:
+		to: self
 		withValue: aButton;
-		
-		on: #mouseLeave 
-		send: #taskbarButtonLeft:event:in: 
-		to: self  
-		withValue: aButton.
+
+		on: #mouseLeave
+		send: #taskbarButtonLeft:event:in:
+		to: self
+		withValue: aButton
 ]
 
-{ #category : #'taskbar-public' }
+{ #category : 'taskbar-public' }
 TShowInTaskbar >> taskbarButtonClicked [
 
 	"Do something"
 ]
 
-{ #category : #'taskbar-thumbnail' }
+{ #category : 'taskbar-thumbnail' }
 TShowInTaskbar >> taskbarButtonEntered: aButton event: evt in: aMorph [
 	"The mouse has entered out taskbar button.
 	Show a thumbnail."
 ]
 
-{ #category : #'taskbar-private' }
+{ #category : 'taskbar-private' }
 TShowInTaskbar >> taskbarButtonFor: aTaskbar [
 	"Answer a new task bar button for the receiver.
 	Answer nil if not required."
-	
+
 	| taskbarButton |
-	
+
 	taskbarButton := aTaskbar theme
 		newBasicTaskbarButtonIn: aTaskbar
 		for: self.
-		
+
 	self customizeTaskbarButton: taskbarButton.
-	
+
 	^ taskbarButton
 ]
 
-{ #category : #'taskbar-required' }
+{ #category : 'taskbar-required' }
 TShowInTaskbar >> taskbarButtonIsActive [
 
 	"true/false"
-	
+
 	^self explicitRequirement
 ]
 
-{ #category : #'taskbar-thumbnail' }
+{ #category : 'taskbar-thumbnail' }
 TShowInTaskbar >> taskbarButtonLeft: aButton event: evt in: aMorph [
 	"The mouse has left our taskbar button.
 	Remove our thumbnail."
 ]
 
-{ #category : #'taskbar-public' }
+{ #category : 'taskbar-public' }
 TShowInTaskbar >> taskbarButtonMenu: aMenu [
 
 	"default is to show no menu"
-		
+
 	^aMenu
 ]
 
-{ #category : #'taskbar-thumbnail' }
+{ #category : 'taskbar-thumbnail' }
 TShowInTaskbar >> taskbarCanShowThumbnail [
 
 	^ false
 ]
 
-{ #category : #'taskbar-required' }
+{ #category : 'taskbar-required' }
 TShowInTaskbar >> taskbarLabel [
 	"Answer the label to use for a taskbar button for the receiver."
-	
+
 	^self explicitRequirement
 ]
 
-{ #category : #'taskbar-required' }
+{ #category : 'taskbar-required' }
 TShowInTaskbar >> taskbarState [
 	"Answer one of #minimized, #restored, #maximized or #active."
-	
+
 	^self explicitRequirement
 ]
 
-{ #category : #'taskbar-private' }
+{ #category : 'taskbar-private' }
 TShowInTaskbar >> taskbarTask [
 
 	^ TaskbarTask

@@ -3,62 +3,64 @@ I'm a datasource who works with FTEasyListMorph.
 I receive blocks to provide my contents. 
 "
 Class {
-	#name : #FTEasyListDataSource,
-	#superclass : #FTSimpleDataSource,
+	#name : 'FTEasyListDataSource',
+	#superclass : 'FTSimpleDataSource',
 	#instVars : [
 		'displayBlock',
 		'iconBlock',
 		'menuBlock'
 	],
-	#category : #'Morphic-Widgets-FastTable-Easy'
+	#category : 'Morphic-Widgets-FastTable-Easy',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Easy'
 }
 
-{ #category : #accessing }
-FTEasyListDataSource >> cellColumn: column row: rowIndex [ 
+{ #category : 'accessing' }
+FTEasyListDataSource >> cellColumn: column row: rowIndex [
 	^ FTCellMorph new
 		cellInset: 5;
-		in: [ :me | 
-			(self iconFor: rowIndex) 
+		in: [ :me |
+			(self iconFor: rowIndex)
 				ifNotNil: [ :icon | me addMorphBack: icon asMorph ] ];
 		addMorphBack: (self displayFor: rowIndex) asMorph;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTEasyListDataSource >> display: aBlock [
 	displayBlock := aBlock
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTEasyListDataSource >> displayFor: rowIndex [
 	| element |
 	element := self elementAt: rowIndex.
-	^ displayBlock 
+	^ displayBlock
 		ifNotNil: [ displayBlock value: element ]
-		ifNil: [ ^ element ].
+		ifNil: [ ^ element ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTEasyListDataSource >> icon: aBlock [
 	iconBlock := aBlock
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTEasyListDataSource >> iconFor: rowIndex [
 	iconBlock ifNil: [ ^ nil ].
 	^ iconBlock value: (self elementAt: rowIndex)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTEasyListDataSource >> menu: aBlock [
 	menuBlock := aBlock
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTEasyListDataSource >> menuColumn: column row: rowIndex [
 	menuBlock ifNil: [ ^ nil ].
-	rowIndex = 0 ifTrue: [ 
-		"I could answer a menu without selection, but in this case I will just answer nil, 
+	rowIndex = 0 ifTrue: [
+		"I could answer a menu without selection, but in this case I will just answer nil,
 		 which means 'no menu'"
 		^ nil ].
 	^ menuBlock value: (self elementAt: rowIndex)

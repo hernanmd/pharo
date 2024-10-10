@@ -1,10 +1,11 @@
 Class {
-	#name : #EFMessageExpressionTest,
-	#superclass : #EFTest,
-	#category : #'EnlumineurFormatter-Tests'
+	#name : 'EFMessageExpressionTest',
+	#superclass : 'EFTest',
+	#category : 'EnlumineurFormatter-Tests',
+	#package : 'EnlumineurFormatter-Tests'
 }
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> basicConfiguration [
 
 	^ self contextClass basicNew
@@ -20,7 +21,7 @@ EFMessageExpressionTest >> basicConfiguration [
 		indentExtraSpaces: 0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> blockAndCascadeInMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -45,7 +46,7 @@ EFMessageExpressionTest >> blockAndCascadeInMessageConfiguration [
 		newLineAfterCascade: true
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> blockAndParenthesesInMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -70,7 +71,7 @@ EFMessageExpressionTest >> blockAndParenthesesInMessageConfiguration [
 		newLineAfterCascade: true
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> blockInMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -92,7 +93,7 @@ EFMessageExpressionTest >> blockInMessageConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> blockInMessageTooLongConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -114,7 +115,7 @@ EFMessageExpressionTest >> blockInMessageTooLongConfiguration [
 		indentExtraSpaces: 0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> dontKeepBlockInMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -136,7 +137,7 @@ EFMessageExpressionTest >> dontKeepBlockInMessageConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> extraIndentWithThreeSpacesInsideParenthesesConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -161,7 +162,7 @@ EFMessageExpressionTest >> extraIndentWithThreeSpacesInsideParenthesesConfigurat
 		newLineAfterCascade: true
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> formatStatementsWithCommentsConfiguration [
 
 	^ self contextClass basicNew
@@ -176,7 +177,7 @@ EFMessageExpressionTest >> formatStatementsWithCommentsConfiguration [
 		keepBlockInMessage:false
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> ifTrueIfFalseMutlilineMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -201,7 +202,7 @@ EFMessageExpressionTest >> ifTrueIfFalseMutlilineMessageConfiguration [
 		newLineAfterCascade: true
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> keepBlockInMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -223,7 +224,7 @@ EFMessageExpressionTest >> keepBlockInMessageConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> littleMaxLineLengthConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -245,7 +246,7 @@ EFMessageExpressionTest >> littleMaxLineLengthConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> multiLineMessageConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -260,7 +261,7 @@ EFMessageExpressionTest >> multiLineMessageConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> newLineBeforeFirstKeywordConfiguration [
 
 	^ self contextClass basicNew
@@ -276,7 +277,7 @@ EFMessageExpressionTest >> newLineBeforeFirstKeywordConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> noIdentsForKeyWordConfiguration [
 	"Here we can control explicitely the configuration we want."
 
@@ -296,7 +297,7 @@ EFMessageExpressionTest >> noIdentsForKeyWordConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> noTraditionalBinaryPrecedenceConfiguration [
 	"Here we can control explicitely the configuration we want."
 
@@ -317,7 +318,7 @@ EFMessageExpressionTest >> noTraditionalBinaryPrecedenceConfiguration [
 		indentExtraSpaces: 0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> oneArgumentPerLineConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -333,7 +334,7 @@ EFMessageExpressionTest >> oneArgumentPerLineConfiguration [
 		numberOfSpacesInsideParentheses: 0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> oneIdentsForKeyWordConfiguration [
 
 	^ self contextClass new
@@ -342,7 +343,7 @@ EFMessageExpressionTest >> oneIdentsForKeyWordConfiguration [
 		indentsForKeywords: 1
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> oneLineMessageConfiguration [
 
 	^ self contextClass basicNew
@@ -358,7 +359,7 @@ EFMessageExpressionTest >> oneLineMessageConfiguration [
 		indentExtraSpaces: 0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> parentheseConfiguration [
 	^ self contextClass basicNew
 		indentStyle: #tabulation;
@@ -374,7 +375,7 @@ EFMessageExpressionTest >> parentheseConfiguration [
 		numberOfSpacesInsideParentheses: 0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> shortMaxLineLengthConfiguration [
 
 	^ self contextClass basicNew
@@ -390,7 +391,7 @@ EFMessageExpressionTest >> shortMaxLineLengthConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> simpleConfiguration [
 	"Here we can control explicitely the configuration we want."
 
@@ -411,7 +412,7 @@ EFMessageExpressionTest >> simpleConfiguration [
 		indentExtraSpaces: 0
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryFormatParameter [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -419,7 +420,7 @@ EFMessageExpressionTest >> testBinaryFormatParameter [
 	self assert: source equals: '1 + 3 factorial'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryFormatReceiver [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -427,7 +428,7 @@ EFMessageExpressionTest >> testBinaryFormatReceiver [
 	self assert: source equals: 'a := ''abc'' + 2'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryMessageComments [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -435,7 +436,7 @@ EFMessageExpressionTest >> testBinaryMessageComments [
 	self assert: source equals: '1 + 1 "aComment"'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryMessageFormatCommentsWithStatement [
 	| source |
 	self flag: #toCheck. "Why would we lose the comment?"
@@ -444,7 +445,7 @@ EFMessageExpressionTest >> testBinaryMessageFormatCommentsWithStatement [
 	self assert: source equals: '1 + 1'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryNoExtraSpacesAfter [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -452,7 +453,7 @@ EFMessageExpressionTest >> testBinaryNoExtraSpacesAfter [
 	self assert: source equals: '1 + 2'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryNoExtraSpacesBefore [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -460,7 +461,7 @@ EFMessageExpressionTest >> testBinaryNoExtraSpacesBefore [
 	self assert: source equals: '1 + 2'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryNoExtraSpacesBetween [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -468,7 +469,7 @@ EFMessageExpressionTest >> testBinaryNoExtraSpacesBetween [
 	self assert: source equals: '1 + 2'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryOneArgumentPerLine [
 	| source |
 	configurationSelector := #oneArgumentPerLineConfiguration.
@@ -480,7 +481,7 @@ EFMessageExpressionTest >> testBinaryOneArgumentPerLine [
 + 2'
 ]
 
-{ #category : #'tests - binary' }
+{ #category : 'tests - binary' }
 EFMessageExpressionTest >> testBinaryOneArgumentPerLine2 [
 	| source |
 	configurationSelector := #oneArgumentPerLineConfiguration.
@@ -493,7 +494,7 @@ EFMessageExpressionTest >> testBinaryOneArgumentPerLine2 [
 * 3'
 ]
 
-{ #category : #'tests - block arg' }
+{ #category : 'tests - block arg' }
 EFMessageExpressionTest >> testBlockParameterOnTheMethodLineWhenMultiline [
 	| source |
 	configurationSelector := #keepBlockInMessageConfiguration.
@@ -502,13 +503,13 @@ EFMessageExpressionTest >> testBlockParameterOnTheMethodLineWhenMultiline [
 	self
 		assert: source
 		equals:
-'1 to: 10 do: [ :i | 
+'1 to: 10 do: [ :i |
 	Transcript show: i.
 	Transcript cr.
 	Transcript cr ]'
 ]
 
-{ #category : #'tests - block arg' }
+{ #category : 'tests - block arg' }
 EFMessageExpressionTest >> testBlockParameterWhenTheLineWillBeTooLong [
 	| source |
 	configurationSelector := #blockInMessageTooLongConfiguration.
@@ -516,11 +517,11 @@ EFMessageExpressionTest >> testBlockParameterWhenTheLineWillBeTooLong [
 	self
 		assert: source
 		equals: 
-'aMessage take: [ :i | 
+'aMessage take: [ :i |
 	i factorial ]'
 ]
 
-{ #category : #'tests - block arg' }
+{ #category : 'tests - block arg' }
 EFMessageExpressionTest >> testBlockParameterWhenTheLineWillBeTooLong2 [
 	| source |
 	configurationSelector := #blockInMessageTooLongConfiguration.
@@ -528,12 +529,12 @@ EFMessageExpressionTest >> testBlockParameterWhenTheLineWillBeTooLong2 [
 	self
 		assert: source
 		equals:
-'aMessage take: [ 
-	:iiiiiiiiiiiiiii | 
+'aMessage take: [
+	:iiiiiiiiiiiiiii |
 	i factorial ]'
 ]
 
-{ #category : #'tests - block arg' }
+{ #category : 'tests - block arg' }
 EFMessageExpressionTest >> testBlockParameterWhenTheLineWillNotBeTooLong [
 	| source |
 	configurationSelector := #blockInMessageConfiguration.
@@ -541,7 +542,7 @@ EFMessageExpressionTest >> testBlockParameterWhenTheLineWillNotBeTooLong [
 	self assert: source equals: 'aMessage take: [ :i | i ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testDontKeepBlockInMessage [
 	| source |
 	configurationSelector := #dontKeepBlockInMessageConfiguration.
@@ -552,12 +553,12 @@ EFMessageExpressionTest >> testDontKeepBlockInMessage [
 		assert: source
 		equals:
 'aBoolean ifTrue:
-	[ :i | 
+	[ :i |
 	i := i factorial.
 	Transcript show: i ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testDontKeepBlockInMessage2 [
 	| source |
 	configurationSelector := #dontKeepBlockInMessageConfiguration.
@@ -570,7 +571,7 @@ EFMessageExpressionTest >> testDontKeepBlockInMessage2 [
 'aBoolean ifTrue: [ :i | i ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testDontKeepBlockInMessage3 [
 	| source |
 	configurationSelector := #dontKeepBlockInMessageConfiguration.
@@ -585,31 +586,31 @@ EFMessageExpressionTest >> testDontKeepBlockInMessage3 [
 	Transcript cr ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testExtraIndentInParentheses [
 	| source |
 	configurationSelector := #blockAndParenthesesInMessageConfiguration.
 	source := self formatExpression: '( [ :i | 	i factorial; +3 ] value: 15 )*3'.
 	self assert: source equals:
-'( [ :i | 
+'( [ :i |
   i
 	  factorial;
 	  + 3 ] value: 15 ) * 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testExtraIndentInParenthesesWhenThreeSpacesInsideParentheses [
 	| source |
 	configurationSelector := #extraIndentWithThreeSpacesInsideParenthesesConfiguration.
 	source := self formatExpression:'( [ :i | 	i factorial; +3 ] value: 15 )*3'.
 	self assert: source equals:
-'(   [ :i | 
+'(   [ :i |
     i
 	    factorial;
 	    + 3 ] value: 15   ) * 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testIndentsForKeywords1 [
 	| source |
 	configurationSelector := #oneIdentsForKeyWordConfiguration.
@@ -623,7 +624,7 @@ EFMessageExpressionTest >> testIndentsForKeywords1 [
 	k3: 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testIndentsForKeywords2 [
 	| source |
 	configurationSelector := #twoIdentsForKeyWordConfiguration.
@@ -637,7 +638,7 @@ EFMessageExpressionTest >> testIndentsForKeywords2 [
 		k3: 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testKeepBlockInMessage [
 	| source |
 	configurationSelector := #keepBlockInMessageConfiguration.
@@ -647,12 +648,12 @@ EFMessageExpressionTest >> testKeepBlockInMessage [
 	self
 		assert: source
 		equals:
-'aBoolean ifTrue: [ :i | 
+'aBoolean ifTrue: [ :i |
 	i := i factorial.
 	Transcript show: i ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testKeepBlockInMessageMutlilineNewLine [
 	| source |
 	configurationSelector := #keepBlockInMessageConfiguration.
@@ -661,13 +662,13 @@ EFMessageExpressionTest >> testKeepBlockInMessageMutlilineNewLine [
 	self
 		assert: source
 		equals:
-'aBoolean ifTrue: [ 
+'aBoolean ifTrue: [
 	Transcript cr.
 	Transcript cr.
 	Transcript cr ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testKeepBlockInMessageMutlilineSpace [
 	| source |
 	configurationSelector := #keepBlockInMessageConfiguration.
@@ -678,13 +679,13 @@ EFMessageExpressionTest >> testKeepBlockInMessageMutlilineSpace [
 	self
 		assert: source
 		equals:
-'aBoolean ifTrue: [ 
+'aBoolean ifTrue: [
 	12 factorial.
 	12 factorial.
 	3 factorial ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testKeepBlockInMessageNotMultilineSpace [
 	| source |
 	configurationSelector := #keepBlockInMessageConfiguration.
@@ -695,7 +696,7 @@ EFMessageExpressionTest >> testKeepBlockInMessageNotMultilineSpace [
 			'aBoolean ifTrue: [ ^1 ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testKeepBlockInMessageNotMutlilineNewLine [
 	| source |
 	configurationSelector := #littleMaxLineLengthConfiguration.
@@ -704,11 +705,11 @@ EFMessageExpressionTest >> testKeepBlockInMessageNotMutlilineNewLine [
 	self
 		assert: source
 		equals:
-			'aBoolean ifTrue: [ 
+			'aBoolean ifTrue: [
 	LongLongLongExpression ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordComments [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -716,7 +717,7 @@ EFMessageExpressionTest >> testKeywordComments [
 	self assert: source equals: '1 between: 2 "firstComment" and: 3 "secondComment"'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordCommentsFormatCommentsWithStatement [
 	| source |
 	self flag: #toCheck. "why no more comment." 
@@ -725,7 +726,7 @@ EFMessageExpressionTest >> testKeywordCommentsFormatCommentsWithStatement [
 	self assert: source equals: '1 between: 2 and: 3'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordFormatParameter [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -734,7 +735,7 @@ EFMessageExpressionTest >> testKeywordFormatParameter [
 	self assert: source equals: '3 between: 2 factorial and: 4 + 5'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordFormatReceiver [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -742,7 +743,7 @@ EFMessageExpressionTest >> testKeywordFormatReceiver [
 	self assert: source equals: '2 between: 4 - 2 and: 3 factorial'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordFormatReceiver2 [
 	| source |
 	configurationSelector := #parentheseConfiguration.
@@ -750,7 +751,7 @@ EFMessageExpressionTest >> testKeywordFormatReceiver2 [
 	self assert: source equals: '(2 between: 4 - 2 and: 3) factorial'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordFormatReceiver3 [
 	| source |
 	configurationSelector := #parentheseConfiguration.
@@ -758,7 +759,7 @@ EFMessageExpressionTest >> testKeywordFormatReceiver3 [
 	self assert: source equals: '(d at: 2) factorial'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordFormatReceiverAssignment [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -766,7 +767,7 @@ EFMessageExpressionTest >> testKeywordFormatReceiverAssignment [
 	self assert: source equals: 'a := ''abc'' at: 2'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordNoExtraSpacesAfter [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -774,7 +775,7 @@ EFMessageExpressionTest >> testKeywordNoExtraSpacesAfter [
 	self assert: source equals: '2 between: 1 and: 3'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordNoExtraSpacesBefore [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -782,7 +783,7 @@ EFMessageExpressionTest >> testKeywordNoExtraSpacesBefore [
 	self assert: source equals: '2 between: 1 and: 3'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordNoExtraSpacesBetween [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -790,20 +791,20 @@ EFMessageExpressionTest >> testKeywordNoExtraSpacesBetween [
 	self assert: source equals: '2 between: 1 and: 3'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression: '1 to: 100 by: 2 do: [ :i | transcript show: i;cr; cr]'.
 	self assert: source equals:
-'1 to: 100 by: 2 do: [ :i | 
+'1 to: 100 by: 2 do: [ :i |
 	transcript
 		show: i;
 		cr;
 		cr ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine10 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -815,27 +816,27 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine10 [
 	bar3: 5.'.
 	self assert: source equals:
 'foo
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
 	bar3: 5'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine11 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression:
-'foo bar3: 5 bar2: [ 
+'foo bar3: 5 bar2: [
 	1 + 1.
 	2 + 2 ]'.
 	self assert: source equals:
-'foo bar3: 5 bar2: [ 
+'foo bar3: 5 bar2: [
 	1 + 1.
 	2 + 2 ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine12 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -849,47 +850,47 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine12 [
 	self assert: source equals:
 'foo
 	bar3: 5
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
 	bar3: 5'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine13 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression:
-'foo bar3: 5 bar3: 5 bar2: [ 
+'foo bar3: 5 bar3: 5 bar2: [
 	1 + 1.
 	2 + 2 ]'.
 	self assert: source equals:
-'foo bar3: 5 bar3: 5 bar2: [ 
+'foo bar3: 5 bar3: 5 bar2: [
 	1 + 1.
 	2 + 2 ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine14 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression:
 'foo
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
 	bar3: 5 
 	bar3: 5'.
 	self assert: source equals:
 'foo
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
 	bar3: 5
 	bar3: 5'.
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine15 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -900,15 +901,15 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine15 [
 		around: [ 1. 2 ]'.
 	self assert: source equals:
 'self
-	indent: (self do: [ 
+	indent: (self do: [
 			 1.
 			 2 ])
-	around: [ 
+	around: [
 		1.
 		2 ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine2 [
 	| source |
 	configurationSelector := #ifTrueIfFalseMutlilineMessageConfiguration.
@@ -916,51 +917,51 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine2 [
 	self assert: source equals:
 'aBoolean
 	ifTrue: [ ^1 ]
-	ifFalse: [ 
+	ifFalse: [
 		tmp := tmp + a.
 		^tmp ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine3 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression: 'aBoolean ifTrue:[ tmp := tmp + a. ^ tmp] ifFalse:[ ^ 0 ]'.
 	self assert: source equals:
 'aBoolean
-	ifTrue: [ 
+	ifTrue: [
 		tmp := tmp + a.
 		^ tmp ]
 	ifFalse: [ ^ 0 ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine4 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression: 'aBoolean ifTrue:[ tmp := tmp + a. ^ tmp] ifFalse:[ tmp := tmp + a. ^tmp]'.
 	self assert: source equals:
 'aBoolean
-	ifTrue: [ 
+	ifTrue: [
 		tmp := tmp + a.
 		^ tmp ]
-	ifFalse: [ 
+	ifFalse: [
 		tmp := tmp + a.
 		^ tmp ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine5 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
 	source := self formatExpression: 'aBoolean ifTrue:[ ^ 1] ifFalse:[ tmp := tmp + a. ^tmp]'.
 	self assert: source equals:
-'aBoolean ifTrue: [ ^ 1 ] ifFalse: [ 
+'aBoolean ifTrue: [ ^ 1 ] ifFalse: [
 	tmp := tmp + a.
 	^ tmp ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine6 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -975,16 +976,16 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine6 [
 	bar3: 5'.
 	self assert: source equals:
 'foo
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
-	bar2: [ 
+	bar2: [
 		1 + 1.
 		2 + 2 ]
 	bar3: 5'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine7 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -1000,15 +1001,15 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine7 [
 	self assert: source equals:
 'foo
 	bar3: 5
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
-	bar2: [ 
+	bar2: [
 		1 + 1.
 		2 + 2 ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine8 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -1023,16 +1024,16 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine8 [
 		2 + 2 ]'.
 	self assert: source equals:
 'foo
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
 	bar3: 5
-	bar2: [ 
+	bar2: [
 		1 + 1.
 		2 + 2 ]'.
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnMultipleLine9 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -1049,16 +1050,16 @@ EFMessageExpressionTest >> testKeywordOnMultipleLine9 [
 	self assert: source equals:
 'foo
 	bar3: 5
-	bar: [ 
+	bar: [
 		1 + 2.
 		2 + 2 ]
-	bar2: [ 
+	bar2: [
 		1 + 1.
 		2 + 2 ]
 	bar3: 5'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnTheSameLine [
 	| source |
 	configurationSelector := #blockInMessageConfiguration.
@@ -1066,7 +1067,7 @@ EFMessageExpressionTest >> testKeywordOnTheSameLine [
 	self assert: source equals: '1 to: 100 do: [ :i | Transcript show: i ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnTheSameLine2 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -1074,7 +1075,7 @@ EFMessageExpressionTest >> testKeywordOnTheSameLine2 [
 	self assert: source equals: '1 to: 100 by: 2 do: [ :i | Transcript show: i ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOnTheSameLine3 [
 	| source |
 	configurationSelector := #blockAndCascadeInMessageConfiguration.
@@ -1082,7 +1083,7 @@ EFMessageExpressionTest >> testKeywordOnTheSameLine3 [
 	self assert: source equals: 'aBoolean ifTrue: [ ^ 1 ] ifFalse: [ ^ 0 ]'
 ]
 
-{ #category : #'tests - keyword' }
+{ #category : 'tests - keyword' }
 EFMessageExpressionTest >> testKeywordOneArgumentPerLine [
 	| source |
 	configurationSelector := #oneArgumentPerLineConfiguration.
@@ -1095,7 +1096,7 @@ between: 1
 and: 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testMultiLineMessage [
 	| source |
 	configurationSelector := #multiLineMessageConfiguration.
@@ -1108,7 +1109,7 @@ EFMessageExpressionTest >> testMultiLineMessage [
 	line: 2'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNewLineBeforeFirstKeyword [
 	| source |
 	configurationSelector := #newLineBeforeFirstKeywordConfiguration.
@@ -1119,7 +1120,7 @@ EFMessageExpressionTest >> testNewLineBeforeFirstKeyword [
 			'2 between: 1 and: 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNewLineBeforeFirstKeywordDoesntAffectBinary [
 	| source |
 	configurationSelector := #newLineBeforeFirstKeywordConfiguration.
@@ -1129,7 +1130,7 @@ EFMessageExpressionTest >> testNewLineBeforeFirstKeywordDoesntAffectBinary [
 		equals:'1 + 1'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNewLineBeforeStatementsWhenMultilineBlock [
 	| source |
 	configurationSelector := #keepBlockInMessageConfiguration.
@@ -1140,12 +1141,12 @@ EFMessageExpressionTest >> testNewLineBeforeStatementsWhenMultilineBlock [
 	self
 		assert: source
 		equals:
-'x = 0 ifFalse: [ 
+'x = 0 ifFalse: [
 	tan := y asFloat / x asFloat.
 	theta := tan arcCos ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNewLineWhenSelectorAndBeginingOfParametersWillBeTooLong [
 	| source |
 	configurationSelector := #blockAndParenthesesInMessageConfiguration.
@@ -1159,7 +1160,7 @@ EFMessageExpressionTest >> testNewLineWhenSelectorAndBeginingOfParametersWillBeT
 	ifFalse: [ 0 ]'.
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoIndentsForKeywords [
 	| source |
 	configurationSelector := #noIdentsForKeyWordConfiguration.
@@ -1173,7 +1174,7 @@ k2: 2
 k3: 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoNewLineBetweenVariableAndIfTrue [
 	| source |
 	configurationSelector := #blockInMessageConfiguration.
@@ -1184,7 +1185,7 @@ EFMessageExpressionTest >> testNoNewLineBetweenVariableAndIfTrue [
 				  gammaTable: gammaTable
 				  ungammaTable: gammaInverseTable ]'.
 	self assert: source equals: 
-'x ifTrue: [ 
+'x ifTrue: [
 	aBitBlt
 		copyBitsColor: foreColorVal
 		alpha: foreColorAlpha
@@ -1192,7 +1193,7 @@ EFMessageExpressionTest >> testNoNewLineBetweenVariableAndIfTrue [
 		ungammaTable: gammaInverseTable ]'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoNewLineForBeginingOfATooLongArgument [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1203,7 +1204,7 @@ b'''.
 b'''
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoNewLineForBeginingOfATooLongArgument2 [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1217,7 +1218,7 @@ EFMessageExpressionTest >> testNoNewLineForBeginingOfATooLongArgument2 [
 ^ abd + cde'''
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoTraditionalBinaryPrecedence [
 	| source |
 	configurationSelector := #noTraditionalBinaryPrecedenceConfiguration.
@@ -1225,7 +1226,7 @@ EFMessageExpressionTest >> testNoTraditionalBinaryPrecedence [
 	self assert: source equals: '2 + 3 * 4'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoTraditionalBinaryPrecedence2 [
 	| source |
 	configurationSelector := #noTraditionalBinaryPrecedenceConfiguration.
@@ -1233,7 +1234,7 @@ EFMessageExpressionTest >> testNoTraditionalBinaryPrecedence2 [
 	self assert: source equals: '2 + 3 * 4'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testNoTraditionalBinaryPrecedence3 [
 	| source |
 	configurationSelector := #noTraditionalBinaryPrecedenceConfiguration.
@@ -1241,7 +1242,7 @@ EFMessageExpressionTest >> testNoTraditionalBinaryPrecedence3 [
 	self assert: source equals: '2 + 3 * 4 + 5 * 2'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testOneLineMessage [
 	| source |
 	configurationSelector := #oneLineMessageConfiguration.
@@ -1249,7 +1250,7 @@ EFMessageExpressionTest >> testOneLineMessage [
 	self assert: source equals: 'foo one: 1 line: 2 message: 3'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testSpacesInsideParentheses [
 	| source |
 	configurationSelector := #twoSpacesInsideParenthesesConfiguration.
@@ -1257,7 +1258,7 @@ EFMessageExpressionTest >> testSpacesInsideParentheses [
 	self assert: source equals: '1 + (  2 * 3  )'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testTooLongArgument [
 	| source |
 	configurationSelector := #shortMaxLineLengthConfiguration.
@@ -1269,7 +1270,7 @@ EFMessageExpressionTest >> testTooLongArgument [
 	TooLongArgument'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testTooLongLineWithArgument [
 	| source |
 	configurationSelector := #shortMaxLineLengthConfiguration.
@@ -1281,7 +1282,7 @@ EFMessageExpressionTest >> testTooLongLineWithArgument [
 	argument'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testTraditionalBinaryPrecedence [
 	| source |
 	configurationSelector := #simpleConfiguration.
@@ -1289,7 +1290,7 @@ EFMessageExpressionTest >> testTraditionalBinaryPrecedence [
 	self assert: source equals: '2 + 3 * 4'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testTraditionalBinaryPrecedence2 [
 	| source |
 	configurationSelector := #simpleConfiguration.
@@ -1297,7 +1298,7 @@ EFMessageExpressionTest >> testTraditionalBinaryPrecedence2 [
 	self assert: source equals: '2 * 3 + 4'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 EFMessageExpressionTest >> testTraditionalBinaryPrecedence3 [
 	| source |
 	configurationSelector := #simpleConfiguration.
@@ -1305,7 +1306,7 @@ EFMessageExpressionTest >> testTraditionalBinaryPrecedence3 [
 	self assert: source equals: '2 + 3 * 4 + 5 * 2'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryFormatReceiver [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1313,7 +1314,7 @@ EFMessageExpressionTest >> testUnaryFormatReceiver [
 	self assert: source equals: 'a := 1 factorial'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryFormatReceiver2 [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1321,7 +1322,7 @@ EFMessageExpressionTest >> testUnaryFormatReceiver2 [
 	self assert: source equals: 'a := 1 factorial foo bar'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryMessageComments [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1329,7 +1330,7 @@ EFMessageExpressionTest >> testUnaryMessageComments [
 	self assert: source equals: '1 factorial "aComment"'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryMessageFormatCommentsWithStatement [
 	| source |
 	self flag: #toCheck. "why do we lose this comment"
@@ -1338,7 +1339,7 @@ EFMessageExpressionTest >> testUnaryMessageFormatCommentsWithStatement [
 	self assert: source equals: '1 factorial'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryNoExtraSpacesAfter [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1346,7 +1347,7 @@ EFMessageExpressionTest >> testUnaryNoExtraSpacesAfter [
 	self assert: source equals: 'Transcript cr'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryNoExtraSpacesAfter2 [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1354,7 +1355,7 @@ EFMessageExpressionTest >> testUnaryNoExtraSpacesAfter2 [
 	self assert: source equals: 'Transcript cr cr cr'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryNoExtraSpacesBefore [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1362,7 +1363,7 @@ EFMessageExpressionTest >> testUnaryNoExtraSpacesBefore [
 	self assert: source equals: 'Transcript cr'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryNoExtraSpacesBetween [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1370,7 +1371,7 @@ EFMessageExpressionTest >> testUnaryNoExtraSpacesBetween [
 	self assert: source equals: 'Transcript cr'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryNoExtraSpacesBetween2 [
 	| source |
 	configurationSelector := #basicConfiguration.
@@ -1378,7 +1379,7 @@ EFMessageExpressionTest >> testUnaryNoExtraSpacesBetween2 [
 	self assert: source equals: 'Transcript cr cr cr cr'
 ]
 
-{ #category : #'tests - unary' }
+{ #category : 'tests - unary' }
 EFMessageExpressionTest >> testUnaryTooLongArgument [
 	| source |
 	configurationSelector := #shortMaxLineLengthConfiguration.
@@ -1390,7 +1391,7 @@ EFMessageExpressionTest >> testUnaryTooLongArgument [
 	messageTooLongUnaryyyy'
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> twoIdentsForKeyWordConfiguration [
 	"Here we can control explicitely the configuration we want."
 
@@ -1410,7 +1411,7 @@ EFMessageExpressionTest >> twoIdentsForKeyWordConfiguration [
 		indentExtraSpaces:0
 ]
 
-{ #category : #configurations }
+{ #category : 'configurations' }
 EFMessageExpressionTest >> twoSpacesInsideParenthesesConfiguration [
 
 	^ self contextClass basicNew

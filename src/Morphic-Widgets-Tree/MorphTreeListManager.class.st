@@ -2,8 +2,8 @@
 A manager caring about a morphic based tree
 "
 Class {
-	#name : #MorphTreeListManager,
-	#superclass : #Object,
+	#name : 'MorphTreeListManager',
+	#superclass : 'Object',
 	#instVars : [
 		'multipleSelection',
 		'autoMultiSelection',
@@ -25,14 +25,15 @@ Class {
 		'doubleClickSelector',
 		'keyDownActionSelector'
 	],
-	#category : #'Morphic-Widgets-Tree'
+	#category : 'Morphic-Widgets-Tree',
+	#package : 'Morphic-Widgets-Tree'
 }
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> addAllToSelection: aCollection [
 | selHolder |
 	self searchedElement: nil.
-	aCollection do: [:m | m 
+	aCollection do: [:m | m
 		highlight;
 		selected: true ].
 	self selectionChanged.
@@ -41,7 +42,7 @@ MorphTreeListManager >> addAllToSelection: aCollection [
 		self listModel selection: selHolder]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> addToSelection: aMorph [
 	aMorph selected ifTrue: [^false].
 	self searchedElement: nil.
@@ -50,7 +51,7 @@ MorphTreeListManager >> addToSelection: aMorph [
 	^ true
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> addToSelection: aMorph clickedTheCheckBox: checkBox [
 	aMorph selected ifTrue: [^false].
 	self searchedElement: nil.
@@ -59,100 +60,87 @@ MorphTreeListManager >> addToSelection: aMorph clickedTheCheckBox: checkBox [
 	^ true
 ]
 
-{ #category : #'client list accessing' }
+{ #category : 'client list accessing' }
 MorphTreeListManager >> allNodeMorphs [
 	^ client allNodeMorphs
 ]
 
-{ #category : #'keyboard managing' }
-MorphTreeListManager >> arrowEvent: event key: aChar [ 
+{ #category : 'keyboard managing' }
+MorphTreeListManager >> arrowEvent: event key: aChar [
 	"Handle a keyboard navigation character. Answer true if handled, false
 	if not."
+
 	| newIndex targetMorph targetIndex multi |
-	
-	self allNodeMorphs ifEmpty: [ ^ false].
-	self listModel okToChange ifFalse: [^ false].
-	self listModel okToDiscardEdits ifFalse: [^ false].
+	self allNodeMorphs ifEmpty: [ ^ false ].
+	self listModel okToChange ifFalse: [ ^ false ].
+	self listModel okToDiscardEdits ifFalse: [ ^ false ].
 
 	newIndex := nil.
 	targetMorph := lastClickedMorph.
-	"Give the oportunity to model to handle the keystroke event. 
+	"Give the oportunity to model to handle the keystroke event.
 	 This is an ugly HACK due to the lack of proper key handling... but I can live with it for now"
-	targetMorph ifNotNil: [  
-		(self listModel arrowEvent: event key: aChar target: targetMorph)
-			ifTrue:  [ ^  true ]].
+	targetMorph ifNotNil: [ (self listModel arrowEvent: event key: aChar target: targetMorph) ifTrue: [ ^ true ] ].
 
 	targetIndex := targetMorph
-		ifNil: [ 0 ]
-		ifNotNil: [ targetMorph index ].
-	multi := (event shiftPressed and: [self isMultiple]) or: [self autoMultiSelection].
-	aChar = Character arrowDown
-		ifTrue: [newIndex := targetIndex + 1].
-	aChar = Character arrowUp
-		ifTrue: [newIndex := targetIndex - 1 max: 1].
-	aChar = Character home
-		ifTrue: [newIndex := 1].
-	aChar = Character end
-		ifTrue: [newIndex := self allNodeMorphs size].
-	aChar = Character pageUp
-		ifTrue: [newIndex := targetIndex - self numSelectionsInView max: 1].
-	aChar = Character pageDown
-		ifTrue: [newIndex := targetIndex + self numSelectionsInView].
-	aChar = Character arrowRight
-		ifTrue: [
-			targetMorph ifNil: [^ false].
-			(targetMorph canExpand and: [targetMorph isExpanded not])
-				ifTrue: [
-					self toggleExpandedState: targetMorph.
-					^ true]
-				ifFalse: [ newIndex := targetIndex + 1 ] ].
-	aChar = Character arrowLeft
-		ifTrue: [
-			targetMorph ifNil: [^ false].
-			(targetMorph canExpand and: [targetMorph isExpanded])
-				ifTrue: [
-					self toggleExpandedState: targetMorph.
-					^ true]
-				ifFalse: [ | parent |
-					parent := targetMorph parent.
-					parent
-						ifNil: [newIndex := targetIndex - 1 max: 1]
-						ifNotNil: [
-							self toggleExpandedState: parent.
-							newIndex := parent index]]].
-	newIndex notNil
-		ifTrue: [
-			self
-				setSelectionIndexFromKeyboard: newIndex
-				multiSelection: multi
-				event: event.
-			self selectionChanged.
-			^ true].
+		               ifNil: [ 0 ]
+		               ifNotNil: [ targetMorph index ].
+	multi := (event shiftPressed and: [ self isMultiple ]) or: [ self autoMultiSelection ].
+	aChar = Character arrowDown ifTrue: [ newIndex := targetIndex + 1 ].
+	aChar = Character arrowUp ifTrue: [ newIndex := targetIndex - 1 max: 1 ].
+	aChar = Character home ifTrue: [ newIndex := 1 ].
+	aChar = Character end ifTrue: [ newIndex := self allNodeMorphs size ].
+	aChar = Character pageUp ifTrue: [ newIndex := targetIndex - self numSelectionsInView max: 1 ].
+	aChar = Character pageDown ifTrue: [ newIndex := targetIndex + self numSelectionsInView ].
+	aChar = Character arrowRight ifTrue: [
+		targetMorph ifNil: [ ^ false ].
+		(targetMorph canExpand and: [ targetMorph isExpanded not ])
+			ifTrue: [
+				self toggleExpandedState: targetMorph.
+				^ true ]
+			ifFalse: [ newIndex := targetIndex + 1 ] ].
+	aChar = Character arrowLeft ifTrue: [
+		targetMorph ifNil: [ ^ false ].
+		(targetMorph canExpand and: [ targetMorph isExpanded ])
+			ifTrue: [
+				self toggleExpandedState: targetMorph.
+				^ true ]
+			ifFalse: [
+				| parent |
+				parent := targetMorph parent.
+				parent
+					ifNil: [ newIndex := targetIndex - 1 max: 1 ]
+					ifNotNil: [
+						self toggleExpandedState: parent.
+						newIndex := parent index ] ] ].
+	newIndex ifNotNil: [
+		self setSelectionIndexFromKeyboard: newIndex multiSelection: multi event: event.
+		self selectionChanged.
+		^ true ].
 	^ false
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> autoAction [
 	^ firstClickedMorph
 		ifNotNil: [
 			firstClickedMorph selected
 				ifTrue: [#addToSelection:]
-				ifFalse: [#removeFromSelection:]].
+				ifFalse: [#removeFromSelection:]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> autoDeselection [
 	^ autoDeselection
 		ifNil: [autoDeselection := false]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> autoDeselection: aBoolean [
 
 	autoDeselection := aBoolean
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> autoMultiSelect: aTargetMorph [
 	autoTargetMorph := aTargetMorph.
 	self autoAction
@@ -161,29 +149,29 @@ MorphTreeListManager >> autoMultiSelect: aTargetMorph [
 				from: firstClickedMorph
 				to: aTargetMorph
 				do: [:nd | self perform: act with: nd].
-			self selectionUpdateFromViewWhile: [ | selHolder | 
+			self selectionUpdateFromViewWhile: [ | selHolder |
 				selHolder := self newSelectionHolderWithNodePath: nil.
 				self listModel selection: selHolder].
 			self selectionChanged.
 			self scrollToShow: aTargetMorph contentBounds]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> autoMultiSelection [
 	^ autoMultiSelection ifNil: [autoMultiSelection := false]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> autoMultiSelection: aBoolean [
 	autoMultiSelection := aBoolean.
 	aBoolean ifTrue: [self multipleSelection: true]
 ]
 
-{ #category : #'keyboard managing' }
+{ #category : 'keyboard managing' }
 MorphTreeListManager >> basicKeyPressed: aChar [
     | nextSelection oldSelection milliSeconds slowKeyStroke nextSelectionNodeMorph |
-   
-    (aChar == Character space and: [ lastClickedMorph notNil ])
+
+    (aChar == Character space and: [ lastClickedMorph isNotNil ])
         ifTrue: [
             self
                 selectMorph: lastClickedMorph
@@ -191,14 +179,14 @@ MorphTreeListManager >> basicKeyPressed: aChar [
             self selectionUpdateFromViewWhile: [ | selHolder |
                 selHolder := self newSelectionHolderWithNodePath: lastClickedMorph complexContents path.
                 self listModel selection: selHolder]].
-       
+
     nextSelection := oldSelection := lastSelection.
     milliSeconds := Time millisecondClockValue.
     slowKeyStroke := milliSeconds - lastKeystrokeTime > 500.
     lastKeystrokeTime := milliSeconds.
-   
+
     self searchedElement: nil.
-   
+
     slowKeyStroke
         ifTrue: ["forget previous keystrokes and search in following elements"
             oldSelection := oldSelection + 1.
@@ -215,7 +203,7 @@ MorphTreeListManager >> basicKeyPressed: aChar [
                     "Get rid of blanks and style used in some lists"
                     a complexContents asString trimBoth asLowercase beginsWith: lastKeystrokes ]]
                 ifNone: [     "roll over" oldSelection := 0 ] ].
-               
+
     oldSelection isZero
         ifTrue:
             [ nextSelectionNodeMorph := self allNodeMorphs
@@ -224,7 +212,7 @@ MorphTreeListManager >> basicKeyPressed: aChar [
                     "Get rid of blanks and style used in some lists"
                     a complexContents asString trimBoth asLowercase beginsWith: lastKeystrokes ]
                 ifNone: [ ^ self ] ].
-           
+
     nextSelection := nextSelectionNodeMorph index.
     "No change if model is locked"
     self listModel okToChange ifFalse: [^ self].
@@ -236,7 +224,7 @@ MorphTreeListManager >> basicKeyPressed: aChar [
     self selectionChanged
 ]
 
-{ #category : #'mouse managing' }
+{ #category : 'mouse managing' }
 MorphTreeListManager >> clicked: event inTheCheckboxOf: aTargetMorph [
 	| position |
 
@@ -245,29 +233,29 @@ MorphTreeListManager >> clicked: event inTheCheckboxOf: aTargetMorph [
 	^ self isCheckList and: [ (aTargetMorph checkClickableZone translateBy: 2 @ 0) containsPoint: position ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> client: aMorphList [
 	client := aMorphList
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> columnDropUnabled [
 
 	^ columnDropUnabled
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> columnDropUnabled: aBoolean [
 
 	columnDropUnabled := aBoolean
 ]
 
-{ #category : #'client list accessing' }
+{ #category : 'client list accessing' }
 MorphTreeListManager >> commandOrCrontrolKeyPressed: anEvent [
 	^ client commandOrCrontrolKeyPressed: anEvent
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> deselectAll [
 	| selHolder |
 	self allNodeMorphs isEmpty
@@ -278,45 +266,45 @@ MorphTreeListManager >> deselectAll [
 		self listModel selection: selHolder]
 ]
 
-{ #category : #'mouse managing' }
+{ #category : 'mouse managing' }
 MorphTreeListManager >> doubleClick: anEvent on: aMorph [
 	self doubleClickSelector  ifNil: [^false].
 	client model perform: self doubleClickSelector withEnoughArguments: { anEvent. aMorph }.
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> doubleClickSelector [
 
 	^ doubleClickSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> doubleClickSelector: aSelector [
 
 	doubleClickSelector := aSelector
 ]
 
-{ #category : #'selection change' }
-MorphTreeListManager >> emptySelection [ 
+{ #category : 'selection change' }
+MorphTreeListManager >> emptySelection [
 	self selectedMorphList do: [:n | n unhighlight; setSelectedSilently: false].
 	self selectedMorphList removeAll.
 	self selectionChanged
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> firstClickedMorph [
 
 	^ firstClickedMorph
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> firstClickedMorph: aNodeMorph [
 
 	firstClickedMorph := aNodeMorph
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> from: aNodeMorph to: anotherNodeMorph do: action [
 	| idx1 idx2 |
 	idx1 := ((self getSelectionIndexOf: aNodeMorph) min: self allNodeMorphs size) max: 1.
@@ -324,12 +312,12 @@ MorphTreeListManager >> from: aNodeMorph to: anotherNodeMorph do: action [
 	(idx1 min: idx2) to: (idx1 max: idx2) do: [:idx | action value: (self allNodeMorphs at: idx)]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> getSelectionIndexOf: aMorph [
 	^ aMorph ifNil: [0] ifNotNil: [aMorph index]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MorphTreeListManager >> initialize [
 	super initialize.
 	lastKeystrokeTime := 0.
@@ -338,27 +326,27 @@ MorphTreeListManager >> initialize [
 	removeOnlyLastSelected := false
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> isCheckList [
 	^ isCheckList ifNil: [isCheckList := false]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> isCheckList: aBoolean [
 	isCheckList := aBoolean
 ]
 
-{ #category : #accessing }
-MorphTreeListManager >> isMultiple [	
+{ #category : 'accessing' }
+MorphTreeListManager >> isMultiple [
 	^ multipleSelection ifNil: [ multipleSelection := false ]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> isSelectionUpdateFromView [
 	^ isSelectionUpdateFromView ifNil: [isSelectionUpdateFromView := false]
 ]
 
-{ #category : #'keyboard managing' }
+{ #category : 'keyboard managing' }
 MorphTreeListManager >> keyDown: anEvent [
 	| char args |
 	char := anEvent keyValue asCharacter.
@@ -372,7 +360,7 @@ MorphTreeListManager >> keyDown: anEvent [
 	anEvent anyModifierKeyPressed
 		ifFalse: [ self basicKeyPressed: char.
 			^ true ].
-		
+
 	keyDownActionSelector ifNil: [ ^ false ].
 
 	args := keyDownActionSelector numArgs.
@@ -383,104 +371,104 @@ MorphTreeListManager >> keyDown: anEvent [
 				ifFalse: [ self listModel perform: keyDownActionSelector with: anEvent with: self ] ]
 ]
 
-{ #category : #'keyboard managing' }
+{ #category : 'keyboard managing' }
 MorphTreeListManager >> keyDownActionSelector: aSelector [
 
 	keyDownActionSelector := aSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastClickedMorph [
 
 	^ lastClickedMorph
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastClickedMorph: aNodeMorph [
 
 	lastClickedMorph ifNotNil: [ lastClickedMorph complexContents lastClicked: false ].
 	lastClickedMorph := aNodeMorph.
-	aNodeMorph ifNotNil: [ aNodeMorph complexContents lastClicked: true ].
+	aNodeMorph ifNotNil: [ aNodeMorph complexContents lastClicked: true ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastKeystrokeTime [
 
 	^ lastKeystrokeTime
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastKeystrokeTime: anObject [
 
 	lastKeystrokeTime := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastKeystrokes [
 
 	^ lastKeystrokes
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastKeystrokes: anObject [
 
 	lastKeystrokes := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastSelection [
 
 	^ lastSelection
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> lastSelection: anObject [
 
 	lastSelection := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> listModel [
 	^ client model
 ]
 
-{ #category : #'mouse managing' }
+{ #category : 'mouse managing' }
 MorphTreeListManager >> mouseDown: event on: aTargetMorph [
 	"Changed to take keybaord focus."
 	| clickedTheCheckbox |
-	
+
 	clickedTheCheckbox := self clicked: event inTheCheckboxOf: aTargetMorph.
-	
+
 	(self autoMultiSelection and: [ event shiftPressed not ])
-		ifTrue: [ 
+		ifTrue: [
 			firstClickedMorph := aTargetMorph.
 			aTargetMorph selected
-				ifTrue: [ 
+				ifTrue: [
 					self removeFromSelection: aTargetMorph.
 					(clickedTheCheckbox not and: [ self selectOnlyLastHighlighted and: [ aTargetMorph hasContentToShow ] ])
-						ifTrue: [ 
+						ifTrue: [
 							aTargetMorph = self lastClickedMorph
 								ifFalse: [ self addToSelection: aTargetMorph ] ] ]
-				ifFalse: [ 
+				ifFalse: [
 					(clickedTheCheckbox not and: [ self selectOnlyLastHighlighted and: [ aTargetMorph hasContentToShow ] ])
-						ifTrue: [ 
+						ifTrue: [
 							aTargetMorph = self lastClickedMorph
-								ifTrue: [ 
+								ifTrue: [
 									self addToSelection: aTargetMorph.
 									clickedTheCheckbox
 										ifFalse: [ self lastClickedMorph: aTargetMorph ] ] ]
-						ifFalse: [ 
+						ifFalse: [
 							self addToSelection: aTargetMorph.
 							clickedTheCheckbox
 								ifFalse: [ self lastClickedMorph: aTargetMorph ] ] ] ].
-	
+
 	(clickedTheCheckbox not and: [ event shiftPressed not or: [ firstClickedMorph isNil ] ])
 		ifTrue: [ firstClickedMorph := aTargetMorph ].
-	
+
 	aTargetMorph mouseDown: event
 ]
 
-{ #category : #'mouse managing' }
+{ #category : 'mouse managing' }
 MorphTreeListManager >> mouseMove: evt on: aTargetMorph [
 
 	(aTargetMorph isNil or: [aTargetMorph highlightedForMouseDown not])
@@ -493,149 +481,149 @@ MorphTreeListManager >> mouseMove: evt on: aTargetMorph [
 						self selectionChanged]]]
 ]
 
-{ #category : #'mouse managing' }
-MorphTreeListManager >> mouseUp: event on: aNodeMorph [ 
+{ #category : 'mouse managing' }
+MorphTreeListManager >> mouseUp: event on: aNodeMorph [
 	| path cmdOrCtrl clickedTheCheckbox |
-	"No change if model is locked" 
-	
+	"No change if model is locked"
+
 	clickedTheCheckbox := self clicked: event inTheCheckboxOf: aNodeMorph.
 	self listModel okToChange ifFalse: [^self].
 	self listModel okToDiscardEdits ifFalse: [^ self].
 
 	cmdOrCtrl := self commandOrCrontrolKeyPressed: event.
-	
+
 	path := (event shiftPressed and: [self isMultiple])
 				ifTrue: [self shiftSelectMorph: aNodeMorph]
 				ifFalse: [
 					self autoMultiSelection
 						ifTrue: [self selectedMorphList ifEmpty: [] ifNotEmpty: [:l | l last path collect: [:p | p complexContents]]]
 						ifFalse: [self selectMorph: aNodeMorph multiple: ((cmdOrCtrl and: [self isMultiple]) or: [self autoMultiSelection]) clickedTheCheckBox: clickedTheCheckbox ]].
-	self selectionUpdateFromViewWhile: [ | selHolder | 
+	self selectionUpdateFromViewWhile: [ | selHolder |
 		selHolder := self newSelectionHolderWithNodePath: path.
 		self listModel selection: selHolder].
-	
+
 	clickedTheCheckbox ifFalse: [ self lastClickedMorph: aNodeMorph ].
-	self selectionChanged.
+	self selectionChanged
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> multipleSelection [
 
 	^ multipleSelection ifNil: [multipleSelection := false]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> multipleSelection: anObject [
 
 	multipleSelection := anObject
 ]
 
-{ #category : #'selection change' }
-MorphTreeListManager >> newSelectionHolderWithNodePath: aNodePath [ 
+{ #category : 'selection change' }
+MorphTreeListManager >> newSelectionHolderWithNodePath: aNodePath [
 	^ self isMultiple
 		ifTrue: [MorphTreeMorphMultipleSelection new
 				selectedNodePathList: (self selectedMorphList
-						collect: [:s | s path	collect: [:m | m complexContents]])] 
+						collect: [:s | s path	collect: [:m | m complexContents]])]
 		ifFalse: [MorphTreeMorphSingleSelection new selectedNodePath: aNodePath]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> nodeMorphsWithAllNodeItems: aNodeItemList [
 	| result |
 
 	result := OrderedCollection new.
-	
-	self allNodeMorphs do: [:m | 
+
+	self allNodeMorphs do: [:m |
 		aNodeItemList do: [ :sel | (m expandPath: sel) ] ].
-	
-	self allNodeMorphs do: [:m | 
+
+	self allNodeMorphs do: [:m |
 		aNodeItemList do: [ :sel | (m matchPath: sel)
 			ifNotNil: [:col | result addAll: col ] ] ].
 
 	^ result flattened
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> noteRemovalOfAll: aMorphList [
 	"When noting the removal of items, do not change their model status: the model will be in charge of it (i.e. either updates from the model or expand/collapse things)."
 
 	aMorphList
-		do: [ :each | 
+		do: [ :each |
 			self selectedMorphList remove: each ifAbsent: [  ].
 			lastClickedMorph == each
 				ifTrue: [ lastClickedMorph := nil ] ]
 ]
 
-{ #category : #'client list accessing' }
+{ #category : 'client list accessing' }
 MorphTreeListManager >> numSelectionsInView [
 	^ client numSelectionsInView
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> potentialDropMorph [
 
 	^ potentialDropMorph
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> potentialDropMorph: anObject [
 
 	potentialDropMorph := anObject
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> removeFromSelection: aMorph [
 	aMorph selected ifFalse: [^false].
 	aMorph selected: false.
 	aMorph unhighlight.
-	self selectionUpdateFromViewWhile: [ | selHolder | 
+	self selectionUpdateFromViewWhile: [ | selHolder |
 		selHolder := self newSelectionHolderWithNodePath: nil.
 		self listModel selection: selHolder].
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> removeOnlyLastSelected: aBoolean [
 
 	removeOnlyLastSelected := aBoolean
 ]
 
-{ #category : #'client list accessing' }
+{ #category : 'client list accessing' }
 MorphTreeListManager >> scrollToShow: aRectangle [
 	client scrollToShow: aRectangle
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> searchedElement [
 
 	^ searchedElement
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> searchedElement: anObject [
 
 	searchedElement := anObject
 ]
 
-{ #category : #'selection accessing' }
+{ #category : 'selection accessing' }
 MorphTreeListManager >> secondSelection: anItem [
 
  	| nodeMorph |
 	nodeMorph := self allNodeMorphs detect: [ :e | e complexContents item == anItem ].
 	self searchedElement: nodeMorph.
-	client changed.
+	client changed
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectAll [
 	self allNodeMorphs isEmpty
 		ifTrue: [^ self].
 	self isMultiple
-		ifFalse: [^ self]. 
+		ifFalse: [^ self].
 	self addAllToSelection: self allNodeMorphs
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectMoreAtBottom [
 	| last |
 	autoTargetMorph ifNil: [^self].
@@ -646,7 +634,7 @@ MorphTreeListManager >> selectMoreAtBottom [
 			self selectionChanged]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectMoreAtTop [
 	| first |
 	autoTargetMorph ifNil: [^self].
@@ -657,7 +645,7 @@ MorphTreeListManager >> selectMoreAtTop [
 			self selectionChanged]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectMorph: aNodeMorph multiple: withMultipleSelection [
 
 	| path mult |
@@ -689,7 +677,7 @@ MorphTreeListManager >> selectMorph: aNodeMorph multiple: withMultipleSelection 
 	^ path
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectMorph: aNodeMorph multiple: withMultipleSelection clickedTheCheckBox: checkBox [
 
 	| path mult |
@@ -720,21 +708,21 @@ MorphTreeListManager >> selectMorph: aNodeMorph multiple: withMultipleSelection 
 	^ path
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MorphTreeListManager >> selectOnlyLastHighlighted [
 	^ removeOnlyLastSelected
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 MorphTreeListManager >> selectSearchedElement [
 
-	self searchedElement 
-		ifNotNil: [ :selectedMorph | 
+	self searchedElement
+		ifNotNil: [ :selectedMorph |
 			self setSelectedMorph: selectedMorph.
 			self searchedElement: nil ]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectedItems: aNodeItemCollection [
 
 	self listModel okToDiscardEdits ifFalse: [^ self].
@@ -747,24 +735,24 @@ MorphTreeListManager >> selectedItems: aNodeItemCollection [
 						ifNotEmpty: [self selectedMorphList last]]
 ]
 
-{ #category : #'selection accessing' }
+{ #category : 'selection accessing' }
 MorphTreeListManager >> selectedMorph [
 	^ self selectedMorphList
 		ifNotEmpty: [ :l | l last]
  		ifEmpty: []
 ]
 
-{ #category : #'selection accessing' }
+{ #category : 'selection accessing' }
 MorphTreeListManager >> selectedMorphList [
 	^ selectedMorphList ifNil: [selectedMorphList := LinkedList new]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectionChanged [
 	client selectionChanged
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> selectionUpdateFromViewWhile: aBlock [
 	| prev |
 	prev := self isSelectionUpdateFromView.
@@ -772,19 +760,19 @@ MorphTreeListManager >> selectionUpdateFromViewWhile: aBlock [
 	aBlock ensure: [isSelectionUpdateFromView := prev]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> setSelectedMorph: aMorph [
 	| path |
 	path := aMorph ifNotNil: [ aMorph path collect: [ :m | m complexContents ] ].
 	self lastClickedMorph: aMorph.
 	self emptySelection.
-	aMorph 
+	aMorph
 		ifNotNil: [ self addToSelection: lastClickedMorph ].
-	self selectionUpdateFromViewWhile: [ 
+	self selectionUpdateFromViewWhile: [
 			self listModel selection: (self newSelectionHolderWithNodePath: path) ]
 ]
 
-{ #category : #'keyboard managing' }
+{ #category : 'keyboard managing' }
 MorphTreeListManager >> setSelectionIndexFromKeyboard: index multiSelection: multiSelect event: anEvent [
 	"Called internally to select the index-th item."
 	| targetMorph |
@@ -808,59 +796,59 @@ MorphTreeListManager >> setSelectionIndexFromKeyboard: index multiSelection: mul
 	self scrollToShow: targetMorph contentBounds
 ]
 
-{ #category : #'selection change' }
-MorphTreeListManager >> shiftSelectMorph: aNodeMorph [ 
+{ #category : 'selection change' }
+MorphTreeListManager >> shiftSelectMorph: aNodeMorph [
 	| m |
 	m := aNodeMorph ifNil: [self allNodeMorphs last].
 	self emptySelection.
 	self searchedElement: nil.
-	self 
-		from: firstClickedMorph 
-		to: m 
-		do: [:nd | self addToSelection: nd]. 
+	self
+		from: firstClickedMorph
+		to: m
+		do: [:nd | self addToSelection: nd].
 	self lastClickedMorph: m.
 	^ m path collect: [:p | p complexContents]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> silentlySetSelectedMorph: aMorph [
 	| path |
-	
+
 	path := aMorph ifNotNil: [ aMorph path collect: [ :m | m complexContents ] ].
 	self isMultiple ifFalse: [ self emptySelection ].
-	
+
 	aMorph ifNotNil: [ self addToSelection: aMorph ].
-	
-	self selectionUpdateFromViewWhile: [ 
+
+	self selectionUpdateFromViewWhile: [
 			self listModel selection: (self newSelectionHolderWithNodePath: path) ]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> toggleExpandedState: aMorph [
 	aMorph toggleExpandedState.
 	client innerWidgetChanged
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> updateLastClickedMorph [
 	"When the contents have been updated, ensure that lastClickedMorph refer to a correct morph."
 
 	lastClickedMorph
 		ifNil: [ lastClickedMorph := self selectedMorphList ifEmpty: [  ] ifNotEmpty: [ self selectedMorphList last ] ]
-		ifNotNil: [ 
+		ifNotNil: [
 			self allNodeMorphs
-				do: [ :each | 
+				do: [ :each |
 					each complexContents withoutListWrapper = lastClickedMorph complexContents withoutListWrapper
 						ifTrue: [ lastClickedMorph := each ] ] ]
 ]
 
-{ #category : #'selection change' }
+{ #category : 'selection change' }
 MorphTreeListManager >> updateSelectionFromModel [
-	(self listModel selection) 
-		ifNotNil: [:selHolder | 	
+	(self listModel selection)
+		ifNotNil: [:selHolder |
 				self isSelectionUpdateFromView
 					ifTrue: [
 						self listModel selectionChanged.
 						self selectionChanged]
-					ifFalse: [selHolder updateView: client forModel: self listModel]].
+					ifFalse: [selHolder updateView: client forModel: self listModel]]
 ]

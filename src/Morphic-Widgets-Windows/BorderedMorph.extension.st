@@ -1,6 +1,6 @@
-Extension { #name : #BorderedMorph }
+Extension { #name : 'BorderedMorph' }
 
-{ #category : #'*Morphic-Widgets-Windows' }
+{ #category : '*Morphic-Widgets-Windows' }
 BorderedMorph >> addCornerGrips [
 	self addMorphBack: (TopLeftGripMorph new target: self; position: self position).
 	self addMorphBack: (TopRightGripMorph new target: self; position: self position).
@@ -8,7 +8,7 @@ BorderedMorph >> addCornerGrips [
 	self addMorphBack: (BottomRightGripMorph new target: self; position: self position)
 ]
 
-{ #category : #'*Morphic-Widgets-Windows' }
+{ #category : '*Morphic-Widgets-Windows' }
 BorderedMorph >> addPaneSplitters [
 	| splitter remaining target targetX sameX minY maxY targetY sameY minX maxX |
 	self removePaneSplitters.
@@ -23,13 +23,13 @@ BorderedMorph >> addPaneSplitters [
 		maxY := (sameX detectMax: [:each | each layoutFrame bottomFraction]) layoutFrame bottomFraction.
 		splitter := ProportionalSplitterMorph new.
 		splitter layoutFrame: (
-		
-		 (targetX @ minY corner: targetX @ maxY) asLayoutFrame 
+
+		 (targetX @ minY corner: targetX @ maxY) asLayoutFrame
 			leftOffset: target layoutFrame rightOffset;
 			topOffset: target layoutFrame topOffset;
 			rightOffset: 4 + target layoutFrame rightOffset;
 			bottomOffset: target layoutFrame bottomOffset).
-			
+
 		self addMorphBack: (splitter position: self position).
 		remaining := remaining copyWithoutAll: sameX].
 
@@ -51,28 +51,28 @@ BorderedMorph >> addPaneSplitters [
 			remaining := remaining copyWithoutAll: sameY].
 
 	self linkSubmorphsToSplitters.
-	self splitters do: [:each | each comeToFront].
+	self splitters do: [:each | each comeToFront]
 ]
 
-{ #category : #'*Morphic-Widgets-Windows' }
-BorderedMorph >> addPaneVSplitterBetween: leftMorph and: rightMorphs [ 
+{ #category : '*Morphic-Widgets-Windows' }
+BorderedMorph >> addPaneVSplitterBetween: leftMorph and: rightMorphs [
 
 	| targetX minY maxY splitter |
 	targetX := leftMorph layoutFrame rightFraction.
 	minY := (rightMorphs detectMin: [:each | each layoutFrame topFraction]) layoutFrame topFraction.
 	maxY := (rightMorphs detectMax: [:each | each layoutFrame bottomFraction]) layoutFrame bottomFraction.
-	
+
 	splitter := ProportionalSplitterMorph new.
-	splitter layoutFrame: ( (targetX @ minY corner: targetX @ maxY) asLayoutFrame 
+	splitter layoutFrame: ( (targetX @ minY corner: targetX @ maxY) asLayoutFrame
 		leftOffset: leftMorph layoutFrame rightOffset;
 		rightOffset: 4+ leftMorph layoutFrame rightOffset;
 		topOffset:  leftMorph layoutFrame topOffset;
 		bottomOffset: leftMorph layoutFrame bottomOffset).
 
-	self addMorphBack: (splitter position: self position).
+	self addMorphBack: (splitter position: self position)
 ]
 
-{ #category : #'*Morphic-Widgets-Windows' }
+{ #category : '*Morphic-Widgets-Windows' }
 BorderedMorph >> linkSubmorphsToSplitters [
 
 	self splitters do:
@@ -90,7 +90,7 @@ BorderedMorph >> linkSubmorphsToSplitters [
 					(eachMorph ~= each and: [eachMorph layoutFrame leftFraction = each layoutFrame rightFraction]) ifTrue: [each addRightOrBottom: eachMorph]]]]
 ]
 
-{ #category : #'*Morphic-Widgets-Windows' }
+{ #category : '*Morphic-Widgets-Windows' }
 BorderedMorph >> removeCornerGrips [
 
 	| corners |
@@ -98,12 +98,12 @@ BorderedMorph >> removeCornerGrips [
 	corners do: [:each | each delete]
 ]
 
-{ #category : #'*Morphic-Widgets-Windows' }
+{ #category : '*Morphic-Widgets-Windows' }
 BorderedMorph >> removePaneSplitters [
 	self splitters do: [:each | each delete]
 ]
 
-{ #category : #'*Morphic-Widgets-Windows' }
+{ #category : '*Morphic-Widgets-Windows' }
 BorderedMorph >> splitters [
 
 	^ self submorphsSatisfying: [:each | each isKindOf: ProportionalSplitterMorph]

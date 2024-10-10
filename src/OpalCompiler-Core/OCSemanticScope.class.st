@@ -34,18 +34,18 @@ Class {
 	#category : #'OpalCompiler-Core-Semantics'
 }
 
-{ #category : #testing }
-OCSemanticScope class >> isAbstract [ 
-	^self = OCSemanticScope 
+{ #category : 'testing' }
+OCSemanticScope class >> isAbstract [
+	^self = OCSemanticScope
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 OCSemanticScope >> allTemps [
 	^#()
 ]
 
-{ #category : #'code evaluation' }
-OCSemanticScope >> announceDoItEvaluation: aSourceString by: aSystemAnnouncer [ 
+{ #category : 'code evaluation' }
+OCSemanticScope >> announceDoItEvaluation: aSourceString by: aSystemAnnouncer [
 
 	aSystemAnnouncer evaluated: aSourceString context: nil
 ]
@@ -67,20 +67,19 @@ OCSemanticScope >> asDoItScopeForReceiver: anObject [
 
 { #category : #testing }
 OCSemanticScope >> hasBindingThatBeginsWith: aString [
-	
-	(self targetClass hasBindingThatBeginsWith: aString) ifTrue: [ ^true ].
-	
-	^super hasBindingThatBeginsWith: aString
 
+	(self targetClass hasBindingThatBeginsWith: aString) ifTrue: [ ^true ].
+
+	^super hasBindingThatBeginsWith: aString
 ]
 
-{ #category : #testing }
-OCSemanticScope >> isDoItScope [ 
+{ #category : 'testing' }
+OCSemanticScope >> isDoItScope [
 	^false
 ]
 
-{ #category : #lookup }
-OCSemanticScope >> lookupVar: name declare: aBoolean [
+{ #category : 'lookup' }
+OCSemanticScope >> lookupVar: name [
 
 	(self targetClass lookupLocalVar: name) ifNotNil: [ :v | ^v ].
 	(self targetEnvironment lookupVar: name) ifNotNil: [ :v | ^v ].	

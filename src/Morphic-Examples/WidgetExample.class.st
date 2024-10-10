@@ -13,12 +13,14 @@ WidgetExamples exampleTextEntryWithCompletionDialog.
 WidgetExamples exampleWindowWithToolbars.
 "
 Class {
-	#name : #WidgetExample,
-	#superclass : #Model,
-	#category : #'Morphic-Examples-Widgets'
+	#name : 'WidgetExample',
+	#superclass : 'Model',
+	#category : 'Morphic-Examples-Widgets',
+	#package : 'Morphic-Examples',
+	#tag : 'Widgets'
 }
 
-{ #category : #'private - accessing' }
+{ #category : 'private - accessing' }
 WidgetExample class >> builder [
 	"Answer a morph that implements TEasilyThemed but without honouring modality
 	for the example dialogs."
@@ -27,7 +29,7 @@ WidgetExample class >> builder [
 	^ExampleBuilderMorph new
 ]
 
-{ #category : #'examples - cleanup' }
+{ #category : 'examples - cleanup' }
 WidgetExample class >> closeExampleDialogs [
 	"Close the example dialogs."
 	"self closeExampleDialogs"
@@ -35,7 +37,7 @@ WidgetExample class >> closeExampleDialogs [
 	DialogWindowMorph allSubInstances do: [:d | d cancel]
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> colorControls [
 	"Open a window with examples of each of the color controls."
 	"self exampleColorControls"
@@ -62,7 +64,7 @@ WidgetExample class >> colorControls [
 	dialog openModal
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleBasicControls [
 	"Open a window with examples of each of the basic controls."
 	"self exampleBasicControls"
@@ -70,7 +72,7 @@ WidgetExample class >> exampleBasicControls [
 	|dialog builder radioModel treeModel|
 	builder := self builder.
 	dialog := (builder newPluggableDialogWindow: 'Example basic controls') useDefaultOKButton.
-	radioModel := ExampleRadioButtonModel new.
+	radioModel := RadioButtonModelExample new.
 	treeModel := Array with:(MorphWithSubmorphsWrapper with: self currentWorld).
 	dialog contentMorph: ((dialog newRow: {
 		dialog newLabelGroup: {
@@ -147,7 +149,7 @@ WidgetExample class >> exampleBasicControls [
 	dialog openModal
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleColorControls [
 	"Open a window with examples of each of the color controls."
 	"self exampleColorControls"
@@ -174,12 +176,12 @@ WidgetExample class >> exampleColorControls [
 	dialog openModal
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleDialogs [
 	"Open an example of each services dialog"
 	"self exampleDialogs"
 	<script>
-	
+
 	self builder
 		chooseFont: TextStyle default defaultFont;
 		chooseColor: (Color r: 0.529 g: 0.611 b: 0.004);
@@ -195,7 +197,7 @@ WidgetExample class >> exampleDialogs [
 		questionWithoutCancel: 'Save image as well?' title: 'Exiting application'
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleGroups [
 	"Open a window with examples of each of the group type morphs."
 	"self exampleGroups"
@@ -276,7 +278,7 @@ WidgetExample class >> exampleGroups [
 	dialog openModal
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleOtherControls [
 	"Open a window with examples of each of the other controls."
 	"self exampleOtherControls"
@@ -345,31 +347,31 @@ WidgetExample class >> exampleOtherControls [
 	dialog openModal
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleTextEntryWithCompletionDialog [
 
 	| applicants entryCompletion |
 	applicants := Smalltalk globals classNames sorted.
-	
+
 	entryCompletion := EntryCompletion new
 		                   dataSourceBlock: [ :currText | applicants ];
-		                   filterBlock: [ :currApplicant :currText | 
-			                   currText size > 3 and: [ 
+		                   filterBlock: [ :currApplicant :currText |
+			                   currText size > 3 and: [
 					                   currApplicant asUppercase includesSubstring:
 							                   currText asString asUppercase ] ].
-	UIManager default
+	MorphicUIManager new
 		request: 'Enter a class name fragment (at least 4 characters)'
 		initialAnswer: ''
 		title: 'Text entry with completion example: simple find a class'
 		entryCompletion: entryCompletion
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WidgetExample class >> exampleWindowWithToolbars [
 	"Open an example window with toolbars."
 	"self exampleWindowWithToolbars"
 	<script>
-	
+
 	| win fileMenu tools dock text holder |
 	win := StandardWindow new.
 	fileMenu := win newMenu.

@@ -5,62 +5,64 @@ self example1.
 self example2.
 "
 Class {
-	#name : #FTExampleMethodTableDataSource,
-	#superclass : #FTSimpleDataSource,
-	#category : #'Morphic-Widgets-FastTable-Examples'
+	#name : 'FTExampleMethodTableDataSource',
+	#superclass : 'FTSimpleDataSource',
+	#category : 'Morphic-Widgets-FastTable-Examples',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Examples'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 FTExampleMethodTableDataSource class >> for: aClass [
-	^ self basicNew 
+	^ self basicNew
 		initializeClass: aClass;
 		yourself
 ]
 
-{ #category : #accessing }
-FTExampleMethodTableDataSource >> cellColumn: column row: rowIndex [ 
+{ #category : 'accessing' }
+FTExampleMethodTableDataSource >> cellColumn: column row: rowIndex [
 	column id = '#' ifTrue: [ ^ FTCellMorph new addMorph: rowIndex asMorph ].
 	column id = 'Name' ifTrue: [ ^ self nameColumn: column row: rowIndex ].
 	column id = 'Protocol' ifTrue: [ ^ self protocolColumn: column row: rowIndex ].
 	column id = 'Origin' ifTrue: [ ^ self originColumn: column row: rowIndex ].
-	
+
 	self error: 'Invalid column'
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTExampleMethodTableDataSource >> colorFor: index [
 	"index odd ifTrue: [ ^ Smalltalk ui theme lightBackgroundColor ]."
 	^Color transparent "Smalltalk ui theme backgroundColor"
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTExampleMethodTableDataSource >> iconFor: rowIndex [
 	^ (self elementAt: rowIndex) actionOn: self
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTExampleMethodTableDataSource >> initializeClass: aClass [
 	self initialize.
 	self elements: ((aClass allSelectors sorted: [ :a :b | a < b ]) collect: [ :each | FTExampleMethodModel method: (aClass lookupSelector: each) ])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> menuColumn: column row: rowIndex [
-	rowIndex = 0 ifTrue: [ 
-		"I could answer a menu without selection, but in this case I will just answer nil, 
+	rowIndex = 0 ifTrue: [
+		"I could answer a menu without selection, but in this case I will just answer nil,
 		 which means 'no menu'"
 		^ nil ].
 
 	"protocols do not have associated menu"
 	column id = 'Name' ifTrue: [ ^ self nameMenuColumn: column row: rowIndex ].
-	column id = 'Origin' ifTrue: [ ^ self originMenuColumn: column row: rowIndex ].	
+	column id = 'Origin' ifTrue: [ ^ self originMenuColumn: column row: rowIndex ].
 
 	^ nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> nameColumn: column row: rowIndex [
-	^ FTCellMorph new  
+	^ FTCellMorph new
 		color: (self colorFor: rowIndex);
 		cellInset: 5;
 		addMorphBack: (self iconFor: rowIndex) asMorph;
@@ -68,12 +70,12 @@ FTExampleMethodTableDataSource >> nameColumn: column row: rowIndex [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> nameMenuColumn: column row: rowIndex [
 	| method menu |
 	method := (self elementAt: rowIndex) method.
-	menu := UIManager default newMenuIn: self table for: self.
-	menu add: ('Browse ', (method methodClass name), '>>#', method selector) 
+	menu := self morphicUIManager newMenuIn: self table for: self.
+	menu add: ('Browse ', (method methodClass name), '>>#', method selector)
 		target: method
 		selector: #browse.
 	menu add: ('Inspect #', (method methodClass name), '>>#', method selector)
@@ -83,27 +85,27 @@ FTExampleMethodTableDataSource >> nameMenuColumn: column row: rowIndex [
 	^ menu
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> originColumn: column row: rowIndex [
-	^ FTCellMorph new 
+	^ FTCellMorph new
 		color: (self colorFor: rowIndex);
 		addMorph: (self elementAt: rowIndex) origin name asMorph;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> originMenuColumn: column row: rowIndex [
 	| method menu |
 	method := (self elementAt: rowIndex) method.
-	menu := UIManager default newMenuIn: self table for: self.
-	menu add: ('Browse ', (method methodClass name)) 
+	menu := self morphicUIManager newMenuIn: self table for: self.
+	menu add: ('Browse ', (method methodClass name))
 		target: method methodClass
 		selector: #browse.
 
 	^ menu
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> protocolColumn: column row: rowIndex [
 	^ FTCellMorph new
 		color: (self colorFor: rowIndex);
@@ -111,10 +113,10 @@ FTExampleMethodTableDataSource >> protocolColumn: column row: rowIndex [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTExampleMethodTableDataSource >> searchText: aString [
 	aString isEmptyOrNil ifTrue: [ ^ #() ].
-	
+
 	self elements withIndexDo: [ :each :index |
 		( each name beginsWith: aString)
 			ifTrue: [ ^ { index } ] ].

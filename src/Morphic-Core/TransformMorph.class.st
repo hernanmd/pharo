@@ -14,17 +14,19 @@ instance var	type				description
 TransformMorphs operate with two different display strategies, depending on whether the transformation is a pure translation or not.  If so, then they simply use a clipping canvas and display their submorphs with the appropriate offset.  If the transformation includes scaling or rotation, then a caching canvas is used, whose active area covers the fullBounds of the submorphs intersected with the source quadrilateral corresponding to the window bounds.
 "
 Class {
-	#name : #TransformMorph,
-	#superclass : #Morph,
+	#name : 'TransformMorph',
+	#superclass : 'Morph',
 	#instVars : [
 		'transform',
 		'smoothing',
 		'localBounds'
 	],
-	#category : #'Morphic-Core-Support'
+	#category : 'Morphic-Core-Support',
+	#package : 'Morphic-Core',
+	#tag : 'Support'
 }
 
-{ #category : #menu }
+{ #category : 'menu' }
 TransformMorph >> addCustomMenuItems: aCustomMenu hand: aHandMorph [
 	super addCustomMenuItems: aCustomMenu hand: aHandMorph.
 	smoothing = 1
@@ -32,12 +34,12 @@ TransformMorph >> addCustomMenuItems: aCustomMenu hand: aHandMorph [
 		ifFalse: [aCustomMenu add: 'turn off smoothing' selector: #smoothingOff]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> angle [
 	^ transform angle
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> angle: newAngle [
 
 	self changed.
@@ -46,27 +48,27 @@ TransformMorph >> angle: newAngle [
 	self changed
 ]
 
-{ #category : #'change reporting' }
+{ #category : 'change reporting' }
 TransformMorph >> areasRemainingToFill: aRectangle [
 
 	^Array with: aRectangle
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> clipSubmorphs [
 	"Answer true since we do!
 	This avoids the senseless over-invalidation
 	with lists etc."
-	
+
 	^true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> colorForInsets [
 	^ owner ifNil: [color] ifNotNil: [owner color]
 ]
 
-{ #category : #'geometry testing' }
+{ #category : 'geometry testing' }
 TransformMorph >> containsPoint: aPoint [
 	(bounds containsPoint: aPoint) ifFalse: [ ^ false ].
 	^ self hasSubmorphs
@@ -77,24 +79,24 @@ TransformMorph >> containsPoint: aPoint [
 		ifFalse: [ true ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TransformMorph >> defaultColor [
 	"answer the default color/fill style for the receiver"
 	^ Color lightGreen
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> extent: aPoint [
 	"Changed to not cause layoutChanged on the receiver."
-	
+
 	bounds extent = aPoint ifTrue: [^ self].
 	self changed.
 	bounds := (bounds topLeft extent: aPoint) rounded.
 	super layoutChanged. "skip submorph bounds recalculation"
-	self changed.
+	self changed
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TransformMorph >> fullBounds [
 	"Overridden to clip submorph hit detection to my bounds."
 	"It might be better to override doLayoutIn:, and remove this method"
@@ -105,30 +107,30 @@ TransformMorph >> fullBounds [
 	^ fullBounds
 ]
 
-{ #category : #'dropping/grabbing' }
+{ #category : 'dropping/grabbing' }
 TransformMorph >> grabTransform [
 	"Return the transform for the receiver which should be applied during grabbing"
 	^owner ifNil:[self transform] ifNotNil:[owner grabTransform composedWithLocal: self transform]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TransformMorph >> initialize [
 	"initialize the state of the receiver"
 	super initialize.
-	
+
 	smoothing := 1.
 	transform := MorphicTransform identity
 ]
 
-{ #category : #'change reporting' }
+{ #category : 'change reporting' }
 TransformMorph >> invalidRect: damageRect from: aMorph [
 	"Translate damage reports from submorphs by the scrollOffset."
 	aMorph == self
 		ifTrue:[super invalidRect: damageRect from: self]
-		ifFalse:[super invalidRect: (((transform localBoundsToGlobal: damageRect) intersect: bounds ifNone: [ ^ self ] ) expandBy: 1) from: self].
+		ifFalse:[super invalidRect: (((transform localBoundsToGlobal: damageRect) intersect: bounds ifNone: [ ^ self ] ) expandBy: 1) from: self]
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 TransformMorph >> layoutChanged [
 
 	"A submorph could have moved, thus changing my localBounds. Invalidate the cache."
@@ -137,7 +139,7 @@ TransformMorph >> layoutChanged [
 	^super layoutChanged
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 TransformMorph >> localSubmorphBounds [
 	"Answer, in my coordinate system, the bounds of all my submorphs (or nil if no submorphs). We will cache this value for performance. The value is invalidated upon recieving #layoutChanged."
 
@@ -145,12 +147,12 @@ TransformMorph >> localSubmorphBounds [
 		self submorphsDo:[:m |
 			localBounds ifNil: [localBounds := m fullBounds]
 						ifNotNil: [localBounds := localBounds quickMerge: m fullBounds]].
-	].	
+	].
 
 	^ localBounds
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 TransformMorph >> localVisibleSubmorphBounds [
 	"Answer, in my coordinate system, the bounds of all my visible submorphs (or nil if no visible submorphs)"
 	| subBounds |
@@ -164,7 +166,7 @@ TransformMorph >> localVisibleSubmorphBounds [
 	^subBounds
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 TransformMorph >> numberOfItemsInView [
 	"Answer the number of my submorphs whose (transformed) bounds intersect mine.
 	This includes items that are only partially visible.
@@ -173,7 +175,7 @@ TransformMorph >> numberOfItemsInView [
 	^(submorphs select: [ :ea | self innerBounds intersects: (transform localBoundsToGlobal: ea bounds) ]) size
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 TransformMorph >> numberOfItemsPotentiallyInView [
 
 	"Answer the number of items that could potentially be viewed in full,
@@ -183,8 +185,8 @@ TransformMorph >> numberOfItemsPotentiallyInView [
 	^ self numberOfItemsPotentiallyInViewWith: self submorphCount
 ]
 
-{ #category : #geometry }
-TransformMorph >> numberOfItemsPotentiallyInViewWith: listSize [ 
+{ #category : 'geometry' }
+TransformMorph >> numberOfItemsPotentiallyInViewWith: listSize [
 	"This is a refactoring for numberOfItemsPotentiallyInView because in some cases the numberOfSubmorhps
 	needs to be passed from the outside. "
 	| height |
@@ -193,95 +195,95 @@ TransformMorph >> numberOfItemsPotentiallyInViewWith: listSize [
 	^ self innerBounds height // (height / listSize)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> offset [
 	^ transform offset + self innerBounds topLeft
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> offset: newOffset [
 
 	transform := transform withOffset: newOffset - self innerBounds topLeft.
 	self changed
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TransformMorph >> privateFullMoveBy: delta [
 	"Private! Relocate me, but not my subMorphs."
 
 	self privateMoveBy: delta.
-	transform :=  (transform asMorphicTransform) withOffset: (transform offset - delta).
+	transform :=  (transform asMorphicTransform) withOffset: (transform offset - delta)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> scale [
 	^ transform scale
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> scale: newScale [
 
 	self changed.
 	transform := transform withScale: newScale.
 	self layoutChanged.
-	self changed.
+	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> setOffset: newOffset angle: newAngle scale: newScale [
 
 	transform := MorphicTransform offset: newOffset angle: newAngle scale: newScale.
 	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> smoothing [
 	^smoothing
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> smoothing: cellSize [
 	smoothing := cellSize.
 	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> smoothingOff [
 	smoothing := 1.
 	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> smoothingOn [
 	smoothing := 2.
 	self changed
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 TransformMorph >> submorphBounds [
 	"Answer, in owner coordinates, the bounds of my visible submorphs, or my bounds"
-	^ (self localVisibleSubmorphBounds ifNotNil: [ :box |transform localBoundsToGlobal: box ] ifNil: [ self bounds ]) truncated.
+	^ (self localVisibleSubmorphBounds ifNotNil: [ :box |transform localBoundsToGlobal: box ] ifNil: [ self bounds ]) truncated
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> transform [
 	^transform
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TransformMorph >> transform: aTransform [
-	transform := aTransform.
+	transform := aTransform
 ]
 
-{ #category : #'event handling' }
-TransformMorph >> transformFrom: uberMorph [ 
+{ #category : 'event handling' }
+TransformMorph >> transformFrom: uberMorph [
 	"Return a transform to map coorinates of uberMorph, a morph above me in my owner chain, into the coordinates of my submorphs."
 
 	(self == uberMorph or: [owner isNil]) ifTrue: [^transform].
 	^(owner transformFrom: uberMorph) composedWithLocal: transform
 ]
 
-{ #category : #'halos and balloon help' }
+{ #category : 'halos and balloon help' }
 TransformMorph >> wantsHaloFromClick [
 	^ false
 ]

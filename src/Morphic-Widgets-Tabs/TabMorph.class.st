@@ -7,8 +7,8 @@ This morph can in fact be anything responding to #asMorph. Moreover it could be 
 I also have a state representing if I am selecting or not, enabled or not, etc
 "
 Class {
-	#name : #TabMorph,
-	#superclass : #Morph,
+	#name : 'TabMorph',
+	#superclass : 'Morph',
 	#instVars : [
 		'closeable',
 		'label',
@@ -26,10 +26,12 @@ Class {
 	#classVars : [
 		'Icons'
 	],
-	#category : #'Morphic-Widgets-Tabs-Morphs'
+	#category : 'Morphic-Widgets-Tabs-Morphs',
+	#package : 'Morphic-Widgets-Tabs',
+	#tag : 'Morphs'
 }
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> closeHalfOverIcon [
 
 	^ Icons
@@ -37,7 +39,7 @@ TabMorph class >> closeHalfOverIcon [
 		ifAbsentPut: [ self closeHalfOverIconContents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> closeHalfOverIconContents [
 
 	^ Form
@@ -47,7 +49,7 @@ TabMorph class >> closeHalfOverIconContents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> closeIcon [
 
 	^ Icons
@@ -55,7 +57,7 @@ TabMorph class >> closeIcon [
 		ifAbsentPut: [ self closeIconContents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> closeIconContents [
 
 	^ Form
@@ -65,7 +67,7 @@ TabMorph class >> closeIconContents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> closeOverIcon [
 
 	^ Icons
@@ -73,7 +75,7 @@ TabMorph class >> closeOverIcon [
 		ifAbsentPut: [ self closeOverIconContents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> closeOverIconContents [
 
 	^ Form
@@ -83,18 +85,18 @@ TabMorph class >> closeOverIconContents [
 		offset: 0@0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph class >> defaultHeight [
 	^ 22
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 TabMorph class >> initialize [
 
-	Icons := Dictionary new.
+	Icons := Dictionary new
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 TabMorph class >> label: label icon: icon morph: morph [
 
 	^ self new
@@ -104,7 +106,7 @@ TabMorph class >> label: label icon: icon morph: morph [
 		yourself
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 TabMorph class >> label: label icon: icon morph: morph actions: aCollection [
 
 	^ self new
@@ -115,7 +117,7 @@ TabMorph class >> label: label icon: icon morph: morph actions: aCollection [
 		yourself
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 TabMorph class >> label: label icon: icon retrievingBlock: morph [
 
 	^ self new
@@ -125,7 +127,7 @@ TabMorph class >> label: label icon: icon retrievingBlock: morph [
 		yourself
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 TabMorph class >> label: label icon: icon retrievingBlock: morph actions: aCollection [
 
 	^ self new
@@ -136,29 +138,29 @@ TabMorph class >> label: label icon: icon retrievingBlock: morph actions: aColle
 		yourself
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> menuIcon [
 
 	^ self theme windowMenuForm
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon1 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon1
 		ifAbsentPut: [ self refreshIcon1Contents ]
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon10 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon10
 		ifAbsentPut: [ self refreshIcon10Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon10Contents [
 
 	^ Form
@@ -168,7 +170,7 @@ TabMorph class >> refreshIcon10Contents [
 		offset: 0@0
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon1Contents [
 
 	^ Form
@@ -178,15 +180,15 @@ TabMorph class >> refreshIcon1Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon2 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon2
 		ifAbsentPut: [ self refreshIcon2Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon2Contents [
 
 	^ Form
@@ -196,15 +198,15 @@ TabMorph class >> refreshIcon2Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon3 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon3
 		ifAbsentPut: [ self refreshIcon3Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon3Contents [
 
 	^ Form
@@ -214,15 +216,15 @@ TabMorph class >> refreshIcon3Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon4 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon4
 		ifAbsentPut: [ self refreshIcon4Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon4Contents [
 
 	^ Form
@@ -232,15 +234,15 @@ TabMorph class >> refreshIcon4Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon5 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon5
 		ifAbsentPut: [ self refreshIcon5Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon5Contents [
 
 	^ Form
@@ -250,15 +252,15 @@ TabMorph class >> refreshIcon5Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon6 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon6
 		ifAbsentPut: [ self refreshIcon6Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon6Contents [
 
 	^ Form
@@ -268,15 +270,15 @@ TabMorph class >> refreshIcon6Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon7 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon7
 		ifAbsentPut: [ self refreshIcon7Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon7Contents [
 
 	^ Form
@@ -286,15 +288,15 @@ TabMorph class >> refreshIcon7Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon8 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon8
 		ifAbsentPut: [ self refreshIcon8Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon8Contents [
 
 	^ Form
@@ -304,15 +306,15 @@ TabMorph class >> refreshIcon8Contents [
 		offset: 0@0
 ]
 
-{ #category : #icons }
+{ #category : 'icons' }
 TabMorph class >> refreshIcon9 [
 
-	^ Icons 
+	^ Icons
 		at: #refreshIcon9
 		ifAbsentPut: [ self refreshIcon9Contents ]
 ]
 
-{ #category : #'icons - contents' }
+{ #category : 'icons - contents' }
 TabMorph class >> refreshIcon9Contents [
 
 	^ Form
@@ -322,66 +324,66 @@ TabMorph class >> refreshIcon9Contents [
 		offset: 0@0
 ]
 
-{ #category : #'private - constants' }
+{ #category : 'private - constants' }
 TabMorph >> actionOffset [
 
 	^ 4 * self displayScaleFactor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> actions [
 
 	^ actions
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> actions: aCollection [
 
 	actions := aCollection.
 	self triggerEvent: #actionsChanged with: self
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> addAction: anAction [
 
 	actions add: anAction
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> addActions: aCollection [
 
 	actions addAll: aCollection
 ]
 
-{ #category : #'icons - actions' }
+{ #category : 'icons - actions' }
 TabMorph >> addActionsToIcon [
 
-	closeIcon 
+	closeIcon
 		on: #mouseEnter send: #mouseEnterIcon to: self;
 		on: #click send: #close to: self;
 		on: #mouseLeave send: #mouseLeaveIcon to: self
 ]
 
-{ #category : #'private - icons' }
+{ #category : 'private - icons' }
 TabMorph >> addIcon [
 
 	self
-		addMorph: closeIcon 
+		addMorph: closeIcon
 		fullFrame: (LayoutFrame identity
 			bottomFraction: 0;
 			leftFraction: 1;
-			topOffset: 6 * self displayScaleFactor; 
+			topOffset: 6 * self displayScaleFactor;
 			leftOffset: self iconRightOffset negated - (12 * self displayScaleFactor);
 			rightOffset: self iconRightOffset negated;
-			bottomOffset: (18 * self displayScaleFactor); 
+			bottomOffset: (18 * self displayScaleFactor);
 			yourself)
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> addLabel [
 
 	self
-		addMorph: label 
+		addMorph: label
 		fullFrame: (LayoutFrame identity
 			topFraction: 1;
 			leftOffset: self labelRightOffset;
@@ -389,10 +391,10 @@ TabMorph >> addLabel [
 			yourself)
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> addRefreshMenuItemOn: aMenu [
 	"I have a block for retrieving my contents, so I install a menu action for this"
-	
+
 	retrievingBlock ifNil: [ ^ self ].
 	aMenu addLine.
 	aMenu
@@ -401,53 +403,53 @@ TabMorph >> addRefreshMenuItemOn: aMenu [
 		selector: #refreshContent
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> addToSelection [
 
 	self triggerEvent: #tabAddedToSelection with: self.
-	
+
 	"No need to change here since the toolbar I belong to will do it"
 ]
 
-{ #category : #'private - drawing' }
+{ #category : 'private - drawing' }
 TabMorph >> backgroundColor [
 	^ state backgroundColor
 ]
 
-{ #category : #'meta-actions' }
+{ #category : 'meta-actions' }
 TabMorph >> blueButtonUp: anEvent [
 	super blueButtonUp: anEvent.
 	self close
 ]
 
-{ #category : #'private - drawing' }
+{ #category : 'private - drawing' }
 TabMorph >> borderColor [
 	"I do not use #borderColor because I want a light border"
 	^ self theme lightBackgroundColor
 ]
 
-{ #category : #'private - drawing' }
+{ #category : 'private - drawing' }
 TabMorph >> buildBorderVertices [
-	
+
 	^ state buildBorderVertices
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> buildLabel: text withIcon: icon [
-	
+
 	^ (TabLabelItemMorph tab: self)
 		morph:	text asMorph;
 		icon: (AlphaImageMorph new image: icon);
 		yourself
 ]
 
-{ #category : #'private - drawing' }
+{ #category : 'private - drawing' }
 TabMorph >> buildVerticesFrom: borderVertices [
-	
+
 	^ state buildVerticesFrom: borderVertices
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> close [
 
 	closeable ifFalse: [ ^ self ].
@@ -455,31 +457,31 @@ TabMorph >> close [
 	self delete
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> closeable [
 	^ closeable
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> closeable: anObject [
 
 	closeable := anObject.
-	anObject 
+	anObject
 		ifTrue: [ self showCloseIcon ]
 		ifFalse: [ self hideCloseIcon ]
 ]
 
-{ #category : #'accessing - defaults' }
+{ #category : 'accessing - defaults' }
 TabMorph >> defaultBounds [
 	^ 0@0 corner: (100@(self class defaultHeight)) * self displayScaleFactor
 ]
 
-{ #category : #'private - icons' }
+{ #category : 'private - icons' }
 TabMorph >> defaultIcon [
 	^ self iconNamed: #blankIcon
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> delete [
 
 	super delete.
@@ -488,20 +490,20 @@ TabMorph >> delete [
 	self triggerEvent: #tabDeleted with: self
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 TabMorph >> drawOn: aCanvas [
 	| borderVertices vertices |
-	
+
 	borderVertices := self buildBorderVertices.
 	vertices := self buildVerticesFrom: borderVertices.
-	
+
 	aCanvas
 		drawPolygon: vertices
 		color: self backgroundColor
 		borderWidth: 0
 		borderColor: Color transparent.
-		
-	borderVertices overlappingPairsDo: [ :start :end | 
+
+	borderVertices overlappingPairsDo: [ :start :end |
 		aCanvas
 			line: start
 			to: end
@@ -509,92 +511,92 @@ TabMorph >> drawOn: aCanvas [
 			color: self borderColor ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> enabled [
-	
+
 	^ state enabled
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> enabled: aBoolean [
 
 	(state isEnabledMatchingTheState: aBoolean) ifTrue: [ ^ self ].
-	
+
 	state := state newStateForEnabled: aBoolean.
 	label enabled: aBoolean.
 	self changed
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> extraSpaceForActions [
 	| space offsets |
-	
+
 	space := 0.
 	offsets := 1.
-	
-	self hasMenu ifTrue: [ 
+
+	self hasMenu ifTrue: [
 		offsets := offsets +1.
 		space := space + self menuIcon width ].
-	
-	self actions do: [ :each | 
+
+	self actions do: [ :each |
 		space := space + each icon width.
 		offsets := offsets +1 ].
-	
+
 	^ space + (offsets * self actionOffset)
 ]
 
-{ #category : #'events - processing' }
+{ #category : 'events - processing' }
 TabMorph >> handleMouseUp: anEvent [
 	anEvent blueButtonChanged
 		ifTrue: [ self blueButtonUp: anEvent ]
 		ifFalse: [ super handleMouseUp: anEvent ]
 ]
 
-{ #category : #'events - handling' }
+{ #category : 'events - handling' }
 TabMorph >> handlesMouseDown: event [
 
 	^ true
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> hasActions [
 
 	^ actions notEmpty
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> hasMenu [
 
-	^ menu notNil or: [ retrievingBlock notNil ]
+	^ menu isNotNil or: [ retrievingBlock isNotNil ]
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> hideCloseIcon [
 
 	closeIcon hide
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> icon [
 
 	^ label icon
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> icon: anIcon [
 
-	anIcon 
+	anIcon
 		ifNil: [ label icon: nil ]
 		ifNotNil: [ label icon: (AlphaImageMorph new image: anIcon) ]
 ]
 
-{ #category : #'private - constants' }
+{ #category : 'private - constants' }
 TabMorph >> iconRightOffset [
 
 	^ 10 * self displayScaleFactor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TabMorph >> initialize [
 	super initialize.
 
@@ -612,66 +614,66 @@ TabMorph >> initialize [
 	self addActionsToIcon
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> label [
 	^ label
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> label: aString [
 
 	label morph: aString asMorph
 ]
 
-{ #category : #'private - constants' }
+{ #category : 'private - constants' }
 TabMorph >> labelBottomOffset [
 
 	^ 5 * self displayScaleFactor
 ]
 
-{ #category : #'private - constants' }
+{ #category : 'private - constants' }
 TabMorph >> labelRightOffset [
 
 	^ 12 * self displayScaleFactor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> menu [
 	| newMenu |
-	
+
 	newMenu := MenuMorph new defaultTarget: self.
 	menu ifNotNil: [ menu cull: newMenu ].
-	
+
 	self addRefreshMenuItemOn: newMenu.
-	
+
 	^ newMenu
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> menu: aMenu [
-	
+
 	menu := aMenu
 ]
 
-{ #category : #'private - icons' }
+{ #category : 'private - icons' }
 TabMorph >> menuIcon [
-	
+
 	^ self class menuIcon
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> model [
 
 	^ model
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> model: aModel [
 
 	model := aModel
 ]
 
-{ #category : #'private - tab label' }
+{ #category : 'private - tab label' }
 TabMorph >> modifyClippingBounds: clippingBounds [
 	| rightOffset |
 
@@ -681,25 +683,25 @@ TabMorph >> modifyClippingBounds: clippingBounds [
 	^ clippingBounds withRight: (clippingBounds right + rightOffset) * self displayScaleFactor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> morph [
 
 	^ morph
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> morph: anObject [
 
 	morph := anObject.
 	self triggerEvent: #tabRefreshed with: self
 ]
 
-{ #category : #'events - handling' }
+{ #category : 'events - handling' }
 TabMorph >> mouseDown: event [
 	self flag: #pharoTodo. "Add drag"
 ]
 
-{ #category : #'icons - actions' }
+{ #category : 'icons - actions' }
 TabMorph >> mouseEnterIcon [
 
 	closeable ifFalse: [ ^ self ].
@@ -707,119 +709,119 @@ TabMorph >> mouseEnterIcon [
 	closeIcon image: self class closeOverIcon
 ]
 
-{ #category : #'icons - actions' }
+{ #category : 'icons - actions' }
 TabMorph >> mouseLeaveIcon [
 
 	closeable ifFalse: [ ^ self ].
 	fadeOut ifNotNil: [ fadeOut terminate ].
-	fadeOut := [ 
+	fadeOut := [
 		closeIcon image: self class closeHalfOverIcon.
-		50 milliSeconds asDelay wait.
+		(Delay forMilliseconds: 50) wait.
 		closeIcon image: self class closeIcon ] fork
 ]
 
-{ #category : #'events - handling' }
+{ #category : 'events - handling' }
 TabMorph >> mouseUp: event [
 
 	(event commandKeyPressed or: [ event controlKeyPressed ])
 		ifTrue: [ self toggleSelection ]
-		ifFalse: [ 
+		ifFalse: [
 			event shiftPressed
 				ifTrue: [ self selectToMe ]
 				ifFalse: [ self selected: true ] ]
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> okToClose [
 	model ifNil: [ ^true ].
 	^model okToClose
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> refreshContent [
-	
+
 	morph := nil.
 	self triggerEvent: #tabEmptyContents with: self.
-	
+
 	"Trigger the update"
-	self softRetrieveMorph.
+	self softRetrieveMorph
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> removeFromSelection [
 
 	self triggerEvent: #tabRemovedFromSelection with: self.
-	
+
 	"No need to change here since the toolbar I belong to will do it"
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> retrieveMorph: aBlock [
 	"This is a hard request. The result is blocking contrary to softRetrieveMorph.
 	Late binding so the morph may be built only on demand"
 
-	morph ifNotNil: [ 
+	morph ifNotNil: [
 		aBlock value: morph.
 		^ nil ].
 	retrievingSemaphore isSignaled
 		ifFalse: [ self softRetrieveMorph ].
 
 	^ [ retrievingSemaphore wait.
-		morph ifNotNil: [ 
-			UIManager default defer: [aBlock value: morph ]]] 
+		morph ifNotNil: [
+			self morphicUIManager defer: [aBlock value: morph ]]]
 				fork
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> retrievingBlock: anObject [
 
 	retrievingBlock := anObject.
-	retrievingBlock ifNotNil: [ self softRetrieveMorph ].
+	retrievingBlock ifNotNil: [ self softRetrieveMorph ]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> selectToMe [
 
 	self triggerEvent: #tabSelectTo with: self.
-	
+
 	"No need to change here since the toolbar I belong to will do it"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> selected [
-	
+
 	^ state selected
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> selected: aBoolean [
 
-	(state isSelectedMatchingTheState: aBoolean) 
+	(state isSelectedMatchingTheState: aBoolean)
 		ifTrue: [ ^ self triggerEvent: #tabResetSelection with: self ].
-	
+
 	state := state newStateForSelected: aBoolean.
 	aBoolean
-		ifTrue: [ 
+		ifTrue: [
 			self triggerEvent: #tabSelected with: self.
 			self showCloseIcon ].
-	
+
 	"No need to change here since the toolbar Ibelong to will do it"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TabMorph >> setActionsFrom: aBlock [
 
 	self actions: aBlock value
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> showCloseIcon [
 
 	closeable
 		ifTrue: [ closeIcon show ]
 ]
 
-{ #category : #'private - tab label' }
+{ #category : 'private - tab label' }
 TabMorph >> showIconTreshold [
 
 	^ (closeIcon visible
@@ -827,36 +829,36 @@ TabMorph >> showIconTreshold [
 		ifFalse: [ 40 ]) * self displayScaleFactor
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> silentlySelected: aBoolean [
 
-	(state isSelectedMatchingTheState: aBoolean) 
+	(state isSelectedMatchingTheState: aBoolean)
 		ifTrue: [ ^ self ].
-	
+
 	state := state newStateForSelected: aBoolean.
 	aBoolean
 		ifTrue: [ self showCloseIcon ].
-	
+
 	"No need to change here since the toolbar Ibelong to will do it"
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> softRetrieveMorph [
 	| oldIcon |
-	"Like retrieveMorph but done in a separated process"	
-	morph ifNotNil: [ ^ self ].	
-	retrievingProcess 
-		ifNotNil: [ 
+	"Like retrieveMorph but done in a separated process"
+	morph ifNotNil: [ ^ self ].
+	retrievingProcess
+		ifNotNil: [
 			"The retrieving process is already running, let's wait for its result"
-			retrievingProcess isTerminated 
+			retrievingProcess isTerminated
 				ifFalse: [ ^ self ] ].
-	
+
 	oldIcon := self icon ifNotNil: [ :i | i form ].
 	label icon: TabBuildingIconMorph new.
 	retrievingProcess := [ [
 		morph := retrievingBlock value]
-	ensure: [		
-		UIManager default defer: [
+	ensure: [
+		self morphicUIManager defer: [
 			self icon: oldIcon.
 			self triggerEvent: #tabRefreshed with: self].
 		"I should signal all waiters here"
@@ -864,13 +866,13 @@ TabMorph >> softRetrieveMorph [
 	] ] forkAt: Processor activePriority - 2
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> themeChanged [
 	super themeChanged.
 	morph ifNotNil: #themeChanged
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 TabMorph >> toggleSelection [
 
 	self selected
@@ -878,7 +880,7 @@ TabMorph >> toggleSelection [
 		ifFalse: [ self addToSelection ]
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> updateShowIcon [
 
 	(self selected not and: [ self width < 100 ])
@@ -886,12 +888,13 @@ TabMorph >> updateShowIcon [
 		ifFalse: [ self showCloseIcon ]
 ]
 
-{ #category : #protocol }
+{ #category : 'protocol' }
 TabMorph >> waitReadyMorphFor: timeoutDuration [
 	"This method allow wait some small duration until morph will be ready.
 	Clients could use it to not show loading progress if it is really fast process.
 	Instead some blinking could happen"
 
-	morph ifNotNil: [ ^self].
-	retrievingSemaphore wait: timeoutDuration
+	morph ifNotNil: [ ^ self ].
+	retrievingSemaphore waitTimeoutMilliseconds:
+		timeoutDuration asMilliSeconds
 ]

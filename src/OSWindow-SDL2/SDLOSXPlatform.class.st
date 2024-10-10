@@ -2,91 +2,70 @@
 I execute specific operations on SDL for OSX
 "
 Class {
-	#name : #SDLOSXPlatform,
-	#superclass : #SDLAbstractPlatform,
-	#category : #'OSWindow-SDL2-Bindings'
+	#name : 'SDLOSXPlatform',
+	#superclass : 'SDLAbstractPlatform',
+	#category : 'OSWindow-SDL2-Platforms',
+	#package : 'OSWindow-SDL2',
+	#tag : 'Platforms'
 }
 
-{ #category : #operations }
+{ #category : 'operations' }
 SDLOSXPlatform >> afterMainPharoWindowCreated: aOSSDLWindow [
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 SDLOSXPlatform >> afterSetWindowTitle: aString onWindow: aOSSDLWindow [
 
 	| aParam cocoaWindow wmInfo selector |
-	aParam := self nsStringOf: aString.
+	aParam := ObjCLibrary uniqueInstance nsStringOf: aString.
 
 	wmInfo := aOSSDLWindow backendWindow getWMInfo.
 	cocoaWindow := wmInfo info cocoa window.
 
-	selector := self lookupSelector: 'setTitleWithRepresentedFilename:'.
+	selector := ObjCLibrary uniqueInstance lookupSelector: 'setTitleWithRepresentedFilename:'.
 
-	self sendMessage: selector to: cocoaWindow getHandle with: aParam.
-	
-	self release: aParam.
+	ObjCLibrary uniqueInstance sendMessage: selector to: cocoaWindow getHandle with: aParam.
+
+	ObjCLibrary uniqueInstance release: aParam
 ]
 
-{ #category : #'ffi-calls' }
-SDLOSXPlatform >> ffiLibraryName [
+{ #category : 'private - initialization' }
+SDLOSXPlatform >> allowTouchpadInertia [
 
-	^ 'libobjc.dylib'
-]
+	| nsUserDefaultsClass standardUserDefaultsSel standardUserDefaults key setBoolForKeySel |
+	nsUserDefaultsClass := ObjCLibrary uniqueInstance lookupClass: 'NSUserDefaults'.
 
-{ #category : #initialization }
-SDLOSXPlatform >> initPlatformSpecific [ 
-	| sel cls |
+	standardUserDefaultsSel := ObjCLibrary uniqueInstance
+		                           lookupSelector: 'standardUserDefaults'.
 
-	sel := self lookupSelector: 'sharedApplication'.
-	cls := self lookupClass: 'NSApplication'.
-	self sendMessage: sel to: cls
-]
+	standardUserDefaults := ObjCLibrary uniqueInstance
+		                        sendMessage: standardUserDefaultsSel
+		                        to: nsUserDefaultsClass.
 
-{ #category : #'utilities - objectiveC' }
-SDLOSXPlatform >> lookupClass: aString [
+	key := ObjCLibrary uniqueInstance nsStringOf: 'AppleMomentumScrollSupported'.
 
-	^ self ffiCall: #(void* objc_lookUpClass(char *aString))
-]
+	setBoolForKeySel := ObjCLibrary uniqueInstance lookupSelector:
+		                    'setBool:forKey:'.
 
-{ #category : #'utilities - objectiveC' }
-SDLOSXPlatform >> lookupSelector: aString [
-
-	^ self ffiCall: #(void* sel_registerName(const char *aString))
-]
-
-{ #category : #'utilities - objectiveC' }
-SDLOSXPlatform >> nsStringOf: aString [ 
-
-	| class selector encoded param |
-	class := self lookupClass: 'NSString'.
-	selector:= self lookupSelector: 'stringWithUTF8String:'.
-	
-	encoded := aString utf8Encoded.
-	param := ByteArray new: encoded size + 1.
-	param pinInMemory.
-	
-	LibC memCopy: encoded to: param size: encoded size.
-	param at: encoded size + 1 put: 0.
+	ObjCLibrary uniqueInstance
+		sendMessage: setBoolForKeySel
+		to: standardUserDefaults
+		with: (ExternalAddress fromAddress: 1)
+		with: key.
 		
-	^ self sendMessage: selector to: class with: param
+	ObjCLibrary uniqueInstance release: key.
 ]
 
-{ #category : #'utilities - objectiveC' }
-SDLOSXPlatform >> release: aObjCObject [ 
+{ #category : 'initialization' }
+SDLOSXPlatform >> initPlatformSpecific [
 
-	| releaseSelector |
-	releaseSelector:= self lookupSelector: 'release'.
-	self sendMessage: releaseSelector to: aObjCObject.
-]
+	| sharedApplication |
+	sharedApplication := ObjCLibrary uniqueInstance sharedApplication.
+	
+	ObjCLibrary uniqueInstance sendMessage: (ObjCLibrary uniqueInstance lookupSelector: 'finishLaunching') to: sharedApplication.
+	
+	SDLOSXPharoMenu uniqueInstance installInOSXWindow.
+	
+	self allowTouchpadInertia.
 
-{ #category : #'utilities - objectiveC' }
-SDLOSXPlatform >> sendMessage: sel to: cls [
-
-	^ self ffiCall: #(void* objc_msgSend(void* cls, void* sel))
-]
-
-{ #category : #'utilities - objectiveC' }
-SDLOSXPlatform >> sendMessage: sel to: rcv with: aParam [
-
-	^ self ffiCall: #(void* objc_msgSend(void* rcv, void* sel, void* aParam))
 ]

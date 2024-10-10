@@ -1,6 +1,6 @@
-Extension { #name : #FormCanvas }
+Extension { #name : 'FormCanvas' }
 
-{ #category : #'*Morphic-Base' }
+{ #category : '*Morphic-Base' }
 FormCanvas >> drawString: aString from: firstIndex to: lastIndex autoBoundAt: aPoint font: fontOrNil color: c [
 	| font textStyle portRect bounds character width carriageReturn lineWidth lineHeight |
 	carriageReturn := Character cr.
@@ -8,7 +8,7 @@ FormCanvas >> drawString: aString from: firstIndex to: lastIndex autoBoundAt: aP
 	font := StandardFonts codeFont.
 	textStyle := font textStyle.
 	lineHeight := textStyle lineGrid.
-	1 to: aString size do: [ :i | 
+	1 to: aString size do: [ :i |
 		character := aString at: i.
 		width := character = carriageReturn
 			ifTrue: [ lineWidth := lineWidth max: width.
@@ -29,7 +29,7 @@ FormCanvas >> drawString: aString from: firstIndex to: lastIndex autoBoundAt: aP
 	port fill: bounds fillColor: Color white rule: Form paint.
 	font installOn: port foregroundColor: c backgroundColor: Color white.
 	aString lines
-		doWithIndex: [ :line :index | 
+		doWithIndex: [ :line :index |
 			font
 				displayString: line
 				on: port
@@ -40,7 +40,7 @@ FormCanvas >> drawString: aString from: firstIndex to: lastIndex autoBoundAt: aP
 	port clipRect: portRect
 ]
 
-{ #category : #'*Morphic-Base' }
+{ #category : '*Morphic-Base' }
 FormCanvas >> roundCornersOf: aMorph in: bounds during: aBlock [
 	aMorph wantsRoundedCorners ifFalse:[^aBlock value].
 	(self seesNothingOutside: (CornerRounder rectWithinCornersOf: bounds))
@@ -52,7 +52,7 @@ FormCanvas >> roundCornersOf: aMorph in: bounds during: aBlock [
 		corners: aMorph roundedCorners
 ]
 
-{ #category : #'*Morphic-Base' }
+{ #category : '*Morphic-Base' }
 FormCanvas >> roundShadowCornersOf: aMorph in: bounds during: aBlock [
 	aMorph wantsRoundedCorners ifFalse:[^aBlock value].
 	(self seesNothingOutside: (CornerRounder rectWithinCornersOf: bounds))

@@ -2,40 +2,41 @@
 A scroll pane that handles its contents accurately.
 "
 Class {
-	#name : #GeneralScrollPaneMorph,
-	#superclass : #Morph,
+	#name : 'GeneralScrollPaneMorph',
+	#superclass : 'Morph',
 	#instVars : [
 		'scroller',
 		'hScrollbar',
 		'vScrollbar'
 	],
-	#category : #'Morphic-Widgets-Scrolling'
+	#category : 'Morphic-Widgets-Scrolling',
+	#package : 'Morphic-Widgets-Scrolling'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> adoptPaneColor: paneColor [
 	"Adopt the given pane color."
-	
+
 	super adoptPaneColor: paneColor.
 	self hScrollbar adoptPaneColor: paneColor.
 	self vScrollbar adoptPaneColor: paneColor
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> changeScrollerTableLayout [
 	"Change the scroller's layout policy to a table layout."
 
 	self scroller changeTableLayout
 ]
 
-{ #category : #initialize }
+{ #category : 'initialize' }
 GeneralScrollPaneMorph >> defaultColor [
 	"Answer the default color/fill style for the receiver."
-	
+
 	^ Color transparent
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> defaultScrollTarget [
 	"Answer a new default scroll target."
 
@@ -43,8 +44,8 @@ GeneralScrollPaneMorph >> defaultScrollTarget [
 		extent: 200@150
 ]
 
-{ #category : #layout }
-GeneralScrollPaneMorph >> doLayoutIn: layoutBounds [ 
+{ #category : 'layout' }
+GeneralScrollPaneMorph >> doLayoutIn: layoutBounds [
 	"Compute a new layout based on the given layout bounds."
 
 	|scrollbarChange|
@@ -56,11 +57,11 @@ GeneralScrollPaneMorph >> doLayoutIn: layoutBounds [
 	super doLayoutIn: layoutBounds
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 GeneralScrollPaneMorph >> extent: newExtent [
 	"Update the receiver's extent. Hide/show the scrollbars and resize the scroller
 	as neccessary."
-	
+
 	|scrollbarChange|
 	bounds extent = newExtent ifTrue: [^ self].
 	super extent: newExtent.
@@ -70,11 +71,11 @@ GeneralScrollPaneMorph >> extent: newExtent [
 	scrollbarChange ifFalse: [self resizeScroller] "if there is a scrollbar change then done already"
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> fitScrollTarget [
 	"If the scroller is bigger than the scroll target then
 	resize the scroll target to fill the scroller."
-	
+
 	|extra|
 	extra := 0.
 	self scroller width > self scrollTarget width
@@ -84,20 +85,20 @@ GeneralScrollPaneMorph >> fitScrollTarget [
 		ifTrue: [self scrollTarget height: self scroller height + extra]
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hHideScrollbar [
 	"Hide the horizontal scrollbar."
-	
+
 	self hScrollbarShowing ifFalse: [^self].
 	self removeMorph: self hScrollbar.
 	self vResizeScrollbar.
 	self resizeScroller
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hPageDelta [
 	"Answer the horizontal page delta."
-	
+
 	|pd tw sw|
 	tw := self scrollTarget width.
 	sw := self scrollBounds width.
@@ -106,10 +107,10 @@ GeneralScrollPaneMorph >> hPageDelta [
 	^pd
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hResizeScrollbar [
 	"Resize the horizontal scrollbar to fit the receiver."
-	
+
 	|b|
 	b := self innerBounds.
 	b := b top: b bottom - self scrollBarThickness.
@@ -118,31 +119,31 @@ GeneralScrollPaneMorph >> hResizeScrollbar [
 	self hScrollbar bounds: b
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> hScrollbar [
 	"Answer the value of hScrollbar"
 
 	^ hScrollbar
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> hScrollbar: anObject [
 	"Set the value of hScrollbar"
 
 	hScrollbar := anObject
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarInterval [
 	"Answer the computed size of the thumb of the horizontal scrollbar."
-	
-	^self scrollBounds width asFloat / self scrollTarget width min: 1.0.
+
+	^ self scrollBounds width asFloat / (self scrollTarget width max: 1.0) min: 1.0
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarNeeded [
 	"Return whether the horizontal scrollbar is needed."
-	
+
 	self hScrollbar showsAlways ifTrue: [^true].
 	self hScrollbar showsNever ifTrue: [^false].
 	^self scrollTarget width +
@@ -151,41 +152,41 @@ GeneralScrollPaneMorph >> hScrollbarNeeded [
 		self innerBounds width
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarShowAlways [
 	"Set the horizontal scrollbar to always show."
-	
+
 	self hScrollbar showAlways.
 	self updateScrollbars
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarShowNever [
 	"Set the horizontal scrollbar to never show."
-	
+
 	self hScrollbar showNever.
 	self updateScrollbars
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarShowWhenNeeded [
 	"Set the horizontal scrollbar to show if needed."
-	
+
 	self hScrollbar showWhenNeeded.
 	self updateScrollbars
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarShowing [
 	"Answer whether the horizontal scrollbar is showing."
-	
-	^self hScrollbar owner notNil
+
+	^self hScrollbar owner isNotNil
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarValue [
 	"Answer the computed horizontal scrollbar value."
-	
+
 	|tw sw v|
 	tw := self scrollTarget width.
 	sw := self scrollBounds width.
@@ -194,33 +195,33 @@ GeneralScrollPaneMorph >> hScrollbarValue [
 	^v
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hScrollbarValue: scrollValue [
 	"Set the offset of the scroller to match the 0.0-1.0 scroll value."
-	
+
 	|r|
 	r := self scrollTarget width - self scrollBounds width max: 0.
 	self scroller
 		offset: (r * scrollValue) rounded @ self scroller offset y
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 GeneralScrollPaneMorph >> hSetScrollDelta [
 	"Set the horizontal scrollbar delta, value and interval, based on the current scroll bounds and offset."
-	
+
 	|pd|
 	pd := self hPageDelta.
 	self hScrollbar
-		scrollDelta: pd / 10 
+		scrollDelta: pd / 10
 		pageDelta: pd;
 		interval: self hScrollbarInterval;
 		setValue: self hScrollbarValue
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hShowScrollbar [
 	"Show the horizontal scrollbar."
-	
+
 	self hResizeScrollbar.
 	self hScrollbarShowing ifTrue: [^self].
 	self privateAddMorph: self hScrollbar atIndex: 1.
@@ -228,10 +229,10 @@ GeneralScrollPaneMorph >> hShowScrollbar [
 	self resizeScroller
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> hUpdateScrollbar [
 	"Update the visibility and dimensions of the horizontal scrollbar as needed."
-	
+
 	self hScrollbarNeeded
 		ifTrue: [self
 					hShowScrollbar;
@@ -239,33 +240,33 @@ GeneralScrollPaneMorph >> hUpdateScrollbar [
 		ifFalse: [self hHideScrollbar]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 GeneralScrollPaneMorph >> handlesKeyboard: evt [
 	"Yes for page up/down."
-	
+
 	^true
 ]
 
-{ #category : #'events-processing' }
+{ #category : 'events-processing' }
 GeneralScrollPaneMorph >> handlesMouseWheel: evt [
-	"Do I want to receive mouseWheel events?." 
+	"Do I want to receive mouseWheel events?."
 
 	^true
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 GeneralScrollPaneMorph >> handlesTextEditionEvent: anEvent [
 
 	^ self scrollTarget handlesTextEditionEvent: anEvent
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 GeneralScrollPaneMorph >> handlesTextInputEvent: anEvent [
 
 	^ self scrollTarget handlesTextInputEvent: anEvent
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GeneralScrollPaneMorph >> initialize [
 	"Initialize the receiver."
 
@@ -280,7 +281,7 @@ GeneralScrollPaneMorph >> initialize [
 		resizeScroller
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 GeneralScrollPaneMorph >> keyStroke: evt [
 	"If pane is not empty, pass the event to the last submorph,
 	assuming it is the most appropriate recipient (!)"
@@ -289,38 +290,38 @@ GeneralScrollPaneMorph >> keyStroke: evt [
 	self scrollTarget keyStroke: evt
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 GeneralScrollPaneMorph >> minHeight [
 	"Fit the width of the scroll target if vResizing is shrinkWrap."
-	
+
 	^self vResizing = #shrinkWrap
 		ifTrue: [self scrollTarget minExtent y + self scrollbarThickness + 5]
 		ifFalse: [super minHeight]
 ]
 
-{ #category : #layout }
+{ #category : 'layout' }
 GeneralScrollPaneMorph >> minWidth [
 	"Fit the width of the scroll target if hResizing is shrinkWrap."
-	
+
 	^self hResizing = #shrinkWrap
 		ifTrue: [self scrollTarget minExtent x + self scrollbarThickness + 5]
 		ifFalse: [super minWidth]
 ]
 
-{ #category : #'event handling' }
-GeneralScrollPaneMorph >> mouseWheel: event [ 
+{ #category : 'event handling' }
+GeneralScrollPaneMorph >> mouseWheel: event [
 	"Handle a mouseWheel event."
-	
+
 	(self scrollTarget handlesMouseWheel: event)
 		ifTrue: [^self scrollTarget mouseWheel: event]. "pass on"
-	
+
 	event isUp ifTrue: [ ^ vScrollbar scrollUp: 3 ].
 	event isDown ifTrue: [ ^ vScrollbar scrollDown: 3 ].
 	event isLeft  ifTrue: [ ^ hScrollbar scrollLeft: 3 ].
-	event isRight  ifTrue: [ ^ hScrollbar scrollRight: 3 ].
+	event isRight  ifTrue: [ ^ hScrollbar scrollRight: 3 ]
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GeneralScrollPaneMorph >> newHScrollbar [
 	"Answer a new horizontal scrollbar."
 
@@ -329,7 +330,7 @@ GeneralScrollPaneMorph >> newHScrollbar [
 		setValueSelector: #hScrollbarValue:
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GeneralScrollPaneMorph >> newScroller [
 	"Answer a new scroller."
 
@@ -337,7 +338,7 @@ GeneralScrollPaneMorph >> newScroller [
 		color: Color transparent
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GeneralScrollPaneMorph >> newVScrollbar [
 	"Answer a new vertical scrollbar."
 
@@ -346,26 +347,26 @@ GeneralScrollPaneMorph >> newVScrollbar [
 		setValueSelector: #vScrollbarValue:
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 GeneralScrollPaneMorph >> resizeScroller [
 	"Resize the scroller to fit the scroll bounds."
-	
+
 	self scroller bounds: self scrollBounds
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> scrollBarThickness [
 	"Answer the width or height of a scrollbar as appropriate to
 	its orientation."
-	
+
 	^self theme scrollbarThickness
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> scrollBounds [
 	"Return the visible scroll area taking into account whether
 	the scrollbars need to be shown."
-	
+
 	|b|
 	b := self innerBounds.
 	self vScrollbarNeeded ifTrue: [b := b right: (b right - self scrollBarThickness)].
@@ -373,10 +374,10 @@ GeneralScrollPaneMorph >> scrollBounds [
 	^b
 ]
 
-{ #category : #'event handling' }
-GeneralScrollPaneMorph >> scrollByKeyboard: event [ 
+{ #category : 'event handling' }
+GeneralScrollPaneMorph >> scrollByKeyboard: event [
 	"If event is ctrl+up/down then scroll and answer true."
-	
+
 	|sb|
 	sb := event commandKeyPressed
 		ifTrue: [self hScrollbar]
@@ -390,27 +391,27 @@ GeneralScrollPaneMorph >> scrollByKeyboard: event [
 	^false
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> scrollTarget [
 	"Answer the morph that is scrolled."
-	
+
 	^self scroller submorphs first
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> scrollTarget: aMorph [
 	"Set the morph that is scrolled."
-	
+
 	self scroller
 		removeAllMorphs;
 		addMorph: aMorph.
 	self updateScrollbars
 ]
 
-{ #category : #'client list accessing' }
+{ #category : 'client list accessing' }
 GeneralScrollPaneMorph >> scrollToShow: aRectangle [
 	"Scroll to include as much of aRectangle as possible, where aRectangle is in the scroller's local space."
-	
+
 	|offset|
 	offset := self scroller offset.
 	((aRectangle top - offset y) >= 0 and: [
@@ -425,80 +426,80 @@ GeneralScrollPaneMorph >> scrollToShow: aRectangle [
 		self setScrollDeltas]
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 GeneralScrollPaneMorph >> scrollbarThickness [
 	"Answer the width or height of a scrollbar as appropriate to
 	its orientation."
-	
+
 	^ self theme scrollbarThickness
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> scroller [
 	"Answer the value of scroller"
 
 	^ scroller
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> scroller: anObject [
 	"Set the value of scroller"
 
 	scroller := anObject
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 GeneralScrollPaneMorph >> setScrollDeltas [
 	"Set the ScrollBar deltas, value and interval, based on the current scroll pane size, offset and range."
-	
+
 	self
 		hSetScrollDelta;
 		vSetScrollDelta
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 GeneralScrollPaneMorph >> textEdition: aTextEditionEvent [
 
 	self scrollTarget textEdition: aTextEditionEvent
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 GeneralScrollPaneMorph >> textInput: aTextInputEvent [
 
 	self scrollTarget textInput: aTextInputEvent
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 GeneralScrollPaneMorph >> updateScrollbars [
 	"Update the visibility, dimensions and values of the scrollbars as needed."
-	
+
 	self
 		vUpdateScrollbar;
 		hUpdateScrollbar;
 		setScrollDeltas
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vHideScrollbar [
 	"Hide the vertical scrollbar."
-	
+
 	self vScrollbarShowing ifFalse: [^self].
 	self removeMorph: self vScrollbar.
 	self hResizeScrollbar.
 	self resizeScroller
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 GeneralScrollPaneMorph >> vLeftoverScrollRange [
 	"Return the entire scrolling range minus the currently viewed area."
-	
+
 	^self scrollTarget height - self scrollBounds height max: 0
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vPageDelta [
 	"Answer the vertical page delta."
-	
+
 	|pd tw sw|
 	tw := self scrollTarget height.
 	sw := self scrollBounds height.
@@ -507,10 +508,10 @@ GeneralScrollPaneMorph >> vPageDelta [
 	^pd
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vResizeScrollbar [
 	"Resize the vertical scrollbar to fit the receiver."
-	
+
 	|b|
 	b := self innerBounds.
 	b := b left: b right - self scrollBarThickness.
@@ -519,31 +520,31 @@ GeneralScrollPaneMorph >> vResizeScrollbar [
 	self vScrollbar bounds: b
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> vScrollbar [
 	"Answer the value of vScrollbar"
 
 	^ vScrollbar
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GeneralScrollPaneMorph >> vScrollbar: anObject [
 	"Set the value of vScrollbar"
 
 	vScrollbar := anObject
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarInterval [
 	"Answer the computed size of the thumb of the vertical scrollbar."
-	
-	^self scrollBounds height asFloat / self scrollTarget height min: 1.0.
+
+	^ (self scrollBounds height asFloat / (self scrollTarget height max: 1.0)) min: 1.0
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarNeeded [
 	"Return whether the vertical scrollbar is needed."
-	
+
 	self vScrollbar showsAlways ifTrue: [^true].
 	self vScrollbar showsNever ifTrue: [^false].
 	^self scrollTarget height +
@@ -552,41 +553,41 @@ GeneralScrollPaneMorph >> vScrollbarNeeded [
 		self innerBounds height
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarShowAlways [
 	"Set the vertical scrollbar to always show."
-	
+
 	self vScrollbar showAlways.
 	self updateScrollbars
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarShowNever [
 	"Set the vertical scrollbar to never show."
-	
+
 	self vScrollbar showNever.
 	self updateScrollbars
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarShowWhenNeeded [
 	"Set the vertical scrollbar to show if needed."
-	
+
 	self vScrollbar showWhenNeeded.
 	self updateScrollbars
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarShowing [
 	"Answer whether the vertical scrollbar is showing."
-	
-	^self vScrollbar owner notNil
+
+	^self vScrollbar owner isNotNil
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarValue [
 	"Answer the computed vertical scrollbar value."
-	
+
 	|tw sw v|
 	tw := self scrollTarget height.
 	sw := self scrollBounds height.
@@ -595,33 +596,33 @@ GeneralScrollPaneMorph >> vScrollbarValue [
 	^v
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vScrollbarValue: scrollValue [
 	"Set the offset of the scroller to match the 0.0-1.0 scroll value."
-	
+
 	|r|
 	r := self scrollTarget height - self scrollBounds height max: 0.
 	self scroller
 		offset: self scroller offset x @ (r * scrollValue) rounded
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 GeneralScrollPaneMorph >> vSetScrollDelta [
 	"Set the vertical scrollbar delta, value and interval, based on the current scroll bounds and offset."
-	
+
 	|pd|
 	pd := self vPageDelta.
 	self vScrollbar
-		scrollDelta: pd / 10 
+		scrollDelta: pd / 10
 		pageDelta: pd;
 		interval: self vScrollbarInterval;
 		setValue: self vScrollbarValue
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vShowScrollbar [
 	"Show the vertical scrollbar."
-	
+
 	self vResizeScrollbar.
 	self vScrollbarShowing ifTrue: [^self].
 	self privateAddMorph: self vScrollbar atIndex: 1.
@@ -629,10 +630,10 @@ GeneralScrollPaneMorph >> vShowScrollbar [
 	self resizeScroller
 ]
 
-{ #category : #scrollbars }
+{ #category : 'scrollbars' }
 GeneralScrollPaneMorph >> vUpdateScrollbar [
 	"Update the visibility and dimensions of the vertical scrollbar as needed."
-	
+
 	self vScrollbarNeeded
 		ifTrue: [self
 				vShowScrollbar;

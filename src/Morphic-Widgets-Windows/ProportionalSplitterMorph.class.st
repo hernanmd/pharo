@@ -2,8 +2,8 @@
 I am the morph the user grabs to adjust pane splitters.
 "
 Class {
-	#name : #ProportionalSplitterMorph,
-	#superclass : #AbstractResizerMorph,
+	#name : 'ProportionalSplitterMorph',
+	#superclass : 'AbstractResizerMorph',
 	#instVars : [
 		'leftOrTop',
 		'rightOrBottom',
@@ -14,56 +14,58 @@ Class {
 	#classVars : [
 		'ShowHandles'
 	],
-	#category : #'Morphic-Widgets-Windows-Resizing'
+	#category : 'Morphic-Widgets-Windows-Resizing',
+	#package : 'Morphic-Widgets-Windows',
+	#tag : 'Resizing'
 }
 
-{ #category : #preferences }
+{ #category : 'preferences' }
 ProportionalSplitterMorph class >> fastSplitterResize [
-	
+
 	^ self theme settings fastDragging
 ]
 
-{ #category : #preferences }
+{ #category : 'preferences' }
 ProportionalSplitterMorph class >> showSplitterHandles [
 
 	^ ShowHandles ifNil: [ShowHandles := false]
 ]
 
-{ #category : #preferences }
+{ #category : 'preferences' }
 ProportionalSplitterMorph class >> showSplitterHandles: aBoolean [
 
 	ShowHandles := aBoolean
 ]
 
-{ #category : #'accessing - defaults' }
+{ #category : 'accessing - defaults' }
 ProportionalSplitterMorph class >> splitterWidth [
 
 	^ 4
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 ProportionalSplitterMorph >> addLeftOrTop: aMorph [
 
 	leftOrTop add: aMorph
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 ProportionalSplitterMorph >> addRightOrBottom: aMorph [
 
-	rightOrBottom add: aMorph.
+	rightOrBottom add: aMorph
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 ProportionalSplitterMorph >> beSplitsTopAndBottom [
 
-	splitsTopAndBottom := true.
+	splitsTopAndBottom := true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> bottomBoundary [
 	"Answer the bottom boundary position by calculating the minimum
 	of the minimum heights of the bottom morphs."
-	
+
 	|morphs|
 	morphs := rightOrBottom reject: [:m |
 		m layoutFrame bottomFraction ~= 1 and: [
@@ -78,8 +80,8 @@ ProportionalSplitterMorph >> bottomBoundary [
 			(self layoutFrame bottomOffset ifNil: [0])]) min - self class splitterWidth
 ]
 
-{ #category : #drawing }
-ProportionalSplitterMorph >> drawOn: aCanvas [ 
+{ #category : 'drawing' }
+ProportionalSplitterMorph >> drawOn: aCanvas [
 
 	| dotBounds size alphaCanvas dotSize |
 	self shouldDraw ifFalse: [^self].
@@ -98,50 +100,50 @@ ProportionalSplitterMorph >> drawOn: aCanvas [
 	alphaCanvas fillRectangle: dotBounds color: self dotColor]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> getOldColor [
 	^ oldColor ifNil: [Color transparent]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> handleRect [
 
 	^ Rectangle
-		center: self bounds center 
+		center: self bounds center
 		extent: (self splitsTopAndBottom
-			ifTrue: [self handleSize transposed] 
+			ifTrue: [self handleSize transposed]
 			ifFalse: [self handleSize])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> handleSize [
 
 	^ self class splitterWidth @ 30
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 ProportionalSplitterMorph >> initialize [
 
 	super initialize.
-	
+
 	self hResizing: #spaceFill.
 	self vResizing: #spaceFill.
 	splitsTopAndBottom := false.
-	
+
 	leftOrTop := OrderedCollection new.
 	rightOrBottom := OrderedCollection new
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 ProportionalSplitterMorph >> isCursorOverHandle [
 	^ self class showSplitterHandles not or: [self handleRect containsPoint: self activeHand cursorPoint]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> leftBoundary [
 	"Answer the left boundary position by calculating the minimum
 	of the minimum widths of the left morphs."
-	
+
 	|morphs|
 	morphs := leftOrTop reject: [:m |
 		m layoutFrame leftFraction ~= 0 and: [
@@ -156,12 +158,12 @@ ProportionalSplitterMorph >> leftBoundary [
 			(m layoutFrame rightOffset ifNil: [0])]) max
 ]
 
-{ #category : #'event handling' }
-ProportionalSplitterMorph >> mouseDown: anEvent [ 
+{ #category : 'event handling' }
+ProportionalSplitterMorph >> mouseDown: anEvent [
 	"A mouse button has been pressed.
 	Update the color for feedback and store the mouse
 	position and relative offset to the receiver."
-	
+
 	|cp|
 	(self class showSplitterHandles not
 			and: [self bounds containsPoint: anEvent cursorPoint])
@@ -171,8 +173,8 @@ ProportionalSplitterMorph >> mouseDown: anEvent [
 	lastMouse := {cp. cp - self position}
 ]
 
-{ #category : #'event handling' }
-ProportionalSplitterMorph >> mouseMove: anEvent [ 
+{ #category : 'event handling' }
+ProportionalSplitterMorph >> mouseMove: anEvent [
 	anEvent hand temporaryCursor
 		ifNil: [^ self].
 	self class fastSplitterResize
@@ -187,19 +189,19 @@ ProportionalSplitterMorph >> mouseMove: anEvent [
 				ifFalse: [traceMorph position: (self normalizedX: anEvent cursorPoint x) @ traceMorph position y]]
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 ProportionalSplitterMorph >> normalizedX: x [
 
 	^ (x max: self leftBoundary) min: self rightBoundary
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 ProportionalSplitterMorph >> normalizedY: y [
 
 	^ (y max: self topBoundary) min: self bottomBoundary
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 ProportionalSplitterMorph >> resizeCursor [
 
 	^ Cursor resizeForEdge: (splitsTopAndBottom
@@ -207,11 +209,11 @@ ProportionalSplitterMorph >> resizeCursor [
 		ifFalse: [#left])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> rightBoundary [
 	"Answer the right boundary position by calculating the minimum
 	of the minimum widths of the right morphs."
-	
+
 	|morphs|
 	morphs := rightOrBottom reject: [:m |
 		m layoutFrame rightFraction ~= 1 and: [
@@ -226,24 +228,24 @@ ProportionalSplitterMorph >> rightBoundary [
 			(self layoutFrame rightOffset ifNil: [0])]) min - self class splitterWidth
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> siblingSplitters [
 
-	^ self owner 
-		submorphsSatisfying: [:each | (each isKindOf: self class) 
+	^ self owner
+		submorphsSatisfying: [:each | (each isKindOf: self class)
 									and: [self splitsTopAndBottom = each splitsTopAndBottom and: [each ~= self]]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> splitsTopAndBottom [
 
 	^ splitsTopAndBottom
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> splitterAbove [
 	"Answer the splitter above the receiver that overlaps in its horizontal range."
-	
+
 	|splitters|
 	splitters := ((self siblingSplitters select: [:each |
 		each top > self top and: [self overlapsHorizontal: each]]) asSortedCollection: [:a :b | a top < b top]).
@@ -252,50 +254,50 @@ ProportionalSplitterMorph >> splitterAbove [
 		ifNotEmpty: [:s | s first ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> splitterBelow [
 	"Answer the splitter below the receiver that overlaps in its horizontal range."
 
 	|splitters|
 	splitters := ((self siblingSplitters select: [:each |
 		each top < self top and: [self overlapsHorizontal: each]]) asSortedCollection: [:a :b | a top > b top]).
-	
+
 	^ splitters
 		ifEmpty: [ nil ]
 		ifNotEmpty: [:s | s first ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> splitterLeft [
 	"Answer the splitter to the left of the receiver that overlaps in its vertical range."
-	
+
 	|splitters|
 	splitters := ((self siblingSplitters select: [:each |
 		each left < self left and: [self overlapsVertical: each]]) asSortedCollection: [:a :b | a left > b left]).
-	
+
 	^ splitters
 		ifEmpty: [ nil ]
 		ifNotEmpty: [:s | s first ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> splitterRight [
 	"Answer the splitter to the right of the receiver that overlaps in its vertical range."
-	
+
 	|splitters|
 	splitters := ((self siblingSplitters select: [:each |
 		each left > self left and: [self overlapsVertical: each]]) asSortedCollection: [:a :b | a left < b left]).
-	
+
 	^ splitters
 		ifEmpty: [ nil ]
 		ifNotEmpty: [:s | s first ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ProportionalSplitterMorph >> topBoundary [
 	"Answer the top boundary position by calculating the minimum
 	of the minimum heights of the top morphs."
-	
+
 	|morphs|
 	morphs := leftOrTop reject: [:m |
 		m layoutFrame topFraction ~= 0 and: [
@@ -310,11 +312,11 @@ ProportionalSplitterMorph >> topBoundary [
 			(m layoutFrame bottomOffset ifNil: [0])]) max
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 ProportionalSplitterMorph >> updateFromEvent: anEvent [
 	"Update the splitter and attached morph positions from the mouse event.
 	Take into account the mouse down offset."
-	
+
 	| pNew pOld delta selfTop selfBottom selfLeft selfRight|
 	pNew := anEvent cursorPoint - lastMouse second.
 	pOld := lastMouse first - lastMouse second.
@@ -324,7 +326,7 @@ ProportionalSplitterMorph >> updateFromEvent: anEvent [
 	lastMouse at: 1 put: (splitsTopAndBottom
 		ifTrue: [pNew x @ (self normalizedY: pNew y) + lastMouse second]
 		ifFalse: [(self normalizedX: pNew x) @ pNew y + lastMouse second]).
-	leftOrTop do: [:each | | firstRight firstBottom | 
+	leftOrTop do: [:each | | firstRight firstBottom |
 		firstRight := each layoutFrame rightOffset
 					ifNil: [0].
 		firstBottom := each layoutFrame bottomOffset
@@ -337,7 +339,7 @@ ProportionalSplitterMorph >> updateFromEvent: anEvent [
 		(each layoutFrame topFraction = each layoutFrame bottomFraction and: [
 				each layoutFrame topFraction ~= 0]) "manual splitter"
 			ifTrue: [each layoutFrame topOffset: (each layoutFrame topOffset ifNil: [0]) + delta y]].
-	rightOrBottom do: [:each | | secondLeft secondTop | 
+	rightOrBottom do: [:each | | secondLeft secondTop |
 		secondLeft := each layoutFrame leftOffset
 					ifNil: [0].
 		secondTop := each layoutFrame topOffset

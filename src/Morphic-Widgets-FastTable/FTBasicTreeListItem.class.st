@@ -24,8 +24,8 @@ Instance variables:
  ].
 "
 Class {
-	#name : #FTBasicTreeListItem,
-	#superclass : #Object,
+	#name : 'FTBasicTreeListItem',
+	#superclass : 'Object',
 	#instVars : [
 		'expanded',
 		'depth',
@@ -33,129 +33,131 @@ Class {
 		'children',
 		'dataSource'
 	],
-	#category : #'Morphic-Widgets-FastTable-Tree-Basic'
+	#category : 'Morphic-Widgets-FastTable-Tree-Basic',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Tree-Basic'
 }
 
-{ #category : #querying }
+{ #category : 'querying' }
 FTBasicTreeListItem >> availableRows [
 
-	^expanded ifTrue: [ 
+	^expanded ifTrue: [
 		children
-			inject: 1 
-			into: [ :sum :each | sum + each availableRows ] 
-			
+			inject: 1
+			into: [ :sum :each | sum + each availableRows ]
+
 	] ifFalse: [ 1 ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicTreeListItem >> cellMorphFor: aDataSource [
 
 	| morph |
-	
+
 	morph := FTIndentedCellMorph new.
 	morph depthIndent: depth.
-	
-	self hasChildren 
+
+	self hasChildren
 		ifTrue: [ morph addMorphBack: self generateButton ]
 		ifFalse: [ morph addIndendtation: 15 ].
-	
+
 	dataSource displayBlock value: item value: morph.
-	
+
 	^morph
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicTreeListItem >> children [
 
 	^children
 ]
 
-{ #category : #'button-interaction' }
+{ #category : 'button-interaction' }
 FTBasicTreeListItem >> collapseItem [
 
 	dataSource updateAvailableRows: 1 - self availableRows.
-	
+
 	children := #().
-	
-	expanded := false.
+
+	expanded := false
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicTreeListItem >> collapsedButton [
 
 	^self defaultButton
 		actionSelector: #expandItem;
-		labelGraphic: Smalltalk ui theme treeUnexpandedForm;
+		labelFormSet: Smalltalk ui theme treeUnexpandedFormSet;
 		helpText: 'Expand Item';
 		yourself
 ]
 
-{ #category : #construction }
+{ #category : 'construction' }
 FTBasicTreeListItem >> datasource: aDS [
 
 	dataSource := aDS
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicTreeListItem >> defaultButton [
 
 	^IconicButtonMorph new
 		target: self;
 		color: Color transparent;
 		borderWidth: 0;
-		yourself.
+		yourself
 ]
 
-{ #category : #construction }
+{ #category : 'construction' }
 FTBasicTreeListItem >> depth: aNumber [
 
 	depth := aNumber
 ]
 
-{ #category : #'button-interaction' }
+{ #category : 'button-interaction' }
 FTBasicTreeListItem >> expandItem [
 
 	expanded := true.
-	
+
 	children := (dataSource childrenFor: item) collect: [ :each | self treeItemFor: each ].
-	
-	dataSource updateAvailableRows: self availableRows - 1.
+
+	dataSource updateAvailableRows: self availableRows - 1
 ]
 
-{ #category : #interaction }
+{ #category : 'interaction' }
 FTBasicTreeListItem >> expandToDepth: aNumber [
-	
+
 	depth = aNumber ifTrue: [ ^self ].
-	
+
 	self expandItem.
-	
-	children do: [ :each | each expandToDepth: aNumber ].
+
+	children do: [ :each | each expandToDepth: aNumber ]
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicTreeListItem >> expandedButton [
 
 	^self defaultButton
 		actionSelector: #collapseItem;
-		labelGraphic: Smalltalk ui theme treeExpandedForm;
+		labelFormSet: Smalltalk ui theme treeExpandedFormSet;
 		helpText: 'Collapse Item';
 		yourself
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicTreeListItem >> generateButton [
-	^expanded 
+	^expanded
 		ifTrue: [ self expandedButton ]
 		ifFalse: [ self collapsedButton ]
 ]
 
-{ #category : #querying }
+{ #category : 'querying' }
 FTBasicTreeListItem >> hasChildren [
 
 	^(dataSource childrenBlock value: item) isNotEmpty
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTBasicTreeListItem >> initialize [
 
 	expanded := false.
@@ -163,22 +165,22 @@ FTBasicTreeListItem >> initialize [
 	children := #()
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicTreeListItem >> item [
 
 	^item
 ]
 
-{ #category : #construction }
+{ #category : 'construction' }
 FTBasicTreeListItem >> item: anItem [
 
 	item := anItem
 ]
 
-{ #category : #'button-interaction' }
+{ #category : 'button-interaction' }
 FTBasicTreeListItem >> treeItemFor: anItem [
 
-	^FTBasicTreeListItem new 
+	^FTBasicTreeListItem new
 		datasource: dataSource;
 		depth: depth + 1;
 		item: anItem

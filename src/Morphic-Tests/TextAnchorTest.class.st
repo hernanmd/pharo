@@ -1,19 +1,21 @@
 Class {
-	#name : #TextAnchorTest,
-	#superclass : #HashAndEqualsTestCase,
-	#category : #'Morphic-Tests-Text Support'
+	#name : 'TextAnchorTest',
+	#superclass : 'HashAndEqualsTestCase',
+	#category : 'Morphic-Tests-Text Support',
+	#package : 'Morphic-Tests',
+	#tag : 'Text Support'
 }
 
-{ #category : #running }
+{ #category : 'running' }
 TextAnchorTest >> setUp [
 	super setUp.
 	prototypes
 		add: (TextAnchor new anchoredMorph: Morph new initialize);
-		
+
 		add: (TextAnchor new anchoredMorph: EllipseMorph new initialize)
 ]
 
-{ #category : #running }
+{ #category : 'running' }
 TextAnchorTest >> testMorphInline [
 
 	| text morphTextAttribute |

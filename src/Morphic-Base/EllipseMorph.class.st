@@ -6,14 +6,16 @@ EllipseMorph new borderWidth:10; borderColor: Color green; openInWorld.
 EllipseMorph new borderStyle:(SimpleBorder width: 5 color: Color blue); openInWorld.
 "
 Class {
-	#name : #EllipseMorph,
-	#superclass : #BorderedMorph,
+	#name : 'EllipseMorph',
+	#superclass : 'BorderedMorph',
 	#traits : 'TAbleToRotate',
 	#classTraits : 'TAbleToRotate classTrait',
-	#category : #'Morphic-Base-Basic'
+	#category : 'Morphic-Base-Basic',
+	#package : 'Morphic-Base',
+	#tag : 'Basic'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 EllipseMorph class >> example [
 
 	EllipseMorph new
@@ -23,34 +25,34 @@ EllipseMorph class >> example [
 		openInWorld
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 EllipseMorph >> areasRemainingToFill: aRectangle [
 	"Could be improved by quick check of inner rectangle"
 
 	^ Array with: aRectangle
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 EllipseMorph >> bottomLeftCorner [
 	^self intersectionWithLineSegmentFromCenterTo: bounds bottomLeft
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 EllipseMorph >> bottomRightCorner [
 	^self intersectionWithLineSegmentFromCenterTo: bounds bottomRight
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 EllipseMorph >> canDrawBorder: aBorderStyle [
 	^aBorderStyle style == #simple
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 EllipseMorph >> closestPointTo: aPoint [
 	^self intersectionWithLineSegmentFromCenterTo: aPoint
 ]
 
-{ #category : #'geometry testing' }
+{ #category : 'geometry testing' }
 EllipseMorph >> containsPoint: aPoint [
 
 	| radius other delta xOverY |
@@ -65,7 +67,7 @@ EllipseMorph >> containsPoint: aPoint [
 	^ (delta x asFloat / xOverY) squared + delta y squared <= radius squared
 ]
 
-{ #category : #rounding }
+{ #category : 'rounding' }
 EllipseMorph >> cornerStyle: aSymbol [
 	"Set the receiver's corner style.  But, in this case, do *not*"
 
@@ -74,46 +76,46 @@ EllipseMorph >> cornerStyle: aSymbol [
 	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 EllipseMorph >> couldHaveRoundedCorners [
 	^ false
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 EllipseMorph >> defaultBorderWidth [
 	"answer the default border width for the receiver"
 	^ 1
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 EllipseMorph >> defaultColor [
 	"answer the default color/fill style for the receiver"
 	^ Color yellow
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 EllipseMorph >> doesBevels [
 	^ false
 ]
 
-{ #category : #drawing }
-EllipseMorph >> drawDropShadowOn: aCanvas [ 
+{ #category : 'drawing' }
+EllipseMorph >> drawDropShadowOn: aCanvas [
 
 	aCanvas fillOval: bounds fillStyle: self shadowColor borderWidth: 0 borderColor: nil
 ]
 
-{ #category : #drawing }
-EllipseMorph >> drawOn: aCanvas [ 
-	
-	aCanvas 
-		fillOval: bounds 
-		fillStyle: self fillStyle 
-		borderWidth: borderWidth  
-		borderColor: borderColor.
+{ #category : 'drawing' }
+EllipseMorph >> drawOn: aCanvas [
+
+	aCanvas
+		fillOval: bounds
+		fillStyle: self fillStyle
+		borderWidth: borderWidth
+		borderColor: borderColor
 ]
 
-{ #category : #geometry }
-EllipseMorph >> intersectionWithLineSegmentFromCenterTo: aPoint [ 
+{ #category : 'geometry' }
+EllipseMorph >> intersectionWithLineSegmentFromCenterTo: aPoint [
 	| dx aSquared bSquared m mSquared xSquared x y dy |
 	(self containsPoint: aPoint)
 		ifTrue: [ ^aPoint ].
@@ -129,15 +131,15 @@ EllipseMorph >> intersectionWithLineSegmentFromCenterTo: aPoint [
 	x := xSquared sqrt.
 	dx < 0 ifTrue: [ x := x negated ].
 	y := m * x.
-	^ self center + (x @ y) asIntegerPoint.
+	^ self center + (x @ y) asIntegerPoint
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 EllipseMorph >> topLeftCorner [
 	^self intersectionWithLineSegmentFromCenterTo: bounds topLeft
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 EllipseMorph >> topRightCorner [
 	^self intersectionWithLineSegmentFromCenterTo: bounds topRight
 ]

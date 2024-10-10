@@ -2,23 +2,25 @@
 I keep some examples on how to use a PluggableButtonMorph
 "
 Class {
-	#name : #PluggableButtonMorphExample,
-	#superclass : #Model,
+	#name : 'PluggableButtonMorphExample',
+	#superclass : 'Model',
 	#instVars : [
 		'label',
 		'state',
 		'icon'
 	],
-	#category : #'Morphic-Examples-Widgets'
+	#category : 'Morphic-Examples-Widgets',
+	#package : 'Morphic-Examples',
+	#tag : 'Widgets'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButton [
 	<example>
 	self new buildButton openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButtonFont [
 	<example>
 	self new buildButton
@@ -26,120 +28,120 @@ PluggableButtonMorphExample class >> exampleButtonFont [
 	  openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButtonNoLabel [
 	<example>
 	self new buildButtonNoLabel openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButtonWithIcon [
 	<example>
 	self new buildButtonWithIcon openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButtonWithIconBottom [
 	<example>
 	self new buildButtonWithIconBottom openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButtonWithIconRight [
 	<example>
 	self new buildButtonWithIconRight openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableButtonMorphExample class >> exampleButtonWithIconTop [
 	<example>
 	self new buildButtonWithIconTop openInWindow
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 PluggableButtonMorphExample >> action [
 	self inform: 'Button pressed'
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableButtonMorphExample >> buildButton [
 	^ PluggableButtonMorph
-		on: self 
+		on: self
 		getState: nil
-		action:  #action 
-		label: #label 
-		menu: nil.
+		action:  #action
+		label: #label
+		menu: nil
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableButtonMorphExample >> buildButtonNoLabel [
 	^ PluggableButtonMorph
-		on: self 
-		getState: nil 
-		action:  #action 
-		label: nil 
+		on: self
+		getState: nil
+		action:  #action
+		label: nil
 		icon: #icon
-		menu: nil.
+		menu: nil
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableButtonMorphExample >> buildButtonWithIcon [
 	^ PluggableButtonMorph
-		on: self 
-		getState: nil 
-		action:  #action 
-		label: #label 
+		on: self
+		getState: nil
+		action:  #action
+		label: #label
 		icon: #icon
-		menu: nil.
+		menu: nil
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableButtonMorphExample >> buildButtonWithIconBottom [
 	^ (PluggableButtonMorph
-		on: self 
-		getState: nil 
-		action:  #action 
-		label: #label 
+		on: self
+		getState: nil
+		action:  #action
+		label: #label
 		icon: #icon
 		menu: nil)
-		beIconBottom.
+		beIconBottom
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableButtonMorphExample >> buildButtonWithIconRight [
 	^ (PluggableButtonMorph
-		on: self 
-		getState: nil 
-		action:  #action 
-		label: #label 
+		on: self
+		getState: nil
+		action:  #action
+		label: #label
 		icon: #icon
 		menu: nil)
-		beIconRight.
+		beIconRight
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableButtonMorphExample >> buildButtonWithIconTop [
 	^ (PluggableButtonMorph
-		on: self 
-		getState: nil 
-		action:  #action 
-		label: #label 
+		on: self
+		getState: nil
+		action:  #action
+		label: #label
 		icon: #icon
 		menu: nil)
-		beIconTop.
+		beIconTop
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableButtonMorphExample >> icon [
 	^ icon
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableButtonMorphExample >> icon: anObject [
 	icon := anObject
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 PluggableButtonMorphExample >> initialize [
 	super initialize.
 	label := 'Test label'.
@@ -147,22 +149,22 @@ PluggableButtonMorphExample >> initialize [
 	icon := self iconNamed: #smallOk
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableButtonMorphExample >> label [
 	^ label
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableButtonMorphExample >> label: anObject [
 	label := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableButtonMorphExample >> state [
 	^ state
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 PluggableButtonMorphExample >> state: anObject [
 	state := anObject
 ]

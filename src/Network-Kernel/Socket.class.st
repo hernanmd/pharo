@@ -4,8 +4,8 @@ A Socket represents a network connection point. Current sockets are designed to 
 ProtocolClient and subclasses are in turn wrappers around a SocketStream to provide support for specific network protocols such as POP, NNTP, HTTP, and FTP.
 "
 Class {
-	#name : #Socket,
-	#superclass : #Object,
+	#name : 'Socket',
+	#superclass : 'Object',
 	#instVars : [
 		'semaphore',
 		'socketHandle',
@@ -24,36 +24,38 @@ Class {
 		'Unconnected',
 		'WaitingForConnection'
 	],
-	#category : #'Network-Kernel-Base'
+	#category : 'Network-Kernel-Base',
+	#package : 'Network-Kernel',
+	#tag : 'Base'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> acceptFrom: aSocket [
 	^[ super new acceptFrom: aSocket ]
 		repeatWithGCIf: [ :sock | sock isValid not ]
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> createIfFail: failBlock [
 	"Attempt to create a new socket. If successful, return the new socket. Otherwise, return the result of evaluating the given block. Socket creation can fail if the network isn't available or if there are not sufficient resources available to create another socket."
 	"Note: The default creates a TCP socket"
 	^self tcpCreateIfFail: failBlock
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> deadServer [
 
 	^ DeadServer
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> deadServer: aStringOrNil [
 	"Keep the machine name of the most recently encoutered non-responding machine.  Next time the user can move it to the last in a list of servers to try."
 
 	DeadServer := aStringOrNil
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 Socket class >> initialize [
 	"Socket initialize"
 
@@ -67,10 +69,10 @@ Socket class >> initialize [
 	WaitingForConnection := 1.
 	Connected := 2.
 	OtherEndClosed := 3.
-	ThisEndClosed := 4.
+	ThisEndClosed := 4
 ]
 
-{ #category : #'network initialization' }
+{ #category : 'network initialization' }
 Socket class >> initializeNetwork [
 	"Initialize the network drivers and the NetNameResolver. Do nothing if the network is already initialized."
 	"Note: The network must be re-initialized every time Pharo starts up, so applications that persist across snapshots should be prepared to re-initialize the network as needed. Such applications should call 'Socket initializeNetwork' before every network transaction. "
@@ -78,7 +80,7 @@ Socket class >> initializeNetwork [
 	NetNameResolver initializeNetwork
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 Socket class >> loopbackTest [
 	"Send data from one socket to another on the local machine.
 	Tests most of the socket primitives."
@@ -86,13 +88,9 @@ Socket class >> loopbackTest [
 	"100 timesRepeat: [Socket loopbackTest]"
 
 	| sock1 sock2 bytesToSend sendBuf receiveBuf done bytesSent bytesReceived t extraBytes packetsSent packetsRead |
-	Transcript
-		cr;
-		show: 'starting loopback test';
-		cr.
-	Transcript
-		show: '---------- Connecting ----------';
-		cr.
+	'
+starting loopback test' traceCr.
+	'---------- Connecting ----------' traceCr.
 	self initializeNetwork.
 	sock1 := self new.
 	sock2 := self new.
@@ -100,59 +98,49 @@ Socket class >> loopbackTest [
 	sock2 connectTo: NetNameResolver localHostAddress port: 54321.
 	sock1 waitForConnectionFor: self standardTimeout.
 	sock2 waitForConnectionFor: self standardTimeout.
-	sock1 isConnected ifFalse: [self error: 'sock1 not connected'].
-	sock2 isConnected ifFalse: [self error: 'sock2 not connected'].
-	Transcript
-		show: 'connection established';
-		cr.
+	sock1 isConnected ifFalse: [ self error: 'sock1 not connected' ].
+	sock2 isConnected ifFalse: [ self error: 'sock2 not connected' ].
+	'connection established' traceCr.
 	bytesToSend := 5000000.
 	sendBuf := String new: 5000 withAll: $x.
 	receiveBuf := String new: 50000.
 	done := false.
 	packetsSent := packetsRead := bytesSent := bytesReceived := 0.
-	t := Time millisecondsToRun: 
-					[[done] whileFalse: 
-							[(sock1 sendDone and: [bytesSent < bytesToSend]) 
-								ifTrue: 
-									[packetsSent := packetsSent + 1.
-									bytesSent := bytesSent + (sock1 sendSomeData: sendBuf)].
-							sock2 dataAvailable 
-								ifTrue: 
-									[packetsRead := packetsRead + 1.
-									bytesReceived := bytesReceived + (sock2 receiveDataInto: receiveBuf)].
-							done := bytesSent >= bytesToSend and: [bytesReceived = bytesSent]]].
-	Transcript
-		show: 'closing connection';
-		cr.
+	t := [
+	     [ done ] whileFalse: [
+		     (sock1 sendDone and: [ bytesSent < bytesToSend ]) ifTrue: [
+			     packetsSent := packetsSent + 1.
+			     bytesSent := bytesSent + (sock1 sendSomeData: sendBuf) ].
+		     sock2 dataAvailable ifTrue: [
+			     packetsRead := packetsRead + 1.
+			     bytesReceived := bytesReceived
+			                      + (sock2 receiveDataInto: receiveBuf) ].
+		     done := bytesSent >= bytesToSend and: [
+			             bytesReceived = bytesSent ] ] ] millisecondsToRun.
+	'closing connection' traceCr.
 	sock1 waitForSendDoneFor: self standardTimeout.
 	sock1 close.
 	sock2 waitForDisconnectionFor: self standardTimeout.
 	extraBytes := sock2 discardReceivedData.
-	extraBytes > 0 
-		ifTrue: 
-			[Transcript
-				show: ' *** received ' , extraBytes size printString , ' extra bytes ***';
-				cr].
+	extraBytes > 0 ifTrue: [
+		' *** received ' , extraBytes size printString
+		, ' extra bytes ***' traceCr ].
 	sock2 close.
 	sock1 waitForDisconnectionFor: self standardTimeout.
-	sock1 isUnconnectedOrInvalid ifFalse: [self error: 'sock1 not closed'].
-	sock2 isUnconnectedOrInvalid ifFalse: [self error: 'sock2 not closed'].
-	Transcript
-		show: '---------- Connection Closed ----------';
-		cr.
+	sock1 isUnconnectedOrInvalid ifFalse: [
+		self error: 'sock1 not closed' ].
+	sock2 isUnconnectedOrInvalid ifFalse: [
+		self error: 'sock2 not closed' ].
+	'---------- Connection Closed ----------' traceCr.
 	sock1 destroy.
 	sock2 destroy.
-	Transcript
-		show: 'loopback test done; time = ' , t printString;
-		cr.
-	Transcript
-		show: (bytesToSend asFloat / t roundTo: 0.01) printString 
-					, '* 1000 bytes/sec';
-		cr.
-	Transcript endEntry
+	('loopback test done; time = ' , t printString) traceCr.
+	((bytesToSend asFloat / t roundTo: 0.01) printString
+	 , '* 1000 bytes/sec') traceCr.
+	Smalltalk tools transcript endEntry
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> nameForWellKnownTCPPort: portNum [
 	"Answer the name for the given well-known TCP port number. Answer a string containing the port number if it isn't well-known."
 
@@ -164,19 +152,19 @@ Socket class >> nameForWellKnownTCPPort: portNum [
 		ifNone: [ 'port-' , portNum printString ]
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> new [
 	"Return a new, unconnected Socket. Note that since socket creation may fail, it is safer to use the method createIfFail: to handle such failures gracefully; this method is primarily for backward compatibility and may be disallowed in a future release."
 	"Note: The default creates a TCP socket - this is also backward compatibility."
 	^self newTCP
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 Socket class >> newAcceptCheck [
 	"Check if the platform has support for the BSD style accept()."
 
 	"Socket newAcceptCheck"
-	
+
 	| socket |
 	self initializeNetwork.
 	socket := self newTCP.
@@ -188,25 +176,37 @@ Socket class >> newAcceptCheck [
 	socket destroy
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> newTCP [
+
+	^ self newTCP: SocketAddressInformation addressFamilyUnspecified
+]
+
+{ #category : 'instance creation' }
+Socket class >> newTCP: family [
 	"Create a socket and initialize it for TCP"
 
 	self initializeNetwork.
-	^ [ super new initialize: TCPSocketType ] repeatWithGCIf: [ :socket | 
+	^ [ super new initialize: TCPSocketType family: family ] repeatWithGCIf: [ :socket |
 		  socket isValid not ]
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> newUDP [
+
+	^ self newUDP: SocketAddressInformation addressFamilyUnspecified
+]
+
+{ #category : 'instance creation' }
+Socket class >> newUDP: family [
 	"Create a socket and initialize it for UDP"
 
 	self initializeNetwork.
-	^ [ super new initialize: UDPSocketType ] repeatWithGCIf: [ :socket | 
+	^ [ super new initialize: UDPSocketType family: family ] repeatWithGCIf: [ :socket |
 		  socket isValid not ]
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> ping: hostName [
 	"Ping the given host. Useful for checking network connectivity. The host must be running a TCP echo server."
 
@@ -215,23 +215,23 @@ Socket class >> ping: hostName [
 	| tcpPort sock serverAddr startTime echoTime |
 	tcpPort := 7.	"7 = echo port, 13 = time port, 19 = character generator port"
 	serverAddr := NetNameResolver addressForName: hostName timeout: 10.
-	serverAddr 
+	serverAddr
 		ifNil: [ ^ self inform: 'Could not find an address for ' , hostName ].
 	sock := Socket new.
 	sock connectNonBlockingTo: serverAddr port: tcpPort.
 	[ sock waitForConnectionFor: 10 ]
 		on: ConnectionTimedOut
-		do: [ :ex | 
+		do: [ :ex |
 			(self confirm: 'Continue to wait for connection to ' , hostName , '?')
 				ifTrue: [ ex retry ]
-				ifFalse: [ 
+				ifFalse: [
 					sock destroy.
 					^ self ] ].
 	sock sendData: 'echo!'.
 	startTime := Time millisecondClockValue.
 	[ sock waitForDataFor: 15 ]
 		on: ConnectionTimedOut
-		do: [ :ex | 
+		do: [ :ex |
 			(self confirm: 'Packet sent but no echo yet; keep waiting?')
 				ifTrue: [ ex retry ] ].
 	echoTime := Time millisecondsSince: startTime.
@@ -239,7 +239,7 @@ Socket class >> ping: hostName [
 	self inform: hostName , ' responded in ' , echoTime printString , ' milliseconds'
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> pingPorts: portList on: hostName timeOutSecs: timeOutSecs [
 	"Attempt to connect to each of the given sockets on the given host. Wait at most timeOutSecs for the connections to be established. Answer an array of strings indicating the available ports."
 
@@ -247,12 +247,12 @@ Socket class >> pingPorts: portList on: hostName timeOutSecs: timeOutSecs [
 
 	| serverAddr sockets startTime timeoutMsecs done result unconnectedCount connectedCount waitingCount |
 	serverAddr := NetNameResolver addressForName: hostName timeout: 10.
-	serverAddr 
-		ifNil: [ 
+	serverAddr
+		ifNil: [
 			self inform: 'Could not find an address for ' , hostName.
 			^ #() ].
 	sockets := portList
-		collect: [ :portNum | 
+		collect: [ :portNum |
 			| sock |
 			sock := Socket new.
 			sock connectTo: serverAddr port: portNum ].
@@ -260,15 +260,15 @@ Socket class >> pingPorts: portList on: hostName timeOutSecs: timeOutSecs [
 	timeoutMsecs := (1000 * timeOutSecs) truncated.
 	done := false.
 	[ done ]
-		whileFalse: [ 
+		whileFalse: [
 			unconnectedCount := 0.
 			connectedCount := 0.
 			waitingCount := 0.
 			sockets
-				do: [ :s | 
+				do: [ :s |
 					s isUnconnectedOrInvalid
 						ifTrue: [ unconnectedCount := unconnectedCount + 1 ]
-						ifFalse: [ 
+						ifFalse: [
 							s isConnected
 								ifTrue: [ connectedCount := connectedCount + 1 ].
 							s isWaitingForConnection
@@ -284,7 +284,7 @@ Socket class >> pingPorts: portList on: hostName timeOutSecs: timeOutSecs [
 	^ result
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> pingPortsOn: hostName [
 	"Attempt to connect to a set of well-known sockets on the given host, and answer the names of the available ports."
 	"Socket pingPortsOn: 'pharo.org'"
@@ -295,75 +295,24 @@ Socket class >> pingPortsOn: hostName [
 		timeOutSecs: 20
 ]
 
-{ #category : #registry }
+{ #category : 'registry' }
 Socket class >> register: anObject [
 	^self registry add: anObject
 ]
 
-{ #category : #registry }
+{ #category : 'registry' }
 Socket class >> registry [
-	^Registry ifNil: [Registry := WeakRegistry new]
+
+	^ Registry ifNil: [ Registry := FinalizationRegistry new ]
 ]
 
-{ #category : #tests }
-Socket class >> sendTest [
-	"Send data to the 'discard' socket of the given host.
-	Tests the speed of one-way data transfers across the
-	network to the given host. Note that most hosts
-	do not run a discard server."
-
-	"Socket sendTest"
-
-	| sock bytesToSend sendBuf bytesSent t serverName serverAddr |
-	Transcript
-		cr;
-		show: 'starting send test';
-		cr.
-	self initializeNetwork.
-	serverName := UIManager default request: 'What is the destination server?' initialAnswer: 'create.ucsb.edu'.
-	serverAddr := NetNameResolver addressForName: serverName timeout: 10.
-	serverAddr 
-		ifNil: [ ^ self inform: 'Could not find an address for ' , serverName ].
-	sock := self new.
-	Transcript
-		show: '---------- Connecting ----------';
-		cr.
-	sock connectTo: serverAddr port: 9.
-	sock isConnected
-		ifFalse: [ 
-			sock destroy.
-			^ self inform: 'could not connect' ].
-	Transcript
-		show: 'connection established; sending data';
-		cr.
-	bytesToSend := 1000000.
-	sendBuf := String new: 64 * 1024 withAll: $x.
-	bytesSent := 0.
-	t := Time
-		millisecondsToRun: [ 
-			[ bytesSent < bytesToSend ]
-				whileTrue: [ 
-					sock sendDone
-						ifTrue: [ bytesSent := bytesSent + (sock sendSomeData: sendBuf) ] ] ].
-	sock waitForSendDoneFor: self standardTimeout.
-	sock destroy.
-	Transcript
-		show: '---------- Connection Closed ----------';
-		cr;
-		show: 'send test done; time = ' , t printString;
-		cr;
-		show: (bytesToSend asFloat / t roundTo: 0.01) printString , ' * 1000 bytes/sec';
-		cr;
-		endEntry
-]
-
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> standardTimeout [
 
 	^45
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> tcpCreateIfFail: failBlock [
 	"Attempt to create a new socket. If successful, return the new socket. Otherwise, return the result of evaluating the given block. Socket creation can fail if the network isn't available or if there are not sufficient resources available to create another socket."
 
@@ -374,7 +323,7 @@ Socket class >> tcpCreateIfFail: failBlock [
 	^ sock
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 Socket class >> udpCreateIfFail: failBlock [
 	"Attempt to create a new socket. If successful, return the new socket. Otherwise, return the result of evaluating the given block. Socket creation can fail if the network isn't available or if there are not sufficient resources available to create another socket."
 
@@ -385,19 +334,19 @@ Socket class >> udpCreateIfFail: failBlock [
 	^ sock
 ]
 
-{ #category : #registry }
+{ #category : 'registry' }
 Socket class >> unregister: anObject [
 	^self registry remove: anObject ifAbsent:[]
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> wildcardAddress [
 	"Answer a don't-care address for use with UDP sockets."
 
 	^ByteArray new: 4		"0.0.0.0"
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 Socket class >> wildcardPort [
 	"Answer a don't-care port for use with UDP sockets.  (The system will allocate an
 	unused port number to the socket.)"
@@ -405,14 +354,14 @@ Socket class >> wildcardPort [
 	^0
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> accept [
 	"Accept a connection from the receiver socket.
 	Return a new socket that is connected to the client"
-	^Socket acceptFrom: self.
+	^Socket acceptFrom: self
 ]
 
-{ #category : #'initialize - destroy' }
+{ #category : 'initialize - destroy' }
 Socket >> acceptFrom: aSocket [
 	"Initialize a new socket handle from an accept call"
 
@@ -431,8 +380,8 @@ Socket >> acceptFrom: aSocket [
 		semaIndex: semaIndex
 		readSemaIndex: readSemaIndex
 		writeSemaIndex: writeSemaIndex.
-	socketHandle 
-		ifNil: [ 
+	socketHandle
+		ifNil: [
 			"socket creation failed"
 			Smalltalk unregisterExternalObject: semaphore.
 			Smalltalk unregisterExternalObject: readSemaphore.
@@ -441,45 +390,69 @@ Socket >> acceptFrom: aSocket [
 		ifNotNil: [ self register ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> address [
 	"Shortcut"
 	^self localAddress
 ]
 
-{ #category : #'initialize - destroy' }
-Socket >> bindTo: anAddress port: aPort [
-	^self primSocket: socketHandle bindTo: anAddress port: aPort
+{ #category : 'ipv6' }
+Socket >> bindTo: aSocketAddress [
+
+	| status |
+	self initializeNetwork.
+	status := self primSocketConnectionStatus: socketHandle.
+	(status == Unconnected)
+		ifFalse: [InvalidSocketStatusException signal: 'Socket status must Unconnected when binding it to an address'].
+
+	self primSocket: socketHandle bindTo: aSocketAddress.
+
 ]
 
-{ #category : #'private - errors' }
+{ #category : 'initialize - destroy' }
+Socket >> bindTo: anAddress port: aPort [
+	"Bind to the local port <aPort>, on the interface specified by <anAddress>
+	(`SocketAddress zero` specifies all interfaces).
+	Primarily used to prepare to listen for incoming connections with #listen[WithBacklog:]."
+
+	self primSocket: socketHandle bindTo: anAddress port: aPort
+]
+
+{ #category : 'initialize - destroy' }
+Socket >> bindToPort: aPort [
+	"Bind to the local port <aPort>, often in order to listen for incoming connections."
+
+	self bindTo: SocketAddress zero port: aPort
+]
+
+{ #category : 'private - errors' }
 Socket >> broadcastError: hostAddress [
 	^ (NoBroadcastAllowed new
 		messageText: 'Sending to ' , hostAddress printString , ' without SO_BROADCAST set')
 		signal
 ]
 
-{ #category : #'private - errors' }
+{ #category : 'private - errors' }
 Socket >> broadcastMisconfiguredForSendingTo: hostAddress [
 	^ (self isBroadcastAddress: hostAddress)
 		and: [ ((self getOption: 'SO_BROADCAST') last = 0) ]
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> close [
 	"Close this connection gracefully. For TCP, this sends a close request, but the stream remains open until the other side also closes it."
 
 	self primSocketCloseConnection: socketHandle.  "close this end"
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> closeAndDestroy [
 	"First, try to close this connection gracefully. If the close attempt fails or times out, abort the connection. In either case, destroy the socket. Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
 
-	self closeAndDestroy: 20.
+	self closeAndDestroy: 20
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> closeAndDestroy: timeoutSeconds [
 	"First, try to close this connection gracefully. If the close attempt fails or times out, abort the connection. In either case, destroy the socket. Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
 
@@ -489,10 +462,23 @@ Socket >> closeAndDestroy: timeoutSeconds [
 				(self waitForDisconnectionFor: timeoutSeconds) ifFalse: [
 						"The other end didn't close so we just abort the connection"
 						self primSocketAbortConnection: socketHandle]].
-			self destroy].
+			self destroy]
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'ipv6' }
+Socket >> connectNonBlockingTo: aSocketAddress [
+
+	| status |
+	self initializeNetwork.
+	status := self primSocketConnectionStatus: socketHandle.
+	(status == Unconnected)
+		ifFalse: [InvalidSocketStatusException signal: 'Socket status must Unconnected before opening a new connection'].
+
+	self primSocket: socketHandle connectTo: aSocketAddress.
+
+]
+
+{ #category : 'connection open/close' }
 Socket >> connectNonBlockingTo: hostAddress port: port [
 	"Initiate a connection to the given port at the given host address. This operation will return immediately; follow it with waitForConnectionUntil: to wait until the connection is established."
 
@@ -505,7 +491,13 @@ Socket >> connectNonBlockingTo: hostAddress port: port [
 	self primSocket: socketHandle connectTo: hostAddress port: port
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'ipv6' }
+Socket >> connectTo: aSocketAddress [
+
+	self connectTo: aSocketAddress waitForConnectionFor: Socket standardTimeout
+]
+
+{ #category : 'connection open/close' }
 Socket >> connectTo: hostAddress port: port [
 	"Initiate a connection to the given port at the given host address.
 	Waits until the connection is established or time outs."
@@ -513,25 +505,42 @@ Socket >> connectTo: hostAddress port: port [
 	self connectTo: hostAddress port: port waitForConnectionFor: Socket standardTimeout
 ]
 
-{ #category : #'connection open/close' }
-Socket >> connectTo: hostAddress port: port waitForConnectionFor: timeout [ 
-	"Initiate a connection to the given port at the given host 
+{ #category : 'connection open/close' }
+Socket >> connectTo: hostAddress port: port waitForConnectionFor: timeout [
+	"Initiate a connection to the given port at the given host
 	address. Waits until the connection is established or time outs."
+
 	self connectNonBlockingTo: hostAddress port: port.
 	self
 		waitForConnectionFor: timeout
-		ifTimedOut: [ConnectionTimedOut signal: 'Cannot connect to '
-					, (NetNameResolver stringFromAddress: hostAddress) , ':' , port asString]
+		ifClosed: [
+			ConnectionClosed signal: 'Connection aborted to '
+				, (NetNameResolver stringFromAddress: hostAddress) , ':'
+				, port asString ]
+		ifTimedOut: [
+			ConnectionTimedOut signal: 'Cannot connect to '
+				, (NetNameResolver stringFromAddress: hostAddress) , ':'
+				, port asString ]
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'ipv6' }
+Socket >> connectTo: aSocketAddress waitForConnectionFor: timeout [ 
+
+	self connectNonBlockingTo: aSocketAddress.
+	self
+		waitForConnectionFor: timeout
+		ifTimedOut: [ConnectionTimedOut signal: ('Cannot connect to {1}' translated format: {aSocketAddress printString})]
+		ifRefused: [ConnectionRefused signal: ('Cannot connect to {1}' translated format: {aSocketAddress printString})]
+]
+
+{ #category : 'connection open/close' }
 Socket >> connectToHostNamed: hostName port: portNumber [
 	| serverIP |
 	serverIP := NetNameResolver addressForName: hostName timeout: 20.
 	^self connectTo: serverIP port: portNumber
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> dataAvailable [
 	"Return true if this socket has unread received data."
 
@@ -539,23 +548,35 @@ Socket >> dataAvailable [
 	^ self primSocketReceiveDataAvailable: socketHandle
 ]
 
-{ #category : #'initialize - destroy' }
+{ #category : 'initialize - destroy' }
 Socket >> destroy [
-	"Destroy this socket. Its connection, if any, is aborted and its resources are freed. Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
+	"Destroy this socket. Its connection, if any, is aborted and its resources are freed.
+	Any processes waiting on the socket are freed immediately, but it is up to them to
+	recognize that the socket has been destroyed.
+	Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
 
-	socketHandle 
-		ifNotNil: [ 
-			self isValid
-				ifTrue: [ self primSocketDestroy: socketHandle ].
-			Smalltalk unregisterExternalObject: semaphore.
-			Smalltalk unregisterExternalObject: readSemaphore.
-			Smalltalk unregisterExternalObject: writeSemaphore.
-			socketHandle := nil.
-			readSemaphore := writeSemaphore := semaphore := nil.
-			self unregister ]
+	socketHandle ifNotNil: [
+		| saveSemaphores |
+		self isValid ifTrue: [ self primSocketDestroy: socketHandle ].
+		socketHandle := nil.
+		Smalltalk unregisterExternalObject: semaphore.
+		Smalltalk unregisterExternalObject: readSemaphore.
+		Smalltalk unregisterExternalObject: writeSemaphore.
+		"Stash the semaphores and nil them before signaling to make sure
+		no caller gets a chance to wait on them again and block forever."
+		saveSemaphores := {
+			                  semaphore.
+			                  readSemaphore.
+			                  writeSemaphore }.
+		semaphore := readSemaphore := writeSemaphore := nil.
+		"A single #signal should be sufficient, as multiple processes trying to
+		read or write at once will result in undefined behavior anyway as their
+		data gets all mixed up together."
+		saveSemaphores do: [ :each | each signal ].
+		self unregister ]
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> discardReceivedData [
 	"Discard any data received up until now, and return the number of bytes discarded."
 
@@ -568,33 +589,33 @@ Socket >> discardReceivedData [
 	^ totalBytesDiscarded
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> disconnect [
 	"Break this connection, no matter what state it is in. Data that has been sent but not received will be lost."
 
-	self primSocketAbortConnection: socketHandle.
+	self primSocketAbortConnection: socketHandle
 ]
 
-{ #category : #'private - errors' }
+{ #category : 'private - errors' }
 Socket >> errorSending: data startingAt: startIndex count: aCount toHost: hostAddress port: portNumber [
 	"If there are known primitive failure reasons when sending that can be specified using more exact errors, discern them here"
 "Only applicable to UDP sockets, TCP does not have broadcast"
 	(self broadcastMisconfiguredForSendingTo: hostAddress)
-		ifTrue: [ ^ self broadcastError: hostAddress ].	
+		ifTrue: [ ^ self broadcastError: hostAddress ].
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #finalization }
+{ #category : 'finalization' }
 Socket >> finalize [
 	self primSocketDestroyGently: socketHandle.
 	Smalltalk unregisterExternalObject: semaphore.
 	Smalltalk unregisterExternalObject: readSemaphore.
-	Smalltalk unregisterExternalObject: writeSemaphore.
+	Smalltalk unregisterExternalObject: writeSemaphore
 ]
 
-{ #category : #other }
-Socket >> getOption: aName [ 
-	"Get options on this socket, see Unix man pages for values for 
+{ #category : 'other' }
+Socket >> getOption: aName [
+	"Get options on this socket, see Unix man pages for values for
 	sockets, IP, TCP, UDP. IE SO_KEEPALIVE
 	returns an array, element one is an status number (0 ok, -1 read only option)
 	element two is the resulting of the requested option"
@@ -616,7 +637,7 @@ options := {
 'SO_SNDLOWAT'. 'IP_TTL'. 'IP_HDRINCL'. 'IP_RCVOPTS'.
 'IP_RCVDSTADDR'. 'IP_MULTICAST_IF'. 'IP_MULTICAST_TTL'.
 'IP_MULTICAST_LOOP'. 'UDP_CHECKSUM'. 'TCP_MAXSEG'.
-'TCP_NODELAY'. 'TCP_ABORT_THRESHOLD'. 'TCP_CONN_NOTIFY_THRESHOLD'. 
+'TCP_NODELAY'. 'TCP_ABORT_THRESHOLD'. 'TCP_CONN_NOTIFY_THRESHOLD'.
 'TCP_CONN_ABORT_THRESHOLD'. 'TCP_NOTIFY_THRESHOLD'.
 'TCP_URGENT_PTR_TYPE'}.
 
@@ -634,8 +655,8 @@ foo waitForConnectionUntil: (Socket standardDeadline).
 "
 ]
 
-{ #category : #initialization }
-Socket >> initialize: socketType [
+{ #category : 'initialization' }
+Socket >> initialize: socketType family: addressFamily [
 	"Initialize a new socket handle. If socket creation fails, socketHandle will be set to nil."
 
 	| semaIndex readSemaIndex writeSemaIndex |
@@ -647,15 +668,15 @@ Socket >> initialize: socketType [
 	readSemaIndex := Smalltalk registerExternalObject: readSemaphore.
 	writeSemaIndex := Smalltalk registerExternalObject: writeSemaphore.
 	socketHandle := self
-		primSocketCreateNetwork: 0
+		primSocketCreateNetwork: addressFamily
 		type: socketType
 		receiveBufferSize: 8000
 		sendBufSize: 8000
 		semaIndex: semaIndex
 		readSemaIndex: readSemaIndex
 		writeSemaIndex: writeSemaIndex.
-	socketHandle 
-		ifNil: [ 
+	socketHandle
+		ifNil: [
 			"socket creation failed"
 			Smalltalk unregisterExternalObject: semaphore.
 			Smalltalk unregisterExternalObject: readSemaphore.
@@ -664,155 +685,160 @@ Socket >> initialize: socketType [
 		ifNotNil: [ self register ]
 ]
 
-{ #category : #'initialize - destroy' }
+{ #category : 'initialize - destroy' }
 Socket >> initializeNetwork [
 	self class initializeNetwork
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isBroadcastAddress: anAddress [
 	"Only IPv4 has broadcast, in IPv6 all nodes are required to support multicast, and that is used instead."
 
 	^ anAddress size = 4 and: [ anAddress last = 255 ]
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isConnected [
 	"Return true if this socket is connected."
 
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	^ (self primSocketConnectionStatus: socketHandle) == Connected
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isOtherEndClosed [
 	"Return true if this socket had the other end closed."
 
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	^ (self primSocketConnectionStatus: socketHandle) == OtherEndClosed
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isThisEndClosed [
 	"Return true if this socket had the this end closed."
 
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	^ (self primSocketConnectionStatus: socketHandle) == ThisEndClosed
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isUnconnected [
 	"Return true if this socket's state is Unconnected."
 
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	^ (self primSocketConnectionStatus: socketHandle) == Unconnected
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isUnconnectedOrInvalid [
 	"Return true if this socket is completely disconnected or is invalid."
 
 	| status |
-	socketHandle == nil ifTrue: [^ true].
+	socketHandle ifNil: [ ^ true ].
 	status := self primSocketConnectionStatus: socketHandle.
-	^ (status = Unconnected) | (status = InvalidSocket)
+	^ status = Unconnected | (status = InvalidSocket)
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isValid [
 	"Return true if this socket contains a valid, non-nil socket handle."
 
 	| status |
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	status := self primSocketConnectionStatus: socketHandle.
 	^ status ~= InvalidSocket
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> isWaitingForConnection [
 	"Return true if this socket is waiting for a connection."
 
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	^ (self primSocketConnectionStatus: socketHandle) == WaitingForConnection
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
+Socket >> listen [
+	"Listen for a connection (after binding to a port using #bindTo:port:).
+	If this method succeeds, you must wait for a connection attempt with #waitForConnectionFor:,
+	then #accept may be used to establish a new connection"
+
+	self listenWithBacklog: 1
+]
+
+{ #category : 'connection open/close' }
 Socket >> listenOn: port [
-	"Listen for a connection on the given port. This operation will return immediately; follow it with waitForConnectionUntil: to wait until a connection is established."
 
-	| status |
-	status := self primSocketConnectionStatus: socketHandle.
-	(status == Unconnected)
-		ifFalse: [InvalidSocketStatusException signal: 'Socket status must Unconnected before listening for a new connection'].
-
-	self primSocket: socketHandle listenOn: port.
+	self
+		bindToPort: port;
+		listen
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> listenOn: portNumber backlogSize: backlog [
-	"Listen for a connection on the given port.
-	If this method succeeds, #accept may be used to establish a new connection"
-	| status |
-	status := self primSocketConnectionStatus: socketHandle.
-	(status == Unconnected)
-		ifFalse: [InvalidSocketStatusException signal: 'Socket status must Unconnected before listening for a new connection'].
-	self primSocket: socketHandle listenOn: portNumber backlogSize: backlog.
+
+	self
+		bindToPort: portNumber;
+		listenWithBacklog: backlog
 ]
 
-{ #category : #'connection open/close' }
+{ #category : 'connection open/close' }
 Socket >> listenOn: portNumber backlogSize: backlog interface: ifAddr [
-	"Listen for a connection on the given port.
-	If this method succeeds, #accept may be used to establish a new connection"
-	| status |
-	status := self primSocketConnectionStatus: socketHandle.
-	(status == Unconnected)
-		ifFalse: [InvalidSocketStatusException signal: 'Socket status must Unconnected before listening for a new connection'].
-	self primSocket: socketHandle listenOn: portNumber backlogSize: backlog interface: ifAddr.
+
+	self
+		bindTo: ifAddr port: portNumber;
+		listenWithBacklog: backlog
 ]
 
-{ #category : #accessing }
+{ #category : 'connection open/close' }
+Socket >> listenWithBacklog: anIntegerBacklog [
+	"Listen for a connection, allowing <anIntegerBacklog> connections to be queued by the OS.
+	Must already be bound to a port using #bindTo:port:.
+	If this method succeeds, you must wait for a connection attempt with #waitForConnectionFor:,
+	then #accept may be used to establish a new connection"
+
+	| status |
+	status := self primSocketConnectionStatus: socketHandle.
+	status == Unconnected ifFalse: [
+		InvalidSocketStatusException signal:
+			'Socket status must Unconnected before listening for a new connection' ].
+
+	self primSocket: socketHandle listenWithBacklog: anIntegerBacklog
+]
+
+{ #category : 'accessing' }
 Socket >> localAddress [
 	"If in the process of connecting, wait for connection to be established and binding to address completed before resolving."
 
-	^ [ self primSocketLocalAddress: socketHandle ]
-		on: Error
-		do: [ :e | 
-			self isWaitingForConnection
-				ifTrue: [ self waitForConnectionFor: Socket standardTimeout ifTimedOut: nil.
-					self primSocketLocalAddress: socketHandle ]
-				ifFalse: [ e pass ] ]
+	^ self retryIfWaitingForConnection: [
+		  self primSocketLocalAddress: socketHandle ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> localPort [
 	"If in the process of connecting, wait for connection to be established and binding to address completed before resolving."
 
-	^ [ self primSocketLocalPort: socketHandle ]
-		on: Error
-		do: [ :e | 
-			self isWaitingForConnection
-				ifTrue: [ self waitForConnectionFor: Socket standardTimeout ifTimedOut: nil.
-					self primSocketLocalPort: socketHandle ]
-				ifFalse: [ e pass ] ]
+	^ self retryIfWaitingForConnection: [
+		  self primSocketLocalPort: socketHandle ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> peerName [
 	"Return the name of the host I'm connected to, or nil if its name isn't known to the domain name server or the request times out."
-	"Note: Slow. Calls the domain name server, taking up to 20 seconds to time out. Even when sucessful, delays of up to 13 seconds have been observed during periods of high network load." 
+	"Note: Slow. Calls the domain name server, taking up to 20 seconds to time out. Even when sucessful, delays of up to 13 seconds have been observed during periods of high network load."
 
 	^ NetNameResolver
 		nameForAddress: self remoteAddress
 		timeout: 20
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> port [
 	"Shortcut"
 	^self localPort
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primAcceptFrom: aHandle receiveBufferSize: rcvBufSize sendBufSize: sndBufSize semaIndex: semaIndex [
 	"Create and return a new socket handle based on accepting the connection from the given listening socket"
 
@@ -821,48 +847,48 @@ Socket >> primAcceptFrom: aHandle receiveBufferSize: rcvBufSize sendBufSize: snd
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primAcceptFrom: aHandle receiveBufferSize: rcvBufSize sendBufSize: sndBufSize semaIndex: semaIndex readSemaIndex: aReadSema writeSemaIndex: aWriteSema [
 	"Create and return a new socket handle based on accepting the connection from the given listening socket"
-	
+
 	<primitive: 'primitiveSocketAccept3Semaphores' module: 'SocketPlugin'>
-	
+
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocket: socketID bindTo: socketAddress [
 
 	<primitive: 'primitiveSocketBindTo' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
-Socket >> primSocket: socketID bindTo: anAddress port: aPort [ 
+{ #category : 'primitives' }
+Socket >> primSocket: socketID bindTo: anAddress port: aPort [
 	"Bind socket to provided IPv4 address and port"
 	<primitive: 'primitiveSocketBindToPort' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocket: socketID connectTo: socketAddress [
 
 	<primitive: 'primitiveSocketConnectTo' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID connectTo: hostAddress port: port [
 	"Attempt to establish a connection to the given port of the given host. This is an asynchronous call; query the socket status to discover if and when the connection is actually completed."
 
 	<primitive: 'primitiveSocketConnectToPort' module: 'SocketPlugin'>
-	
+
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
-Socket >> primSocket: socketID getOption: aString [ 
-	"Get some option information on this socket. Refer to the UNIX 
+{ #category : 'primitives' }
+Socket >> primSocket: socketID getOption: aString [
+	"Get some option information on this socket. Refer to the UNIX
 	man pages for valid SO, TCP, IP, UDP options. In case of doubt
 	refer to the source code.
 	TCP:=NODELAY, SO:=KEEPALIVE are valid options for example
@@ -872,45 +898,21 @@ Socket >> primSocket: socketID getOption: aString [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
-Socket >> primSocket: socketID listenOn: port [
-	"Listen for a connection on the given port. This is an asynchronous call; query the socket status to discover if and when the connection is actually completed."
-
-	<primitive: 'primitiveSocketListenWithOrWithoutBacklog' module: 'SocketPlugin'>
-	^ SocketError signal: self socketErrorMessage
-]
-
-{ #category : #primitives }
-Socket >> primSocket: aHandle listenOn: portNumber backlogSize: backlog [
-	"Primitive. Set up the socket to listen on the given port.
-	Will be used in conjunction with #accept only."
-	<primitive: 'primitiveSocketListenWithOrWithoutBacklog' module: 'SocketPlugin'>
-	self destroy. "Accept not supported so clean up"
-]
-
-{ #category : #primitives }
-Socket >> primSocket: aHandle listenOn: portNumber backlogSize: backlog interface: ifAddr [
-	"Primitive. Set up the socket to listen on the given port.
-	Will be used in conjunction with #accept only."
-	<primitive: 'primitiveSocketListenOnPortBacklogInterface' module: 'SocketPlugin'>
-	self destroy. "Accept not supported so clean up"
-]
-
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocket: socketID listenWithBacklog: backlogSize [
 
 	<primitive: 'primitiveSocketListenWithBacklog' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocket: socketID localAddressResult: socketAddress [
 
 	<primitive: 'primitiveSocketLocalAddressResult' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID receiveDataInto: aStringOrByteArray startingAt: startIndex count: count [
 	"Receive data from the given socket into the given array starting at the given index. Return the number of bytes read or zero if no data is available."
 
@@ -918,23 +920,23 @@ Socket >> primSocket: socketID receiveDataInto: aStringOrByteArray startingAt: s
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID receiveUDPDataInto: aStringOrByteArray startingAt: startIndex count: count [
-	"Receive data from the given socket into the given array starting at the given index. 
+	"Receive data from the given socket into the given array starting at the given index.
 	Return an Array containing the amount read, the host address byte array, the host port, and the more flag"
 
 	<primitive: 'primitiveSocketReceiveUDPDataBufCount' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocket: socketID remoteAddressResult: socketAddress [
 
 	<primitive: 'primitiveSocketRemoteAddressResult' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID sendData: aStringOrByteArray startIndex: startIndex count: count [
 	"Send data to the remote host through the given socket starting with the given byte index of the given byte array. The data sent is 'pushed' immediately. Return the number of bytes of data actually sent; any remaining data should be re-submitted for sending after the current send operation has completed."
 
@@ -949,7 +951,7 @@ Socket >> primSocket: socketID sendData: aStringOrByteArray startIndex: startInd
 		port: self remotePort
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber startIndex: startIndex count: count [
 	"Send data to the remote host through the given socket starting with the given byte index of the given byte array. The data sent is 'pushed' immediately. Return the number of bytes of data actually sent; any remaining data should be re-submitted for sending after the current send operation has completed."
 
@@ -964,9 +966,9 @@ Socket >> primSocket: socketID sendUDPData: aStringOrByteArray toHost: hostAddre
 		port: portNumber
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID setOption: aString value: aStringValue [
-	"Set some option information on this socket. Refer to the UNIX 
+	"Set some option information on this socket. Refer to the UNIX
 	man pages for valid SO, TCP, IP, UDP options. In case of doubt
 	refer to the source code.
 	TCP:=NODELAY, SO:=KEEPALIVE are valid options for example
@@ -976,7 +978,7 @@ Socket >> primSocket: socketID setOption: aString value: aStringValue [
 	^nil
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocket: socketID setPort: port [
 	"Set the local port associated with a UDP socket.
 	Note: this primitive is overloaded.  The primitive will not fail on a TCP socket, but
@@ -987,7 +989,7 @@ Socket >> primSocket: socketID setPort: port [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketAbortConnection: socketID [
 	"Terminate the connection on the given port immediately without going through the normal close sequence. This is an asynchronous call; query the socket status to discover if and when the connection is actually terminated."
 
@@ -995,7 +997,7 @@ Socket >> primSocketAbortConnection: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketCloseConnection: socketID [
 	"Close the connection on the given port. The remote end is informed that this end has closed and will do no further sends. This is an asynchronous call; query the socket status to discover if and when the connection is actually closed."
 
@@ -1003,7 +1005,7 @@ Socket >> primSocketCloseConnection: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketConnectionStatus: socketID [
 	"Return an integer reflecting the connection status of this socket. For a list of possible values, see the comment in the 'initialize' method of this class. If the primitive fails, return a status indicating that the socket handle is no longer valid, perhaps because the Pharo image was saved and restored since the socket was created. (Sockets do not survive snapshots.)"
 
@@ -1011,7 +1013,7 @@ Socket >> primSocketConnectionStatus: socketID [
 	^ InvalidSocket
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketCreateNetwork: netType type: socketType receiveBufferSize: rcvBufSize sendBufSize: sendBufSize semaIndex: semaIndex [
 	"Return a new socket handle for a socket of the given type and buffer sizes. Return nil if socket creation fails.
 	The netType parameter is platform dependent and can be used to encode both the protocol type (IP, Xerox XNS, etc.) and/or the physical network interface to use if this host is connected to multiple networks. A zero netType means to use IP protocols and the primary (or only) network interface.
@@ -1025,7 +1027,7 @@ Socket >> primSocketCreateNetwork: netType type: socketType receiveBufferSize: r
 	^ nil  "socket creation failed"
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketCreateNetwork: netType type: socketType receiveBufferSize: rcvBufSize sendBufSize: sendBufSize semaIndex: semaIndex readSemaIndex: aReadSema writeSemaIndex: aWriteSema [
 	"See comment in primSocketCreateNetwork: with one semaIndex. However you should know that some implementations
 	ignore the buffer size and this interface supports three semaphores,  one for open/close/listen and the other two for
@@ -1035,7 +1037,7 @@ Socket >> primSocketCreateNetwork: netType type: socketType receiveBufferSize: r
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketDestroy: socketID [
 	"Release the resources associated with this socket. If a connection is open, it is aborted."
 
@@ -1043,7 +1045,7 @@ Socket >> primSocketDestroy: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketDestroyGently: socketID [
 	"Release the resources associated with this socket. If a connection is open, it is aborted.
 	Do not fail if the receiver is already closed."
@@ -1051,15 +1053,15 @@ Socket >> primSocketDestroyGently: socketID [
 	<primitive: 'primitiveSocketDestroy' module: 'SocketPlugin'>
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketError: socketID [
 	"Return an integer encoding the most recent error on this socket. Zero means no error."
 
 	<primitive: 'primitiveSocketError' module: 'SocketPlugin'>
-	^ SocketError signal: self socketErrorMessage
+	^ SocketError signal: 'Cannot access socket error code'
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketLocalAddress: socketID [
 	"Return the local host address for this socket."
 
@@ -1067,14 +1069,14 @@ Socket >> primSocketLocalAddress: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocketLocalAddressSize: handle [
 
 	<primitive: 'primitiveSocketLocalAddressSize' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketLocalPort: socketID [
 	"Return the local port for this socket, or zero if no port has yet been assigned."
 
@@ -1082,22 +1084,22 @@ Socket >> primSocketLocalPort: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketReceiveDataAvailable: socketID [
 	"Return true if data may be available for reading from the current socket.
 	This primitive should not be called directly.
 	We should use #dataAvailable because it checks if the handler is nil.
 	The primitive fails with a primitive failure if the handler is nil.
-	Pay attention that if we are using the primitive directly, 
-	the image can be saved in the middle of the method niling the value in the socket. 
-	This can produce a primitiveFailed error while it should be a ConnectionClosedError 
+	Pay attention that if we are using the primitive directly,
+	the image can be saved in the middle of the method niling the value in the socket.
+	This can produce a primitiveFailed error while it should be a ConnectionClosedError
 	or something like that."
 
 	<primitive: 'primitiveSocketReceiveDataAvailable' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketRemoteAddress: socketID [
 	"Return the remote host address for this socket, or zero if no connection has been made."
 
@@ -1105,14 +1107,14 @@ Socket >> primSocketRemoteAddress: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #'primitives - ipv6' }
+{ #category : 'primitives - ipv6' }
 Socket >> primSocketRemoteAddressSize: handle [
 
 	<primitive: 'primitiveSocketRemoteAddressSize' module: 'SocketPlugin'>
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketRemotePort: socketID [
 	"Return the remote port for this socket, or zero if no connection has been made."
 
@@ -1120,7 +1122,7 @@ Socket >> primSocketRemotePort: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #primitives }
+{ #category : 'primitives' }
 Socket >> primSocketSendDone: socketID [
 	"Return true if there is no send in progress on the current socket."
 
@@ -1128,29 +1130,29 @@ Socket >> primSocketSendDone: socketID [
 	^ SocketError signal: self socketErrorMessage
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 Socket >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream nextPutAll: '[', self statusString, ']'.
+	aStream nextPutAll: '[', self statusString, ']'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> readSemaphore [
 	^ readSemaphore
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveAvailableData [
 	"Receive all available data (if any). Do not wait."
- 
+
 	| buffer bytesRead |
 	buffer := String new: 2000.
 	bytesRead := self receiveAvailableDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveAvailableDataInto: buffer [
 	"Receive all available data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
@@ -1159,7 +1161,7 @@ Socket >> receiveAvailableDataInto: buffer [
 	^self receiveAvailableDataInto: buffer startingAt: 1
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveAvailableDataInto: buffer startingAt: startIndex [
 	"Receive all available data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
@@ -1168,25 +1170,25 @@ Socket >> receiveAvailableDataInto: buffer startingAt: startIndex [
 	| bufferPos bytesRead |
 	bufferPos := startIndex.
 	[self dataAvailable
-		and: [bufferPos-1 < buffer size]] 
+		and: [bufferPos-1 < buffer size]]
 		whileTrue: [
 			bytesRead := self receiveSomeDataInto: buffer startingAt: bufferPos.
 			bufferPos := bufferPos + bytesRead].
 	^bufferPos - startIndex
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveAvailableDataIntoBuffer: buffer [
 	"Receive all available data (if any). Do not wait."
- 
+
 	| bytesRead |
 	bytesRead := self receiveAvailableDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveData [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once.
 	Either returns data or signals a time out or connection close."
@@ -1197,9 +1199,9 @@ Socket >> receiveData [
 	^buffer copyFrom: 1 to: bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataInto: aStringOrByteArray [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once.
 	Either returns data or signals a time out or connection close."
@@ -1207,7 +1209,7 @@ Socket >> receiveDataInto: aStringOrByteArray [
 	^self receiveDataInto: aStringOrByteArray startingAt: 1
 ]
 
-{ #category : #datagrams }
+{ #category : 'datagrams' }
 Socket >> receiveDataInto: aStringOrByteArray fromHost: hostAddress port: portNumber [
 	"Receive a UDP packet from the given hostAddress/portNumber, storing the data in the given buffer, and return the number of bytes received. Note the given buffer may be only partially filled by the received data."
 
@@ -1218,11 +1220,11 @@ Socket >> receiveDataInto: aStringOrByteArray fromHost: hostAddress port: portNu
 		ifFalse: [ 0 ] ] repeat
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataInto: aStringOrByteArray startingAt: aNumber [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
-	Waits for data once.  The answer may be zero (indicating that no data was 
+	Waits for data once.  The answer may be zero (indicating that no data was
 	available before the socket closed)."
 
 	| bytesRead closed |
@@ -1238,9 +1240,9 @@ Socket >> receiveDataInto: aStringOrByteArray startingAt: aNumber [
 	^bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataSignallingClosedInto: aStringOrByteArray startingAt: aNumber [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data until something is read or the socket is closed, upon which
 	we signal."
@@ -1257,9 +1259,9 @@ Socket >> receiveDataSignallingClosedInto: aStringOrByteArray startingAt: aNumbe
 	^bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataSignallingTimeout: timeout into: aStringOrByteArray startingAt: aNumber [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Wait for data once for the specified nr of seconds.  This method will
 	throw exceptions on timeout or the socket closing."
@@ -1271,9 +1273,9 @@ Socket >> receiveDataSignallingTimeout: timeout into: aStringOrByteArray startin
 		count: aStringOrByteArray size-aNumber+1
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataTimeout: timeout [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once."
 
@@ -1283,20 +1285,20 @@ Socket >> receiveDataTimeout: timeout [
 	^buffer copyFrom: 1 to: bytesRead
 ]
 
-{ #category : #receiving }
-Socket >> receiveDataTimeout: timeout into: aStringOrByteArray [ 
-	"Receive data into the given buffer and return the number of bytes received. 
+{ #category : 'receiving' }
+Socket >> receiveDataTimeout: timeout into: aStringOrByteArray [
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once."
 
 	^self receiveDataTimeout: timeout into: aStringOrByteArray startingAt: 1
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataTimeout: timeout into: aStringOrByteArray startingAt: aNumber [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
-	Wait for data once for the specified nr of seconds.  The answer may be 
+	Wait for data once for the specified nr of seconds.  The answer may be
 	zero (indicating that there was no data available within the given timeout)."
 
 	self waitForDataFor: timeout ifClosed: [] ifTimedOut: [].
@@ -1306,9 +1308,9 @@ Socket >> receiveDataTimeout: timeout into: aStringOrByteArray startingAt: aNumb
 		count: aStringOrByteArray size-aNumber+1
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataWithTimeout [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once.
 	Either returns data or signals a time out or connection close."
@@ -1319,9 +1321,9 @@ Socket >> receiveDataWithTimeout [
 	^buffer copyFrom: 1 to: bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataWithTimeoutInto: aStringOrByteArray [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once.
 	Either returns data or signals a time out or connection close."
@@ -1329,33 +1331,33 @@ Socket >> receiveDataWithTimeoutInto: aStringOrByteArray [
 	^self receiveDataWithTimeoutInto: aStringOrByteArray startingAt: 1
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveDataWithTimeoutInto: aStringOrByteArray startingAt: aNumber [
-	"Receive data into the given buffer and return the number of bytes received. 
+	"Receive data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
 	Waits for data once."
 
 	^self receiveDataTimeout: Socket standardTimeout into: aStringOrByteArray startingAt: aNumber
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveSomeData [
 	"Receive currently available data (if any). Do not wait."
- 
+
 	| buffer bytesRead |
 	buffer := String new: 2000.
 	bytesRead := self receiveSomeDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveSomeDataInto: aStringOrByteArray [
 	"Receive data into the given buffer and return the number of bytes received. Note the given buffer may be only partially filled by the received data."
 
 	^self receiveSomeDataInto: aStringOrByteArray startingAt: 1
 ]
 
-{ #category : #receiving }
+{ #category : 'receiving' }
 Socket >> receiveSomeDataInto: aStringOrByteArray startingAt: aNumber [
 	"Receive data into the given buffer and return the number of bytes received. Note the given buffer may be only partially filled by the received data."
 
@@ -1365,7 +1367,7 @@ Socket >> receiveSomeDataInto: aStringOrByteArray startingAt: aNumber [
 		count: aStringOrByteArray size-aNumber+1
 ]
 
-{ #category : #datagrams }
+{ #category : 'datagrams' }
 Socket >> receiveUDPDataInto: aStringOrByteArray [
 	"Receive UDP data into the given buffer and return the number of bytes received. Note the given buffer may be only partially filled by the received data. What is returned is an array, the first element is the bytes read, the second the sending bytearray address, the third the senders port, the fourth, true if more of the datagram awaits reading"
 
@@ -1375,50 +1377,55 @@ Socket >> receiveUDPDataInto: aStringOrByteArray [
 		count: aStringOrByteArray size
 ]
 
-{ #category : #registry }
+{ #category : 'registry' }
 Socket >> register [
 	^self class register: self
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> remoteAddress [
 	"If in the process of connecting, wait for connection to be established and binding to address completed before resolving."
 
-	^ [ self primSocketRemoteAddress: socketHandle ]
-		on: Error
-		do: [ :e | 
-			self isWaitingForConnection
-				ifTrue: [ self waitForConnectionFor: Socket standardTimeout ifTimedOut: nil.
-					self primSocketRemoteAddress: socketHandle ]
-				ifFalse: [ e pass ] ]
+	^ self retryIfWaitingForConnection: [
+		  self primSocketRemoteAddress: socketHandle ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> remotePort [
 	"If in the process of connecting, wait for connection to be established and binding to address completed before resolving."
 
-	^ [ self primSocketRemotePort: socketHandle ]
-		on: Error
-		do: [ :e | 
-			self isWaitingForConnection
-				ifTrue: [ self waitForConnectionFor: Socket standardTimeout ifTimedOut: nil.
-					self primSocketRemotePort: socketHandle ]
-				ifFalse: [ e pass ] ]
+	^ self retryIfWaitingForConnection: [ self primSocketRemotePort: socketHandle ]
 ]
 
-{ #category : #accessing }
+{ #category : 'waiting' }
+Socket >> retryIfWaitingForConnection: aBlock [
+
+	^ aBlock
+		  on: SocketError
+		  do: [ :e |
+			  self isWaitingForConnection
+				  ifTrue: [
+					  self
+						  waitForConnectionFor: Socket standardTimeout
+						  ifClosed: nil
+						  ifTimedOut: nil.
+					  aBlock value ]
+				  ifFalse: [ e pass ] ]
+]
+
+{ #category : 'accessing' }
 Socket >> semaphore [
 	^ semaphore
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendCommand: commandString [
 	"Send the given command as a single line followed by a <CR><LF> terminator."
 
-	self sendData: commandString, String crlf.
+	self sendData: commandString, String crlf
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendData: aStringOrByteArray [
 	"Send all of the data in the given array, even if it requires multiple calls to send it all. Return the number of bytes sent."
 
@@ -1427,43 +1434,43 @@ Socket >> sendData: aStringOrByteArray [
 	| bytesSent bytesToSend count |
 	bytesToSend := aStringOrByteArray size.
 	bytesSent := 0.
-	[bytesSent < bytesToSend] whileTrue: [
-		(self waitForSendDoneFor: 60)
-			ifFalse: [ConnectionTimedOut signal: 'send data timeout; data not sent'].
-		count := self primSocket: socketHandle
-			sendData: aStringOrByteArray
-			startIndex: bytesSent + 1
-			count: (bytesToSend - bytesSent min: 5000).
-		bytesSent := bytesSent + count].
+	[ bytesSent < bytesToSend ] whileTrue: [
+		self waitForSendDoneFor: 60.
+		count := self
+			         primSocket: socketHandle
+			         sendData: aStringOrByteArray
+			         startIndex: bytesSent + 1
+			         count: (bytesToSend - bytesSent min: 5000).
+		bytesSent := bytesSent + count ].
 
 	^ bytesSent
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendData: buffer count: n [
 	"Send the amount of data from the given buffer"
 	| sent |
 	sent := 0.
 	[sent < n] whileTrue:[
-		sent := sent + (self sendSomeData: buffer startIndex: sent+1 count: (n-sent))].
+		sent := sent + (self sendSomeData: buffer startIndex: sent+1 count: (n-sent))]
 ]
 
-{ #category : #datagrams }
+{ #category : 'datagrams' }
 Socket >> sendData: aStringOrByteArray toHost: hostAddress port: portNumber [
 	"Send a UDP packet containing the given data to the specified host/port."
 
 	^ self sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> sendDone [
 	"Return true if the most recent send operation on this socket has completed."
 
-	socketHandle == nil ifTrue: [^ false].
+	socketHandle ifNil: [ ^ false ].
 	^ self primSocketSendDone: socketHandle
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendSomeData: aStringOrByteArray [
 	"Send as much of the given data as possible and answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
@@ -1474,7 +1481,7 @@ Socket >> sendSomeData: aStringOrByteArray [
 		count: aStringOrByteArray size
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendSomeData: aStringOrByteArray startIndex: startIndex [
 	"Send as much of the given data as possible starting at the given index. Answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
@@ -1485,35 +1492,33 @@ Socket >> sendSomeData: aStringOrByteArray startIndex: startIndex [
 		count: (aStringOrByteArray size - startIndex + 1)
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendSomeData: aStringOrByteArray startIndex: startIndex count: count [
 	"Send up to count bytes of the given data starting at the given index. Answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
 
-	^ self 
-		sendSomeData: aStringOrByteArray 
-		startIndex: startIndex 
-		count: count 
+	^ self
+		sendSomeData: aStringOrByteArray
+		startIndex: startIndex
+		count: count
 		for: Socket standardTimeout
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendSomeData: aStringOrByteArray startIndex: startIndex count: count for: aTimeoutInSeconds [
 	"Send up to count bytes of the given data starting at the given index. Answer the number of bytes actually sent."
+
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
 
-	| bytesSent |
-	(self waitForSendDoneFor: aTimeoutInSeconds)
-		ifTrue: [
-			bytesSent := self primSocket: socketHandle
-				sendData: aStringOrByteArray
-				startIndex: startIndex
-				count: count ]
-		ifFalse: [ ConnectionTimedOut signal: 'send data timeout; data not sent' ].
-	^ bytesSent
+	self waitForSendDoneFor: aTimeoutInSeconds.
+	^ self
+		  primSocket: socketHandle
+		  sendData: aStringOrByteArray
+		  startIndex: startIndex
+		  count: count
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendStreamContents: stream [
 	"Send the data in the stream. Close the stream.
 	Usefull for directly sending contents of a file without reading into memory first."
@@ -1521,7 +1526,7 @@ Socket >> sendStreamContents: stream [
 	self sendStreamContents: stream checkBlock: [true]
 ]
 
-{ #category : #sending }
+{ #category : 'sending' }
 Socket >> sendStreamContents: stream checkBlock: checkBlock [
 	"Send the data in the stream. Close the stream after you are done. After each block of data evaluate checkBlock and abort if it returns false.
 	Usefull for directly sending contents of a file without reading into memory first."
@@ -1537,39 +1542,38 @@ Socket >> sendStreamContents: stream checkBlock: checkBlock [
 		ensure: [stream close]
 ]
 
-{ #category : #datagrams }
+{ #category : 'datagrams' }
 Socket >> sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber [
 	"Send a UDP packet containing the given data to the specified host/port."
-	| bytesToSend bytesSent count |
 
+	| bytesToSend bytesSent count |
 	bytesToSend := aStringOrByteArray size.
 	bytesSent := 0.
 	[
-		(self waitForSendDoneFor: 20)
-			ifFalse: [ConnectionTimedOut signal: 'send data timeout; data not sent'].
-		count := self primSocket: socketHandle
-			sendUDPData: aStringOrByteArray
-			toHost: hostAddress
-			port: portNumber
-			startIndex: bytesSent + 1
-			count: bytesToSend - bytesSent.
-		count = 0 ifTrue: 
-			["Usually broadcast fails in primitive without the proper option set, 
+	self waitForSendDoneFor: 20.
+	count := self
+		         primSocket: socketHandle
+		         sendUDPData: aStringOrByteArray
+		         toHost: hostAddress
+		         port: portNumber
+		         startIndex: bytesSent + 1
+		         count: bytesToSend - bytesSent.
+	count = 0 ifTrue: [ "Usually broadcast fails in primitive without the proper option set,
 			but some platforms simply return count=0"
-			(self broadcastMisconfiguredForSendingTo: hostAddress)
-				ifTrue: [ ^ self broadcastError: hostAddress ].
-			bytesToSend ~= count 
-				ifTrue: [ ^NetworkError signal: 'failed to send data']].
-		bytesSent := bytesSent + count.
-		bytesSent < bytesToSend] whileTrue.
+		(self broadcastMisconfiguredForSendingTo: hostAddress) ifTrue: [
+			^ self broadcastError: hostAddress ].
+		bytesToSend ~= count ifTrue: [
+			^ NetworkError signal: 'failed to send data' ] ].
+	bytesSent := bytesSent + count.
+	bytesSent < bytesToSend ] whileTrue.
 
 	^ bytesSent
 ]
 
-{ #category : #other }
-Socket >> setOption: aName value: aValue [ 
+{ #category : 'other' }
+Socket >> setOption: aName value: aValue [
 	| value |
-	"setup options on this socket, see Unix man pages for values for 
+	"setup options on this socket, see Unix man pages for values for
 	sockets, IP, TCP, UDP. IE SO_KEEPALIVE
 	returns an array, element one is the error number
 	element two is the resulting of the negotiated value.
@@ -1583,99 +1587,138 @@ Socket >> setOption: aName value: aValue [
 	^ self primSocket: socketHandle setOption: aName value: value
 ]
 
-{ #category : #datagrams }
+{ #category : 'datagrams' }
 Socket >> setPeer: hostAddress port: port [
 	"Set the default send/recv address."
 
-	self primSocket: socketHandle connectTo: hostAddress port: port.
+	self primSocket: socketHandle connectTo: hostAddress port: port
 ]
 
-{ #category : #datagrams }
+{ #category : 'datagrams' }
 Socket >> setPort: port [
 	"Associate a local port number with a UDP socket.  Not applicable to TCP sockets."
 
-	self primSocket: socketHandle setPort: port.
+	self primSocket: socketHandle setPort: port
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> socketError [
-	^self primSocketError: socketHandle
+
+	^ socketHandle ifNotNil: [ self primSocketError: socketHandle ]
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> socketErrorMessage [
 
-	^ [ OSPlatform current getErrorMessage: self socketError ]
-		  on: Error
-		  do: [ 'Error code: ' , self socketError printString ]
+	^ self socketError
+		  ifNil: [ 'Socket destroyed, cannot retrieve error message' ]
+		  ifNotNil: [ :err |
+			  [ OSPlatform current getErrorMessage: err ]
+				  on: Error
+				  do: [ 'Error code: ' , err printString ] ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 Socket >> socketHandle [
 	^socketHandle
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 Socket >> statusString [
 	"Return a string describing the status of this socket."
 
 	| status |
-	socketHandle == nil ifTrue: [^ 'destroyed'].
+	socketHandle ifNil: [ ^ 'destroyed' ].
 	status := self primSocketConnectionStatus: socketHandle.
-	status = InvalidSocket ifTrue: [^ 'invalidSocketHandle'].
-	status = Unconnected ifTrue: [^ 'unconnected'].
-	status = WaitingForConnection ifTrue: [^ 'waitingForConnection'].
-	status = Connected ifTrue: [^ 'connected'].
-	status = OtherEndClosed ifTrue: [^ 'otherEndClosedButNotThisEnd'].
-	status = ThisEndClosed ifTrue: [^ 'thisEndClosedButNotOtherEnd'].
+	status = InvalidSocket ifTrue: [ ^ 'invalidSocketHandle' ].
+	status = Unconnected ifTrue: [ ^ 'unconnected' ].
+	status = WaitingForConnection ifTrue: [ ^ 'waitingForConnection' ].
+	status = Connected ifTrue: [ ^ 'connected' ].
+	status = OtherEndClosed ifTrue: [ ^ 'otherEndClosedButNotThisEnd' ].
+	status = ThisEndClosed ifTrue: [ ^ 'thisEndClosedButNotOtherEnd' ].
 	^ 'unknown socket status'
 ]
 
-{ #category : #registry }
+{ #category : 'registry' }
 Socket >> unregister [
 	^self class unregister: self
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForAcceptFor: timeout [
 	"Wait and accept an incoming connection. Return nil if it fails"
-	^ self waitForAcceptFor: timeout ifTimedOut: [nil].
+
+	^ self waitForAcceptFor: timeout ifClosed: nil ifTimedOut: nil
 ]
 
-{ #category : #waiting }
-Socket >> waitForAcceptFor: timeout ifTimedOut: timeoutBlock [
+{ #category : 'waiting' }
+Socket >> waitForAcceptFor: timeout ifClosed: closedBlock ifTimedOut: timeoutBlock [
 	"Wait and accept an incoming connection"
-	self waitForConnectionFor: timeout ifTimedOut: [^timeoutBlock value].
-	^self accept
+
+	self
+		waitForConnectionFor: timeout
+		ifClosed: [ ^ closedBlock value ]
+		ifTimedOut: [ ^ timeoutBlock value ].
+	^ self accept
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForConnectionFor: timeout [
 	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
 
-	^self 
-		waitForConnectionFor: timeout 
-		ifTimedOut: [ConnectionTimedOut signal: 'Failed to connect in ', timeout asString, ' seconds']
+	^ self
+		  waitForConnectionFor: timeout
+		  ifClosed: [
+			  ConnectionClosed signal: (socketHandle
+					   ifNil: [ 'Socket destroyed while connecting' ]
+					   ifNotNil: [
+					   'Connection aborted or failed: ' , self socketErrorMessage ]) ]
+		  ifTimedOut: [
+			  ConnectionTimedOut signal:
+				  'Failed to connect in ' , timeout asString , ' seconds' ]
 ]
 
-{ #category : #waiting }
-Socket >> waitForConnectionFor: timeout ifTimedOut: timeoutBlock [
-	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
+{ #category : 'waiting' }
+Socket >> waitForConnectionFor: timeout ifClosed: closedBlock ifTimedOut: timeoutBlock [
+	"Wait up until the given deadline for a connection to be established.
+	Evaluate closedBlock if the connection is closed locally,
+	or timeoutBlock if the deadline expires.
+	
+	We should separately detect the case of a connection being refused here as well."
 
-	| startTime msecsDelta msecsEllapsed status |
+	| startTime msecsDelta msecsElapsed status |
 	startTime := Time millisecondClockValue.
 	msecsDelta := (timeout * 1000) truncated.
-	status := self primSocketConnectionStatus: socketHandle.
-	[(status = WaitingForConnection) and: [(msecsEllapsed := Time millisecondsSince: startTime) < msecsDelta]]
-		whileTrue: [
-			semaphore waitTimeoutMSecs: msecsDelta - msecsEllapsed.
-			status := self primSocketConnectionStatus: socketHandle].
 
-	status = Connected ifFalse: [^timeoutBlock value].
-	^ true
+	[
+	status := self primSocketConnectionStatus: socketHandle.
+	status == WaitingForConnection and: [
+		(msecsElapsed := Time millisecondsSince: startTime) < msecsDelta ] ]
+		whileTrue: [ semaphore waitTimeoutMilliseconds: msecsDelta - msecsElapsed ].
+
+	status == WaitingForConnection ifTrue: [ ^ timeoutBlock value ].
+	status == Connected ifFalse: [ ^ closedBlock value ]
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
+Socket >> waitForConnectionFor: timeout ifTimedOut: timeoutBlock ifRefused: refusedBlock [
+	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
+
+	| deadline timeLeft status |
+	deadline := Time millisecondClockValue + (timeout * 1000) truncated.
+	(status := self primSocketConnectionStatus: socketHandle) == Connected ifTrue: [^true].
+	[ (status == WaitingForConnection) and: [ (timeLeft := deadline - Time millisecondClockValue) > 0 ] ]
+		whileTrue: [
+			semaphore waitTimeoutMilliseconds: timeLeft.
+			status := self primSocketConnectionStatus: socketHandle ].
+	status == Connected ifTrue: [ ^true ].
+	status == WaitingForConnection 
+		ifTrue: [ timeoutBlock value ]
+		ifFalse: [ refusedBlock value ].
+	^false
+]
+
+{ #category : 'waiting' }
 Socket >> waitForData [
 	"Wait for data to arrive.  This method will block until
 	data is available or the socket is closed.  If the socket is closed
@@ -1685,7 +1728,7 @@ Socket >> waitForData [
 		[ConnectionClosed signal: 'Connection close while waiting for data.']
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForDataFor: timeout [
 	"Wait for the given nr of seconds for data to arrive.
 	Signal a time out or connection close exception if either happens before data becomes available."
@@ -1696,39 +1739,33 @@ Socket >> waitForDataFor: timeout [
 		ifTimedOut: [ConnectionTimedOut signal: 'Data receive timed out.']
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForDataFor: timeout ifClosed: closedBlock ifTimedOut: timedOutBlock [
-	"Wait for the given nr of seconds for data to arrive."
+	"Wait for the given nr of seconds for data to arrive.
+	If it does not, execute <timedOutBlock>. If the connection
+	is closed before any data arrives, execute <closedBlock>."
 
-	| startTime msecsDelta |
+	| startTime msecsDelta msecsElapsed |
 	startTime := Time millisecondClockValue.
 	msecsDelta := (timeout * 1000) truncated.
-	[ (Time millisecondsSince: startTime) < msecsDelta ]
-		whileTrue: [ self dataAvailable ifTrue: [ ^ self ].
-			self isConnected ifFalse: [ ^ closedBlock value ].
-			self readSemaphore waitTimeoutMSecs: (msecsDelta - (Time millisecondsSince: startTime) max: 0) ].
-
-	self dataAvailable
-		ifFalse: [ ^ (self isConnected
-				ifTrue: [ timedOutBlock ]
-				ifFalse: [ closedBlock ]) value ]
+	[ self dataAvailable ] whileFalse: [
+		self isConnected ifFalse: [ ^ closedBlock value ].
+		(msecsElapsed := Time millisecondsSince: startTime) < msecsDelta
+			ifFalse: [ ^ timedOutBlock value ].
+		readSemaphore waitTimeoutMilliseconds: msecsDelta - msecsElapsed ]
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForDataIfClosed: closedBlock [
 	"Wait indefinitely for data to arrive.  This method will block until
 	data is available or the socket is closed."
 
-	[true]
-		whileTrue: [
-			self dataAvailable
-				ifTrue: [^self].
-			self isConnected
-				ifFalse: [^closedBlock value].
-			self readSemaphore wait].
+	[ self dataAvailable ] whileFalse: [
+		self isConnected ifFalse: [ ^ closedBlock value ].
+		readSemaphore wait ]
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForDisconnectionFor: timeout [
 	"Wait for the given nr of seconds for the connection to be broken.
 	Return true if it is broken by the deadline, false if not.
@@ -1736,35 +1773,54 @@ Socket >> waitForDisconnectionFor: timeout [
 	(e.g., because he has called 'close' to send a close request to the other end)
 	before calling this method."
 
-	| startTime msecsDelta status |
+	| startTime msecsDelta msecsElapsed status |
 	startTime := Time millisecondClockValue.
 	msecsDelta := (timeout * 1000) truncated.
+
+	[
 	status := self primSocketConnectionStatus: socketHandle.
-	[((status == Connected) or: [(status == ThisEndClosed)]) and:
-	 [(Time millisecondsSince: startTime) < msecsDelta]] whileTrue: [
-		self discardReceivedData.
-		self readSemaphore waitTimeoutMSecs: 
-			(msecsDelta - (Time millisecondsSince: startTime) max: 0).
-		status := self primSocketConnectionStatus: socketHandle].
+	(status == Connected or: [ status == ThisEndClosed ]) and: [
+		(msecsElapsed := Time millisecondsSince: startTime) < msecsDelta ] ]
+		whileTrue: [
+			self discardReceivedData.
+			readSemaphore waitTimeoutMilliseconds: msecsDelta - msecsElapsed ].
 	^ status ~= Connected
 ]
 
-{ #category : #waiting }
+{ #category : 'waiting' }
 Socket >> waitForSendDoneFor: timeout [
-	"Wait up until the given deadline for the current send operation to complete. Return true if it completes by the deadline, false if not."
+	"Wait up until the given deadline for the current send operation to complete.
+	Raise an exception if the timeout expires or the connection is closed before sending finishes."
 
-	| startTime msecsDelta msecsEllapsed sendDone |
-	startTime := Time millisecondClockValue.
-	msecsDelta := (timeout * 1000) truncated.
-	[(sendDone := self primSocketSendDone: socketHandle) not and: [ self isConnected
-			"Connection end and final data can happen fast, so test in this order"
-		and: [(msecsEllapsed := Time millisecondsSince: startTime) < msecsDelta]]] whileTrue: [
-			self writeSemaphore waitTimeoutMSecs: msecsDelta - msecsEllapsed].
-
-	^ sendDone
+	^ self
+		  waitForSendDoneFor: timeout
+		  ifClosed: [ ConnectionClosed signal: 'connection closed while sending data' ]
+		  ifTimedOut: [ ConnectionTimedOut signal: 'send data timeout; data not sent' ]
 ]
 
-{ #category : #accessing }
+{ #category : 'waiting' }
+Socket >> waitForSendDoneFor: timeout ifClosed: closedBlock ifTimedOut: timedOutBlock [
+	"Wait up until the given deadline for the current send operation to complete.
+	If it does not, execute <timedOutBlock>. If the connection is closed before
+	the send completes, execute <closedBlock>."
+
+	| startTime msecsDelta msecsElapsed |
+	startTime := Time millisecondClockValue.
+	msecsDelta := (timeout * 1000) truncated.
+	"Connection end and final data can happen fast, so test in this order"
+	[ self sendDone ] whileFalse: [
+		self isConnected ifFalse: [ ^ closedBlock value ].
+		(msecsElapsed := Time millisecondsSince: startTime) < msecsDelta
+			ifFalse: [ ^ timedOutBlock value ].
+		writeSemaphore waitTimeoutMilliseconds: msecsDelta - msecsElapsed ].
+
+	"For backward compatibility with Pharo <= 11, return a boolean indicating
+	whether the send is completed. The loop will only terminate when this
+	is the case, so simply return true."
+	^ true
+]
+
+{ #category : 'accessing' }
 Socket >> writeSemaphore [
 	^ writeSemaphore
 ]

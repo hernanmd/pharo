@@ -1,11 +1,11 @@
-Extension { #name : #Text }
+Extension { #name : 'Text' }
 
-{ #category : #'*Morphic-Base-Converting' }
+{ #category : '*Morphic-Base-Converting' }
 Text >> asMorph [
 	^ self asTextMorph
 ]
 
-{ #category : #'*Morphic-Base-Converting' }
+{ #category : '*Morphic-Base-Converting' }
 Text >> asStringMorph [
 	^ StringMorph
 		contents: self string
@@ -13,57 +13,57 @@ Text >> asStringMorph [
 		emphasis: (self emphasisAt: 1)
 ]
 
-{ #category : #'*Morphic-Base-Converting' }
+{ #category : '*Morphic-Base-Converting' }
 Text >> asTextMorph [
 	^ TextMorph new contentsAsIs: self
 ]
 
-{ #category : #'*Morphic-Base-Pluggable Widgets' }
+{ #category : '*Morphic-Base-Pluggable Widgets' }
 Text >> beginsWith: aString fromList: aMorph [
 
 	^ self asString beginsWith: aString fromList: aMorph
 ]
 
-{ #category : #'*Morphic-Base' }
+{ #category : '*Morphic-Base' }
 Text >> embeddedMorphs [
 	"return the list of morphs embedded in me"
 
 	| morphs |
 	morphs := IdentitySet new.
-	runs withStartStopAndValueDo: 
-			[:start :stop :attribs | 
-			attribs 
+	runs withStartStopAndValueDo:
+			[:start :stop :attribs |
+			attribs
 				do: [:attrib | attrib anchoredMorph ifNotNil: [morphs add: attrib anchoredMorph]]].
 	^morphs select: [:m | m isMorph]
 ]
 
-{ #category : #'*Morphic-Base' }
-Text >> embeddedMorphsFrom: start to: stop [ 
+{ #category : '*Morphic-Base' }
+Text >> embeddedMorphsFrom: start to: stop [
 	"return the list of morphs embedded in me"
 
 	| morphs |
 	morphs := IdentitySet new.
-	runs 
+	runs
 		runsFrom: start
 		to: stop
-		do: 
-			[:attribs | 
-			attribs 
+		do:
+			[:attribs |
+			attribs
 				do: [:attr | attr anchoredMorph ifNotNil: [morphs add: attr anchoredMorph]]].
 	^morphs select: [:m | m isMorph]
 ]
 
-{ #category : #'*Morphic-Base-Widgets' }
+{ #category : '*Morphic-Base-Widgets' }
 Text >> heightToDisplayInList: aList [
 
 	^ aList font height
 ]
 
-{ #category : #'*Morphic-Base-Widgets' }
+{ #category : '*Morphic-Base-Widgets' }
 Text >> listRenderOn: aCanvas atRow: aRow bounds: bounds color: color backgroundColor: backgroundColor from: aMorph [
 	"Method extracted from LazyListMorph"
 	| attrs useDefaultFont f itemBounds |
-	
+
 	attrs := self attributesAt: 1.
 	useDefaultFont := true.
 	attrs
@@ -91,7 +91,7 @@ Text >> listRenderOn: aCanvas atRow: aRow bounds: bounds color: color background
 		strikethroughColor: color
 ]
 
-{ #category : #'*Morphic-Base-Widgets' }
+{ #category : '*Morphic-Base-Widgets' }
 Text >> widthToDisplayInList: aList [
 
 	^ aList font widthOfStringOrText: self contents
