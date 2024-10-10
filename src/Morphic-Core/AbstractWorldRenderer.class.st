@@ -3,8 +3,8 @@ I implement the logic to render a world.
 I have different implementations to start the world.
 "
 Class {
-	#name : #AbstractWorldRenderer,
-	#superclass : #Object,
+	#name : 'AbstractWorldRenderer',
+	#superclass : 'Object',
 	#instVars : [
 		'world',
 		'alreadyActivated'
@@ -15,18 +15,20 @@ Class {
 		'MainWorldRenderer',
 		'RenderingProfilingLogOutput'
 	],
-	#category : #'Morphic-Core-Worlds'
+	#category : 'Morphic-Core-Worlds',
+	#package : 'Morphic-Core',
+	#tag : 'Worlds'
 }
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer class >> closeRenderingProfileLogFile [
 
-	RenderingProfilingLogOutput ifNotNil: [ 
+	RenderingProfilingLogOutput ifNotNil: [
 		RenderingProfilingLogOutput close.
 		RenderingProfilingLogOutput := nil ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 AbstractWorldRenderer class >> detectCorrectOneForWorld: aWorld [
 
 	| aRenderer |
@@ -39,21 +41,21 @@ AbstractWorldRenderer class >> detectCorrectOneForWorld: aWorld [
 	^ MainWorldRenderer := aRenderer
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer class >> disableRenderingProfileLogFile [
 	<script>
-	
+
 	self isLoggingRenderingProfileToFile: false
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer class >> enableRenderingProfileLogFile [
 	<script>
-	
+
 	self isLoggingRenderingProfileToFile: true
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 AbstractWorldRenderer class >> forWorld: aWorld [
 
 	^ self new
@@ -61,44 +63,44 @@ AbstractWorldRenderer class >> forWorld: aWorld [
 		  yourself
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 AbstractWorldRenderer class >> initialize [
 
 	SessionManager default registerSystemClassNamed: self name
 ]
 
-{ #category : #testing }
-AbstractWorldRenderer class >> isAbstract [ 
+{ #category : 'testing' }
+AbstractWorldRenderer class >> isAbstract [
 
 	^ self == AbstractWorldRenderer
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 AbstractWorldRenderer class >> isApplicableFor: aWorld [
 
 	^ self subclassResponsibility
 ]
 
-{ #category : #'profiling - testing' }
+{ #category : 'profiling - testing' }
 AbstractWorldRenderer class >> isLoggingRenderingProfileToFile [
 
 	^ IsLoggingRenderingProfileToFile ifNil: [ IsLoggingRenderingProfileToFile := false ]
 ]
 
-{ #category : #'profiling - testing' }
+{ #category : 'profiling - testing' }
 AbstractWorldRenderer class >> isLoggingRenderingProfileToFile: aBoolean [
 
 	IsLoggingRenderingProfileToFile := aBoolean.
 	IsLoggingRenderingProfileToFile ifFalse: [ self closeRenderingProfileLogFile ]
 ]
 
-{ #category : #'profiling - testing' }
+{ #category : 'profiling - testing' }
 AbstractWorldRenderer class >> isProfilingRenderingTime [
 
 	^ IsProfilingRenderingTime ifNil: [ IsProfilingRenderingTime := false ]
 ]
 
-{ #category : #'profiling - testing' }
+{ #category : 'profiling - testing' }
 AbstractWorldRenderer class >> isProfilingRenderingTime: aBoolean [
 	"
 	self isProfilingRenderingTime: true.
@@ -109,7 +111,7 @@ AbstractWorldRenderer class >> isProfilingRenderingTime: aBoolean [
 	IsProfilingRenderingTime ifFalse: [ self closeRenderingProfileLogFile ]
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer class >> logRenderingTimeMeasurements: measurements [
 	self isLoggingRenderingProfileToFile ifFalse: [ ^ self ].
 	RenderingProfilingLogOutput ifNil: [
@@ -125,54 +127,54 @@ AbstractWorldRenderer class >> logRenderingTimeMeasurements: measurements [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 AbstractWorldRenderer class >> mainWorldRenderer [
 
 	^ MainWorldRenderer
 ]
 
-{ #category : #accessing }
-AbstractWorldRenderer class >> priority [ 
+{ #category : 'accessing' }
+AbstractWorldRenderer class >> priority [
 
 	^ 0
 ]
 
-{ #category : #'system startup' }
+{ #category : 'system startup' }
 AbstractWorldRenderer class >> shutDown: quitting [
 
-	MainWorldRenderer ifNotNil: [ :aRenderer | 
-		aRenderer shutDown: quitting ]. 
-	
+	MainWorldRenderer ifNotNil: [ :aRenderer |
+		aRenderer shutDown: quitting ].
+
 	quitting ifFalse: [ ^ self ].
 	MainWorldRenderer := nil
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer class >> startProfilingRenderingTime [
 	<script>
-	
+
 	self isProfilingRenderingTime: true
 ]
 
-{ #category : #'system startup' }
+{ #category : 'system startup' }
 AbstractWorldRenderer class >> startUp: isANewSession [
 
 	isANewSession ifTrue: [ MainWorldRenderer := nil ].
-	MainWorldRenderer ifNotNil: [ 
+	MainWorldRenderer ifNotNil: [
 		MainWorldRenderer startUp: isANewSession ]
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer class >> stopProfilingRenderingTime [
 	<script>
-	
+
 	self isProfilingRenderingTime: false
 ]
 
-{ #category : #activation }
+{ #category : 'activation' }
 AbstractWorldRenderer >> activate [
 
-	alreadyActivated ifTrue: [ 
+	alreadyActivated ifTrue: [
 		"Maybe I need to change the title of the window after saving the image"
 		^ self updateWindowTitle ].
 
@@ -180,43 +182,43 @@ AbstractWorldRenderer >> activate [
 	alreadyActivated := true
 ]
 
-{ #category : #activation }
+{ #category : 'activation' }
 AbstractWorldRenderer >> actualScreenSize [
 
 	self subclassResponsibility
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 AbstractWorldRenderer >> checkForNewScreenSize [
 
 	self subclassResponsibility
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 AbstractWorldRenderer >> convertWindowMouseEventPosition: aPosition [
 
 	self subclassResponsibility
 ]
 
-{ #category : #activation }
+{ #category : 'activation' }
 AbstractWorldRenderer >> deactivate [
 
 	self subclassResponsibility
 ]
 
-{ #category : #operations }
+{ #category : 'operations' }
 AbstractWorldRenderer >> deferUpdates: aBoolean [
 
 	^ false
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 AbstractWorldRenderer >> deferUpdatesDuring: aBlock [
 
 	^ aBlock value
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 AbstractWorldRenderer >> displayWorldState: aWorldState ofWorld: aWorld [
 	"Update this world's display."
 
@@ -242,9 +244,6 @@ AbstractWorldRenderer >> displayWorldState: aWorldState ofWorld: aWorld [
 			"draw hands onto world canvas"
 			handsToDraw reverseDo: [:h | aMorphicCanvas fullDrawMorph: h].
 
-			"*make this true to flash damaged areas for testing*"
-			WorldState debugShowDamage ifTrue: [aWorld flashRects: allDamage color: Color black].
-
 			aMorphicCanvas finish.
 			self updateDamage: allDamage.
 
@@ -253,68 +252,73 @@ AbstractWorldRenderer >> displayWorldState: aWorldState ofWorld: aWorld [
 		] ]
 ]
 
-{ #category : #activation }
+{ #category : 'activation' }
 AbstractWorldRenderer >> doActivate [
 
 	self subclassResponsibility
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 AbstractWorldRenderer >> drawDuring: aBlock [
 
 	self subclassResponsibility
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer >> formatRenderingTimeMeasurement: measurement [
 
-	^ '[{1}]{2}: {3} ms' format: { 
+	^ '[{1}]{2}: {3} ms' format: {
 			  self class name.
 			  measurement key.
 			  (measurement value printPaddedWith: Character space to: 5) }
 ]
 
-{ #category : #accessing }
-AbstractWorldRenderer >> icon: aForm [ 
+{ #category : 'operations' }
+AbstractWorldRenderer >> fullscreenMode: aValue [
+	"We ignore the value by default - subclasses might handle fullscreen mode"
+]
+
+{ #category : 'accessing' }
+AbstractWorldRenderer >> icon: aForm [
 
 	self subclassResponsibility
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 AbstractWorldRenderer >> initialize [
 
 	alreadyActivated := false
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 AbstractWorldRenderer >> invalidate [
 	"Invalidate the entire render"
 	"Each subclass should define me properly"
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 AbstractWorldRenderer >> isProfilingRenderingTime [
 	^ self class isProfilingRenderingTime
 ]
 
-{ #category : #profiling }
+{ #category : 'profiling' }
 AbstractWorldRenderer >> logRenderingTimeMeasurements: measurements [
 	self class logRenderingTimeMeasurements: measurements
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 AbstractWorldRenderer >> requestStopTextEditing [
-	^ self subclassResponsibility 
+	^ self subclassResponsibility
 ]
 
-{ #category : #events }
-AbstractWorldRenderer >> requestTextEditingAt: aRectangle [ 
-	
+{ #category : 'events' }
+AbstractWorldRenderer >> requestTextEditingAt: aRectangle [
+
 	self subclassResponsibility
 ]
 
-{ #category : #operations }
-AbstractWorldRenderer >> restoreMorphicDisplay [ 
+{ #category : 'operations' }
+AbstractWorldRenderer >> restoreMorphicDisplay [
 
 	world
 		extent: self actualScreenSize;
@@ -323,65 +327,64 @@ AbstractWorldRenderer >> restoreMorphicDisplay [
 		resizeBackgroundMorph;
 		submorphsDo: [ :each | each displayExtentChanged ];
 		fullRepaintNeeded.
-		
+
 	world defer: [Cursor normal show].
-		
-	world layoutChanged.
+
+	world layoutChanged
 ]
 
-{ #category : #'system startup' }
+{ #category : 'system startup' }
 AbstractWorldRenderer >> shutDown: quitting [
 
 	quitting ifTrue: [ self deactivate ]
 ]
 
-{ #category : #'system startup' }
-AbstractWorldRenderer >> startUp: resuming [ 
-
+{ #category : 'system startup' }
+AbstractWorldRenderer >> startUp: resuming [
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 AbstractWorldRenderer >> updateDamage: rectangles [
 
 	self subclassResponsibility
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 AbstractWorldRenderer >> updateToNewResolution [
 
 	self subclassResponsibility
 ]
 
-{ #category : #activation }
+{ #category : 'activation' }
 AbstractWorldRenderer >> updateWindowTitle [
 
 	"I do nothing... maybe my subclasses extend it"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 AbstractWorldRenderer >> usableArea [
 
 	^ self viewBox
 ]
 
-{ #category : #'display box access' }
-AbstractWorldRenderer >> viewBox [ 
+{ #category : 'display box access' }
+AbstractWorldRenderer >> viewBox [
 
 	^ 0@0 corner: self actualScreenSize
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 AbstractWorldRenderer >> windowTitle: aString [
 
 	self subclassResponsibility
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 AbstractWorldRenderer >> world [
 	^ world
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 AbstractWorldRenderer >> world: anObject [
 	world := anObject
 ]

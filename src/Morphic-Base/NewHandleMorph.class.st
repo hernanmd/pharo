@@ -2,23 +2,25 @@
 A more recent implementation of a handle morph
 "
 Class {
-	#name : #NewHandleMorph,
-	#superclass : #HandleMorph,
+	#name : 'NewHandleMorph',
+	#superclass : 'HandleMorph',
 	#instVars : [
 		'hand',
 		'waitingForClickInside'
 	],
-	#category : #'Morphic-Base-Widgets'
+	#category : 'Morphic-Base-Widgets',
+	#package : 'Morphic-Base',
+	#tag : 'Widgets'
 }
 
-{ #category : #'submorphs - add/remove' }
+{ #category : 'submorphs - add/remove' }
 NewHandleMorph >> delete [
 
 	hand ifNotNil: [ hand showTemporaryCursor: nil ].
 	super delete
 ]
 
-{ #category : #all }
+{ #category : 'all' }
 NewHandleMorph >> followHand: aHand forEachPointDo: block1 lastPointDo: block2 [
 
 	hand := aHand.
@@ -27,7 +29,7 @@ NewHandleMorph >> followHand: aHand forEachPointDo: block1 lastPointDo: block2 [
 	self position: hand lastEvent cursorPoint - (self extent // 2)
 ]
 
-{ #category : #all }
+{ #category : 'all' }
 NewHandleMorph >> followHand: aHand forEachPointDo: block1 lastPointDo: block2 withCursor: aCursor [
 
 	hand := aHand.
@@ -39,7 +41,7 @@ NewHandleMorph >> followHand: aHand forEachPointDo: block1 lastPointDo: block2 w
 	self position: hand lastEvent cursorPoint - (self extent // 2)
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 NewHandleMorph >> initialize [
 	"initialize the state of the receiver"
 
@@ -47,36 +49,36 @@ NewHandleMorph >> initialize [
 	waitingForClickInside := true
 ]
 
-{ #category : #'dropping/grabbing' }
+{ #category : 'dropping/grabbing' }
 NewHandleMorph >> justDroppedInto: aMorph event: anEvent [
 	"No dropping behavior because stepping will delete me.
 	Moreover it needs to be done that way to evaluate lastPointBlock"
 ]
 
-{ #category : #'wiw support' }
+{ #category : 'wiw support' }
 NewHandleMorph >> morphicLayerNumber [
 	"Handles are very front-like - e.g. the spawn reframe logic actually asks if the first submorph of the world is one of us before deciding to create one"
 
 	^ 1
 ]
 
-{ #category : #'stepping and presenter' }
+{ #category : 'stepping and presenter' }
 NewHandleMorph >> step [
 
 	| eventSource |
 	eventSource := hand lastEvent.
 	eventSource anyButtonPressed
-		ifTrue: [ 
+		ifTrue: [
 			waitingForClickInside := false.
 			self position: eventSource cursorPoint - (self extent // 2).
 			pointBlock value: self center ]
-		ifFalse: [ 
+		ifFalse: [
 			waitingForClickInside
-				ifTrue: [ 
-					(self containsPoint: eventSource cursorPoint) ifFalse: [ 
-						"mouse wandered out before clicked" 
+				ifTrue: [
+					(self containsPoint: eventSource cursorPoint) ifFalse: [
+						"mouse wandered out before clicked"
 						^ self delete ] ]
-				ifFalse: [ 
+				ifFalse: [
 					lastPointBlock value: self center.
 					^ self delete ] ]
 ]

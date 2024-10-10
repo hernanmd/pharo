@@ -7,70 +7,71 @@ I represent an Internet mail or news message.
 	parts - if I am a multipart message, then this is a cache of my parts
 "
 Class {
-	#name : #MailMessage,
-	#superclass : #Object,
+	#name : 'MailMessage',
+	#superclass : 'Object',
 	#instVars : [
 		'text',
 		'body',
 		'fields',
 		'parts'
 	],
-	#category : #'Network-Mail'
+	#category : 'Network-Mail',
+	#package : 'Network-Mail'
 }
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 MailMessage class >> dateStampNow [
 	"Return the current date and time formatted per RFC5322  e.g.  'Thu, 18 Feb 1999 20:38:51 -0500'"
 
-	^	DateAndTime now asEmailString.
+	^	DateAndTime now asEmailString
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 MailMessage class >> dateTimeSuffix [
 	"Answer a string which indicates the date and time, intended for use in building fileout filenames, etc."
 
 	^self monthDayTime24StringFrom: Time primUTCSecondsClock
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 MailMessage class >> empty [
 	"return a message with no text and no header"
 
 	^self new
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 MailMessage class >> from: aString [
 	"Initialize a new instance from the given string."
 
 	^ self new from: aString
 ]
 
-{ #category : #'instance creation' }
-MailMessage class >> from: senderString to: recipients about: subjectString asFollows: bodyString [ 
+{ #category : 'instance creation' }
+MailMessage class >> from: senderString to: recipients about: subjectString asFollows: bodyString [
 
 	^ (self fromRfc822: Character lf asString, bodyString)
 			from: senderString;
 			date: self dateStampNow;
 			subject: subjectString;
 			to: recipients;
-			yourself.
+			yourself
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 MailMessage class >> fromRfc822: aString [
 	"Initialize a new instance from the given string."
 
 	^ self new fromRfc822: aString
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 MailMessage class >> generateSeparator [
 	"generate a separator usable for making MIME multipart documents.  A leading -- will *not* be included"
-	^'==CelesteAttachment' , (10000 to: 99999) atRandom asString , '=='.
+	^'==CelesteAttachment' , (10000 to: 99999) atRandom asString , '=='
 ]
 
-{ #category : #utilities }
+{ #category : 'utilities' }
 MailMessage class >> monthDayTime24StringFrom: aSecondCount [
 	| aDate aTime |
 	"From the date/time represented by aSecondCount, produce a string which indicates the date and time in the compact form
@@ -82,12 +83,12 @@ MailMessage class >> monthDayTime24StringFrom: aSecondCount [
 	aDate := Date fromSeconds: aSecondCount.
 	aTime := Time fromSeconds: aSecondCount \\ 86400.
 
-	^ (aDate dayOfMonth asTwoCharacterString), 
-		(aDate monthName copyFrom: 1 to: 3), 
+	^ (aDate dayOfMonth asTwoCharacterString),
+		(aDate monthName copyFrom: 1 to: 3),
 		(aTime hhmm24)
 ]
 
-{ #category : #preferences }
+{ #category : 'preferences' }
 MailMessage class >> omittedHeaderFields [
 	"Reply a list of fields to omit when displaying a nice simple message"
 
@@ -144,22 +145,22 @@ MailMessage class >> omittedHeaderFields [
 		)
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> addAlternativePart: newPart [
-	self makeMultipart: 'alternative' with: newPart.
+	self makeMultipart: 'alternative' with: newPart
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> addAlternativePart: bodyString contentType: aContentTypeString [
 
 	| newPart |
 	newPart := MailMessage empty.
 	newPart setField: 'content-type' toString: aContentTypeString.
 	newPart body: (MIMEDocument contentType: aContentTypeString  content: bodyString).
-	self addAlternativePart: newPart.
+	self addAlternativePart: newPart
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> addAttachmentFrom: aStream withName: aName [
 	"add an attachment, encoding with base64.  aName is the option filename to encode"
 	| newPart |
@@ -181,25 +182,25 @@ MailMessage >> addAttachmentFrom: aStream withName: aName [
 	"regenerate our text"
 	parts := parts copyWith: newPart.
 	self regenerateBodyFromParts.
-	text := nil.
+	text := nil
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> addMixedPart: newPart [
-	self makeMultipart: 'mixed' with: newPart.
+	self makeMultipart: 'mixed' with: newPart
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> addMixedPart: bodyString contentType: aContentTypeString [
 
 	| newPart |
 	newPart := MailMessage empty.
 	newPart setField: 'content-type' toString: aContentTypeString.
 	newPart body: (MIMEDocument contentType: aContentTypeString  content: bodyString).
-	self addMixedPart: newPart.
+	self addMixedPart: newPart
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> asSendableText [
 	"break lines in the given string into shorter lines"
 	| result atAttachment width aString pastHeader |
@@ -209,37 +210,37 @@ MailMessage >> asSendableText [
 	pastHeader := false.
 	atAttachment := false.
 	aString asString
-		linesDo: 
-			[:line | | end start | 
+		linesDo:
+			[:line | | end start |
 			line isEmpty ifTrue: [pastHeader := true].
 			pastHeader
-				ifTrue: 
+				ifTrue:
 					[(line beginsWith: '--==')
 						ifTrue: [atAttachment := true].
 					atAttachment
-						ifTrue: 
-							["at or after an attachment line; no more 
+						ifTrue:
+							["at or after an attachment line; no more
 							wrapping for the rest of the message"
 							result nextPutAll: line.
 							result cr]
 						ifFalse: [(line beginsWith: '>')
-								ifTrue: 
+								ifTrue:
 									["it's quoted text; don't wrap it"
 									result nextPutAll: line.
 									result cr]
-								ifFalse: 
-									["regular old line.  Wrap it to multiple 
+								ifFalse:
+									["regular old line.  Wrap it to multiple
 									lines "
 									start := 1.
-									"output one shorter line each time 
+									"output one shorter line each time
 									through this loop"
 									[start + width <= line size]
-										whileTrue: 
+										whileTrue:
 											["find the end of the line"
 											end := start + width - 1.
 											[end >= start and: [(line at: end + 1) isSeparator not]]
 												whileTrue: [end := end - 1].
-											end < start ifTrue: ["a word spans the entire 
+											end < start ifTrue: ["a word spans the entire
 												width! "
 												end := start + width - 1].
 											"copy the line to the output"
@@ -251,13 +252,13 @@ MailMessage >> asSendableText [
 									"write out the final part of the line"
 									result nextPutAll: (line copyFrom: start to: line size).
 									result cr]]]
-				ifFalse: 
+				ifFalse:
 					[result nextPutAll: line.
 					result cr]].
 	^ result contents
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> atomicParts [
 	"Answer all of the leaf parts of this message, including those of multipart included messages"
 
@@ -265,65 +266,71 @@ MailMessage >> atomicParts [
 	^ self parts inject: OrderedCollection new into: [:col :part | col , part atomicParts]
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> attachmentSeparator [
 	^(self fieldNamed: 'content-type' ifAbsent: [^nil]) parameters
 		at: 'boundary' ifAbsent: [^nil]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
+MailMessage >> bcc [
+
+	^self fieldsNamed: 'bcc' separatedBy: ', '
+]
+
+{ #category : 'accessing' }
 MailMessage >> body [
 	"return just the body of the message"
 	^body
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MailMessage >> body: newBody [
 	"change the body"
 	body := newBody.
-	text := nil.
+	text := nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> bodyText [
 	"return the text of the body of the message"
 	^body content
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> bodyTextFormatted [
 	"Answer a version of the text in my body suitable for display.  This will parse multipart forms, decode HTML, and other such things"
 
 	"check for multipart"
 
 	self body isMultipart
-		ifTrue: [ 
+		ifTrue: [
 			"check for alternative forms"
 			self body isMultipartAlternative
-				ifTrue: [ 
+				ifTrue: [
 					"it's multipart/alternative.  search for a part that we can display, biasing towards nicer formats"
 					#('text/html' 'text/plain')
-						do: [ :format | 
+						do: [ :format |
 							self parts
-								do: [ :part | 
+								do: [ :part |
 									part body contentType = format
 										ifTrue: [ ^ part bodyTextFormatted ] ] ].	"couldn't find a desirable part to display; just display the first part"
 					^ self parts first bodyTextFormatted ].	"not alternative parts.  put something for each part"
 			^ Text
-				streamContents: [ :str | 
+				streamContents: [ :str |
 					self parts
-						do: [ :part | 
+						do: [ :part |
 							((#('text' 'multipart') includes: part body mainType) or: [ part body contentType = 'message/rfc822' ])
-								ifTrue: [ 
+								ifTrue: [
 									"try to inline the message part"
 									str nextPutAll: part bodyTextFormatted ]
-								ifFalse: [ 
+								ifFalse: [
 									| descript |
 									str cr.
 									descript := part name ifNil: [ 'attachment' ].
 									str nextPutAll: (Text string: '[' , descript , ']' attribute: (TextMessageLink message: part)) ] ] ] ].	"check for HTML"
 	self body contentType = 'text/html'
-		ifTrue: [ 
+		ifTrue: [
 			Smalltalk globals
 				at: #HtmlParser
 				ifPresent: [ :htmlParser | ^ (htmlParser parse: body content readStream) formattedText ] ].	"check for an embedded message"
@@ -332,13 +339,13 @@ MailMessage >> bodyTextFormatted [
 	^ body content
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> cc [
 
 	^self fieldsNamed: 'cc' separatedBy: ', '
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> cleanedHeader [
 	"Reply with a cleaned up version email header.  First show fields people would normally want to see (in a regular order for easy browsing), and then any other fields not explictly excluded"
 
@@ -347,11 +354,11 @@ MailMessage >> cleanedHeader [
 	priorityFields := #('Date' 'From' 'Subject' 'To' 'Cc').
 	omittedFields := MailMessage omittedHeaderFields.	"Show the priority fields first, in the order given in priorityFields"
 	priorityFields
-		do: [ :pField | 
+		do: [ :pField |
 			"We don't check whether the priority field is in the omitted list!"
 			self
 				headerFieldsNamed: pField
-				do: [ :fValue | 
+				do: [ :fValue |
 					new
 						nextPutAll: pField;
 						nextPutAll: ': ';
@@ -360,9 +367,9 @@ MailMessage >> cleanedHeader [
 	omittedFields := omittedFields , priorityFields.
 	self
 		fieldsFrom: text readStream
-		do: [ :fName :fValue | 
+		do: [ :fName :fValue |
 			((fName beginsWith: 'x-') or: [ omittedFields anySatisfy: [ :omitted | fName sameAs: omitted ] ])
-				ifFalse: [ 
+				ifFalse: [
 					new
 						nextPutAll: fName;
 						nextPutAll: ': ';
@@ -371,25 +378,25 @@ MailMessage >> cleanedHeader [
 	^ new contents
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 MailMessage >> containsViewableImage [
 	^self body isJpeg | self body isGif | self body isPng
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> date [
 	"Answer a date string for this message."
 
-	^(Date fromSeconds: self time + (Date year: 1980 day: 1 ) asSeconds) 
+	^(Date fromSeconds: self time + (Date year: 1980 day: 1 ) asSeconds)
 		printFormat: #(2 1 3 47 1 2)
 ]
 
-{ #category : #'fields-convenience' }
+{ #category : 'fields-convenience' }
 MailMessage >> date: aDate [
 	self setField: 'date' toString: aDate
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> decoderClass [
 	| encoding |
 	encoding := self fieldNamed: 'content-transfer-encoding' ifAbsent: [^ nil].
@@ -399,14 +406,14 @@ MailMessage >> decoderClass [
 	^ nil
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> excerpt [
 	"Return a short excerpt of the text of the message"
 
 	^ self bodyText withSeparatorsCompacted truncateWithElipsisTo: 60
 ]
 
-{ #category : #fields }
+{ #category : 'fields' }
 MailMessage >> fieldNamed: aString ifAbsent: aBlock [
 	| matchingFields |
 	"return the value of the field with the specified name.  If there is more than one field, then return the first one"
@@ -414,45 +421,45 @@ MailMessage >> fieldNamed: aString ifAbsent: aBlock [
 	^matchingFields first
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> fields [
 	"return the internal fields structure.  This is private and subject to change!"
 	^ fields
 ]
 
-{ #category : #parsing }
-MailMessage >> fieldsFrom: aStream do: aBlock [ 
+{ #category : 'parsing' }
+MailMessage >> fieldsFrom: aStream do: aBlock [
 	"Invoke the given block with each of the header fields from the given stream. The block arguments are the field name and value. The streams position is left right after the empty line separating header and body."
 	| savedLine line s |
 	savedLine := self readStringLineFrom: aStream.
-	[ aStream atEnd ] whileFalse: 
+	[ aStream atEnd ] whileFalse:
 		[ line := savedLine.
 		line isEmpty ifTrue: [ ^ self ].	"quit when we hit a blank line"
-		
+
 		[ savedLine := self readStringLineFrom: aStream.
-		savedLine notEmpty and: [ savedLine first isSeparator ] ] whileTrue: 
+		savedLine notEmpty and: [ savedLine first isSeparator ] ] whileTrue:
 			[ "lines starting with white space are continuation lines"
 			s := savedLine readStream.
 			s skipSeparators.
 			line := line , ' ' , s upToEnd ].
-		self 
+		self
 			reportField: line trimBoth
 			to: aBlock ].
 
 	"process final header line of a body-less message"
-	savedLine isEmpty ifFalse: 
-		[ self 
+	savedLine isEmpty ifFalse:
+		[ self
 			reportField: savedLine trimBoth
 			to: aBlock ]
 ]
 
-{ #category : #fields }
+{ #category : 'fields' }
 MailMessage >> fieldsNamed: aString ifAbsent: aBlock [
 	"return a list of all fields with the given name"
 	^fields at: aString asLowercase ifAbsent: aBlock
 ]
 
-{ #category : #fields }
+{ #category : 'fields' }
 MailMessage >> fieldsNamed: aString  separatedBy: separationString [
 	"return all fields with the specified name, concatenated together with separationString between each element.  Return an empty string if no fields with the specified name are present"
 	| matchingFields |
@@ -460,38 +467,38 @@ MailMessage >> fieldsNamed: aString  separatedBy: separationString [
 	^String streamContents: [ :str |
 		matchingFields
 			do: [ :field | str nextPutAll: field mainValue ]
-			separatedBy: [ str nextPutAll: separationString ]].
+			separatedBy: [ str nextPutAll: separationString ]]
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> format [
 	"Replace the text of this message with a formatted version."
 	"NOTE: This operation discards extra header fields."
 
-	text := self formattedText.
+	text := self formattedText
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> formattedText [
 	"Answer a version of my text suitable for display.  This cleans up the header, decodes HTML, and things like that"
 
-	
+
 	^ self cleanedHeader asText, String cr , self bodyTextFormatted
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> from [
 
 	^(self fieldNamed: 'from' ifAbsent: [ ^'' ]) mainValue
 ]
 
-{ #category : #'fields-convenience' }
+{ #category : 'fields-convenience' }
 MailMessage >> from: senderString [
 	self setField: 'from' toString: senderString
 ]
 
-{ #category : #initialization }
-MailMessage >> fromRfc822: aString [ 
+{ #category : 'initialization' }
+MailMessage >> fromRfc822: aString [
 	"Parse aString to initialize myself."
 	| parseStream contentType bodyText contentTransferEncoding |
 	text := aString trimRight, String cr.
@@ -501,44 +508,44 @@ MailMessage >> fromRfc822: aString [
 	fields := Dictionary new.
 
 	"Extract information out of the header fields"
-	self 
+	self
 		fieldsFrom: parseStream
-		do: 
-			[ :fName :fValue | 
+		do:
+			[ :fName :fValue |
 			"NB: fName is all lowercase"
 			fName = 'content-type' ifTrue: [ contentType := (fValue copyUpTo: $;) asLowercase ].
 			fName = 'content-transfer-encoding' ifTrue: [ contentTransferEncoding := fValue asLowercase ].
-			(fields 
+			(fields
 				at: fName
-				ifAbsentPut: [ OrderedCollection new: 1 ]) add: (MIMEHeaderValue 
+				ifAbsentPut: [ OrderedCollection new: 1 ]) add: (MIMEHeaderValue
 					forField: fName
 					fromString: fValue) ].
 
 	"Extract the body of the message"
 	bodyText := parseStream upToEnd.
-	contentTransferEncoding = 'base64' ifTrue: 
+	contentTransferEncoding = 'base64' ifTrue:
 		[ bodyText := Base64MimeConverter mimeDecodeToChars: bodyText readStream.
 		bodyText := bodyText contents ].
 	contentTransferEncoding = 'quoted-printable' ifTrue: [ bodyText := bodyText decodeQuotedPrintable ].
-	body := MIMEDocument 
+	body := MIMEDocument
 		contentType: contentType
 		content: bodyText
 ]
 
-{ #category : #fields }
+{ #category : 'fields' }
 MailMessage >> hasFieldNamed: aString [
 	^fields includesKey: aString asLowercase
 ]
 
-{ #category : #parsing }
-MailMessage >> headerFieldsNamed: fieldName do: aBlock [ 
+{ #category : 'parsing' }
+MailMessage >> headerFieldsNamed: fieldName do: aBlock [
 	"Evalue aBlock once for each header field which matches fieldName.  The block is valued with one parameter, the value of the field"
-	self 
+	self
 		fieldsFrom: text readStream
 		do: [ :fName :fValue | (fieldName sameAs: fName) ifTrue: [ aBlock value: fValue ] ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MailMessage >> initialize [
 	"initialize as an empty message"
 
@@ -548,7 +555,7 @@ MailMessage >> initialize [
 	body := MIMEDocument contentType: 'text/plain' content: String cr
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> makeMultipart [
 	"if I am not multipart already, then become a multipart message with one part"
 
@@ -573,10 +580,10 @@ MailMessage >> makeMultipart [
 
 	"regenerate everything"
 	self regenerateBodyFromParts.
-	text := nil.
+	text := nil
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> makeMultipart: subType with: newPart [
 	"if I am not multipart already, then become a multipart message with one part"
 
@@ -600,29 +607,29 @@ MailMessage >> makeMultipart: subType with: newPart [
 
 	"regenerate everything"
 	self regenerateBodyFromParts.
-	text := nil.
+	text := nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> name [
 	"return a default name for this part, if any was specified.  If not, return nil"
 	| type nameField disposition |
 
 	"try in the content-type: header"
 	type := self fieldNamed: 'content-type' ifAbsent: [nil].
-	(type notNil and: [(nameField := type parameters at: 'name' ifAbsent: [nil]) notNil])
+	(type isNotNil and: [(nameField := type parameters at: 'name' ifAbsent: [nil]) isNotNil])
 		ifTrue: [^ nameField].
 
 	"try in content-disposition:"
 	disposition := self fieldNamed: 'content-disposition' ifAbsent: [nil].
-	(disposition notNil and: [(nameField := disposition parameters at: 'filename' ifAbsent: [nil]) notNil])
+	(disposition isNotNil and: [(nameField := disposition parameters at: 'filename' ifAbsent: [nil]) isNotNil])
 		ifTrue: [^ nameField].
 
 	"give up"
 	^ nil
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> parseParts [
 	"private -- parse the parts of the message and store them into a collection"
 
@@ -667,15 +674,15 @@ MailMessage >> parseParts [
 	parts := messages collect: [ :e | MailMessage from: e ]
 ]
 
-{ #category : #multipart }
+{ #category : 'multipart' }
 MailMessage >> parts [
 	parts ifNil: [self parseParts].
 	^ parts
 ]
 
-{ #category : #printing }
-MailMessage >> printOn: aStream [ 
-	"For text parts with no filename show: 'text/plain: first line of text...'    
+{ #category : 'printing' }
+MailMessage >> printOn: aStream [
+	"For text parts with no filename show: 'text/plain: first line of text...'
 	for attachments/filenamed parts show: 'attachment: filename.ext'"
 
 	| name |
@@ -684,7 +691,7 @@ MailMessage >> printOn: aStream [
 			ifNotNil: ['File: ' , name])
 ]
 
-{ #category : #parsing }
+{ #category : 'parsing' }
 MailMessage >> readDateFrom: aStream [
 	"Parse a date from the given stream and answer nil if the date can't be parsed. The date may be in any of the following forms:
 		<day> <monthName> <year>		(5 April 1982; 5-APR-82)
@@ -715,20 +722,22 @@ MailMessage >> readDateFrom: aStream [
 	^Date year: year month: month day: day
 ]
 
-{ #category : #parsing }
-MailMessage >> readStringLineFrom: aStream [ 
+{ #category : 'parsing' }
+MailMessage >> readStringLineFrom: aStream [
 	"Read and answer the next line from the given stream. Consume the carriage return but do not append it to the string."
 
 	^aStream nextLine
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> recipientList [
 
-	^ (self to findTokens: $,) collect: [ :e | e trimLeft ]
+	^ (MailAddressParser addressesIn: self to)
+	  , (MailAddressParser addressesIn: self cc)
+	  , (MailAddressParser addressesIn: self bcc)
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> regenerateBodyFromParts [
 	"regenerate the message body from the multiple parts"
 	| bodyText |
@@ -742,7 +751,7 @@ MailMessage >> regenerateBodyFromParts [
 				nextPutAll: self attachmentSeparator;
 				cr;
 				nextPutAll: part text ].
-	
+
 		str
 			cr;
 			nextPutAll: '--';
@@ -754,17 +763,17 @@ MailMessage >> regenerateBodyFromParts [
 	text := nil.  "text needs to be reformatted"
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> regenerateText [
 	"regenerate the full text from the body and headers"
-	
-	text := String streamContents: 
-		[ :str | | encodedBodyText | 
+
+	text := String streamContents:
+		[ :str | | encodedBodyText |
 		"first put the header"
-		fields keysAndValuesDo: 
-			[ :fieldName :fieldValues | 
-			fieldValues do: 
-				[ :fieldValue | 
+		fields keysAndValuesDo:
+			[ :fieldName :fieldValues |
+			fieldValues do:
+				[ :fieldValue |
 				str
 					nextPutAll: fieldName capitalized;
 					nextPutAll: ': ';
@@ -776,50 +785,50 @@ MailMessage >> regenerateText [
 
 		"put the body, being sure to encode it according to the header"
 		encodedBodyText := body content.
-		self decoderClass ifNotNil: 
+		self decoderClass ifNotNil:
 			[ encodedBodyText := self decoderClass mimeEncode: encodedBodyText readStream ].
 		str nextPutAll: encodedBodyText contents]
 ]
 
-{ #category : #fields }
+{ #category : 'fields' }
 MailMessage >> removeFieldNamed: name [
 	"remove all fields with the specified name"
 	fields removeKey: name ifAbsent: []
 ]
 
-{ #category : #parsing }
-MailMessage >> reportField: aString to: aBlock [ 
+{ #category : 'parsing' }
+MailMessage >> reportField: aString to: aBlock [
 	"Evaluate the given block with the field name a value in the given field. Do nothing if the field is malformed."
 	| s fieldName fieldValue |
 	(aString includes: $:) ifFalse: [ ^ self ].
 	s := aString readStream.
 	fieldName := (s upTo: $:) asLowercase.	"fieldname must be lowercase"
 	fieldValue := s upToEnd trimBoth.
-	fieldValue isEmpty ifFalse: 
-		[ aBlock 
+	fieldValue isEmpty ifFalse:
+		[ aBlock
 			value: fieldName
 			value: fieldValue ]
 ]
 
-{ #category : #sending }
-MailMessage >> sendOn: serverString [ 
+{ #category : 'sending' }
+MailMessage >> sendOn: serverString [
 
-	SMTPClient deliver: self usingServer: serverString.
+	SMTPClient deliver: self usingServer: serverString
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MailMessage >> setField: fieldName to: aFieldValue [
 	"set a field.  If any field of the specified name exists, it will be overwritten"
 	fields at: fieldName asLowercase put: (OrderedCollection with: aFieldValue).
-	text := nil.
+	text := nil
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MailMessage >> setField: fieldName toString: fieldValue [
 	^self setField: fieldName to: (MIMEHeaderValue forField: fieldName fromString: fieldValue)
 ]
 
-{ #category : #parsing }
+{ #category : 'parsing' }
 MailMessage >> skipWeekdayName: aStream [
 	"If the given stream starts with a weekday name or its abbreviation, advance the stream to the first alphaNumeric character following the weekday name."
 
@@ -835,42 +844,42 @@ MailMessage >> skipWeekdayName: aStream [
 	abbrev := name contents copyFrom: 1 to: (3 min: name position).
 	abbrev := abbrev asLowercase.
 	(#('sun' 'mon' 'tue' 'wed' 'thu' 'fri' 'sat') includes: abbrev asLowercase)
-		ifTrue: [ 
+		ifTrue: [
 			"found a weekday; skip to the next alphanumeric character"
 			[ aStream peek isAlphaNumeric ] whileFalse: [ aStream skip: 1 ] ]
-		ifFalse: [ 
+		ifFalse: [
 			"didn't find a weekday so restore stream position"
 			aStream position: position ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> subject [
 
 		^(self fieldNamed: 'subject' ifAbsent: [ ^'' ])  mainValue
 ]
 
-{ #category : #'fields-convenience' }
+{ #category : 'fields-convenience' }
 MailMessage >> subject: aString [
 	self setField: 'subject' toString: aString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> text [
 	"the full, unprocessed text of the message"
 	text ifNil: [ self regenerateText ].
 	^text
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> time [
 	| dateField |
 	dateField := (self fieldNamed: 'date' ifAbsent: [ ^0 ]) mainValue.
-	^ [self timeFrom: dateField] onErrorDo: [Date today asSeconds].
+	^ [self timeFrom: dateField] onErrorDo: [Date today asSeconds]
 ]
 
-{ #category : #parsing }
-MailMessage >> timeFrom: aString [ 
-	"Parse the date and time (rfc822) and answer the result as the number of seconds 
+{ #category : 'parsing' }
+MailMessage >> timeFrom: aString [
+	"Parse the date and time (rfc822) and answer the result as the number of seconds
 	since the start of 1980."
 	| s t rawDelta delta plusOrMinus |
 	s := aString readStream.
@@ -880,19 +889,19 @@ MailMessage >> timeFrom: aString [
 	[ s atEnd or: [ s peek isAlphaNumeric ] ] whileFalse: [ s next ].
 
 	"time part"
-	s atEnd ifFalse: 
+	s atEnd ifFalse:
 		[ "read time part (interpreted as local, regardless of sender's timezone)"
 		s peek isDigit ifTrue: [ t := t + (Time readFrom: s) asSeconds ] ].
 	s skipSeparators.
 
 	"Check for a numeric time zone offset"
-	('+-' includes: s peek) ifTrue: 
+	('+-' includes: s peek) ifTrue:
 		[ plusOrMinus := s next.
-		rawDelta := s peek isDigit 
+		rawDelta := s peek isDigit
 			ifTrue: [ Integer readFrom: s ]
 			ifFalse: [ 0 ].
 		delta := (rawDelta // 100 * 60 + (rawDelta \\ 100)) * 60.
-		t := plusOrMinus = $+ 
+		t := plusOrMinus = $+
 			ifTrue: [ t - delta ]
 			ifFalse: [ t + delta ] ].
 
@@ -904,27 +913,27 @@ MailMessage >> timeFrom: aString [
 	"MailMessage new timeFrom: 'on, 04 apr 2001 14:57:32'"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MailMessage >> to [
 	^self fieldsNamed: 'to' separatedBy: ', '
 ]
 
-{ #category : #'fields-convenience' }
+{ #category : 'fields-convenience' }
 MailMessage >> to: aStringOrCollection [
 	self setField: 'to' toString: aStringOrCollection asEmailHeaderString
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> viewBody [
 	"open a viewer on the body of this message"
 	self containsViewableImage
 		ifTrue: [^ self viewImageInBody].
-	UIManager default  
+	MorphicUIManager new
 		longMessage: self bodyTextFormatted
 		title: (self name ifNil: ['(a message part)'])
 ]
 
-{ #category : #'printing/formatting' }
+{ #category : 'printing/formatting' }
 MailMessage >> viewImageInBody [
 	| stream image |
 	stream := self body contentStream.

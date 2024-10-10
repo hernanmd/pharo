@@ -157,8 +157,8 @@ spec
 
 "
 Class {
-	#name : #MenuRegistration,
-	#superclass : #Object,
+	#name : 'MenuRegistration',
+	#superclass : 'Object',
 	#instVars : [
 		'parentName',
 		'itemList',
@@ -168,19 +168,21 @@ Class {
 		'isGroup',
 		'precondition'
 	],
-	#category : #'MenuRegistration-Core'
+	#category : 'MenuRegistration-Core',
+	#package : 'MenuRegistration',
+	#tag : 'Core'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 MenuRegistration class >> owner: aMenuRegistration [
 	^ self new owner: aMenuRegistration
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> action: aMessageSendOrABlock [
 	"set the action of the menu"
-	
-	aMessageSendOrABlock isBlock 
+
+	aMessageSendOrABlock isBlock
 		ifTrue: [
 			self target: aMessageSendOrABlock.
 			self selector: #cull:.
@@ -189,57 +191,57 @@ MenuRegistration >> action: aMessageSendOrABlock [
 			self selector: aMessageSendOrABlock]
 ]
 
-{ #category : #accessing }
-MenuRegistration >> addItem: anItem [ 
+{ #category : 'accessing' }
+MenuRegistration >> addItem: anItem [
 	"Add a MenuRegistration"
 	self ensureItemList add: anItem
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> arguments: anArray [
 	"set the arguments for an item with an action"
-	self spec action 
+	self spec action
 		ifNil: [self spec action: (MessageSend receiver: self itemReceiver selector: nil arguments: anArray)]
 		ifNotNil: [self spec action arguments: anArray]
 ]
 
-{ #category : #accessing }
-MenuRegistration >> assignOrderWithBlock: aBlock [ 
+{ #category : 'accessing' }
+MenuRegistration >> assignOrderWithBlock: aBlock [
 	"Compute recursively MenuRegistration order"
-	self itemList 
+	self itemList
 		ifNotNil: [self itemList: (aBlock value: self itemList).
 				self itemList do: [:rded | rded assignOrderWithBlock: aBlock]]
 ]
 
-{ #category : #accessing }
-MenuRegistration >> buildMenuSpec: aMenu [ 
+{ #category : 'accessing' }
+MenuRegistration >> buildMenuSpec: aMenu [
 	"recursiveley build the menu spec aMenu passed as argument"
 	self itemList
-		ifNotNil: [:l | 
+		ifNotNil: [:l |
 			| m |
-			m := isGroup 
+			m := isGroup
 				ifFalse: [PluggableMenuSpec withModel: nil]
 				ifTrue: [aMenu].
 			(l reject: [:i | i precondition value not]) do: [:i | i buildMenuSpec: m].
 			isGroup ifFalse: [self spec subMenu: m]].
 	isGroup
-		ifTrue: [self spec separator ifTrue: [self itemList ifNotNil: [self itemList last spec separator: true]]] 
+		ifTrue: [self spec separator ifTrue: [self itemList ifNotNil: [self itemList last spec separator: true]]]
 		ifFalse: [aMenu items add: self spec]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> builder [
 	^ owner builder
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> collectMisplacedItemsIn: aCollection [
-	"Select recursively all MenuRegistration with a parentName 
-	different from its owner name. 	This is possible since a parent name 
-	can be given in order to force a menu item placement. 
-	If my parentName is not the same as my owner name then it means 
+	"Select recursively all MenuRegistration with a parentName
+	different from its owner name. 	This is possible since a parent name
+	can be given in order to force a menu item placement.
+	If my parentName is not the same as my owner name then it means
 	that I'm not in the right place and that my placement has to be resolved"
-	
+
 	self parentName
 		ifNotNil: [owner
 				ifNil: [aCollection add: self]
@@ -249,137 +251,143 @@ MenuRegistration >> collectMisplacedItemsIn: aCollection [
 		l do: [:item | item collectMisplacedItemsIn: aCollection]]
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> enabled: aBooleanOrABlock [
 
 	aBooleanOrABlock == true
-		ifTrue: [ 
+		ifTrue: [
 			self spec enabled: true.
 			^ self ].
 	aBooleanOrABlock == false
-		ifTrue: [ 
+		ifTrue: [
 			self spec enabled: false.
 			^ self ].
-	self spec enabled: (aBooleanOrABlock cull: self model).
+	self spec enabled: (aBooleanOrABlock cull: self model)
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> enabledBlock [
 	^ self spec enabledBlock
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> enabledBlock: aBlock [
 
 	self spec enabledBlock: aBlock
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> ensureItemList [
 	"Return the list of MenuRegistration instances"
 	^ itemList ifNil: [itemList := OrderedCollection new]
 ]
 
-{ #category : #'sub item creating' }
+{ #category : 'sub item creating' }
 MenuRegistration >> group: aSymbol [
 	^ (self item: aSymbol) isGroup: true
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> help: anHelpText [
 	"set the help text"
 	self spec help: anHelpText
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> icon: aForm [
 	"set the icon that is shown in the menu"
 	self spec icon: aForm
 ]
 
-{ #category : #initialization }
+{ #category : 'spec accessing' }
+MenuRegistration >> iconFormSet: aFormSet [
+	"set the icon that is shown in the menu"
+	self spec iconFormSet: aFormSet
+]
+
+{ #category : 'initialization' }
 MenuRegistration >> initialize [
 	super initialize.
 	isGroup := false
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> isGroup: aBoolean [
 	isGroup := aBoolean
 ]
 
-{ #category : #'sub item creating' }
+{ #category : 'sub item creating' }
 MenuRegistration >> item: aSymbol [
 	"set my name and my label with aSymbol (the label and the name as the same by default) and register myself as a child of my owner"
 	^ (self builder newSubItem) name: aSymbol; label: aSymbol asString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> itemList [
 	"Return my children"
 	^ itemList
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> itemList: aCollection [
 	"Set the list of MenuRegistration"
 	 itemList := aCollection
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> itemNamed: aName [
 	"Return the MenuRegistration named aName or nil if none is found"
 
 	| result |
 	self name = aName ifTrue: [ ^ self ].
 	result := self itemList
-		ifNotNil: [ :l | 
+		ifNotNil: [ :l |
 			l
-				detect: [ :item | (item itemNamed: aName) notNil ]
+				detect: [ :item | (item itemNamed: aName) isNotNil ]
 				ifNone: [  ] ].
 	^ result ifNotNil: [ result itemNamed: aName ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> itemReceiver [
 	^ self target ifNil: [owner itemReceiver]
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> keyText: aString [
 	self spec keyText: aString
 ]
 
-{ #category : #'spec accessing' }
-MenuRegistration >> label [ 
+{ #category : 'spec accessing' }
+MenuRegistration >> label [
 	"return my label"
 	^ self spec label
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> label: aLabel [
 	"set the label that is shown in the menu"
 	self spec label: aLabel
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> model [
 	^ self builder model
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> name [
 	"returns my name which is used as a key (should unique over all the menu items"
 	^ self spec name
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> name: aSymbol [
 	"set my name (should be unique over all menu items"
 	self spec name: aSymbol
 ]
 
-{ #category : #'sub item creating' }
+{ #category : 'sub item creating' }
 MenuRegistration >> newSubItem [
 	| reg |
 	reg := self class owner: self.
@@ -387,93 +395,93 @@ MenuRegistration >> newSubItem [
 	^ reg
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> order [
 	^ order
 ]
 
-{ #category : #accessing }
-MenuRegistration >> order: aNumber [ 
+{ #category : 'accessing' }
+MenuRegistration >> order: aNumber [
 	"Set the value of order"
 
 	order := aNumber
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> owner [
 	^ owner
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> owner: anItem [
 	owner := anItem
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> parent: aSymbol [
 	self parentName: aSymbol
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> parentName [
 	^ parentName
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> parentName: aSymbol [
 	parentName := aSymbol
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> precondition [
 	^ precondition ifNil: [[true]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> precondition: aValuable [
 	precondition := aValuable
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 MenuRegistration >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream 
+	aStream
 		<< ' ( ';
-		print: self name; 
+		print: self name;
 		<< ' ) '
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MenuRegistration >> release [
 	itemList := nil.
-	self releaseActionMap.
+	self releaseActionMap
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> removeItem: anItem [
 	"Remove a MenuRegistration"
 	self itemList remove: anItem
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MenuRegistration >> reset [
-	itemList 
+	itemList
 		ifNotNil: [
 			itemList do: [:i | i reset].
 			itemList := nil].
 	spec := nil
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> selector: aSymbol [
 	"set the selector for item with an action"
-	self spec action 
+	self spec action
 		ifNil: [self spec action: (MessageSend receiver: self itemReceiver selector: aSymbol)]
 		ifNotNil: [self spec action selector: aSymbol]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MenuRegistration >> sort: aSortBlock [
 	"Sort the tree recursively"
 	self itemList
@@ -482,31 +490,31 @@ MenuRegistration >> sort: aSortBlock [
 		self itemList do: [:rded | rded sort: aSortBlock] ]
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> spec [
 	"return my PluggableMenuItemSpec"
 	^ spec ifNil: [spec := PluggableMenuItemSpec new]
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> target [
 	^ self spec action ifNotNil: [:action | action receiver]
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> target: anObject [
 	"set the target for the action"
-	self spec action 
+	self spec action
 		ifNil: [self spec action: (MessageSend receiver: (anObject ifNil: [owner itemReceiver]) selector: nil)]
 		ifNotNil: [self spec action receiver: anObject]
 ]
 
-{ #category : #'sub item creating' }
+{ #category : 'sub item creating' }
 MenuRegistration >> with: aBlock [
 	self builder currentRoot: self while: aBlock
 ]
 
-{ #category : #'spec accessing' }
+{ #category : 'spec accessing' }
 MenuRegistration >> withSeparatorAfter [
 	"add a separator line after me"
 	self spec separator: true

@@ -3,39 +3,41 @@ A list of examples.
 See class side.
 "
 Class {
-	#name : #FTExamples,
-	#superclass : #Object,
-	#category : #'Morphic-Widgets-FastTable-Examples'
+	#name : 'FTExamples',
+	#superclass : 'Object',
+	#category : 'Morphic-Widgets-FastTable-Examples',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Examples'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> example1 [
 	<example>
 	| list |
 
 	list := FTTableMorph new
 		extent: 300@300;
-		dataSource: (FTExampleDataSource elements: (Smalltalk allClassesAndTraits 
+		dataSource: (FTExampleDataSource elements: (Smalltalk allClassesAndTraits
 			sorted: [ :a :b | a name < b name]));
 		yourself.
 	list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> example2 [
 	<example>
 	| list |
 
 	list := FTTableMorph new
 		extent: 300@300;
-		dataSource: (FTExampleDataSource elements: ((Smalltalk allClassesAndTraits 
+		dataSource: (FTExampleDataSource elements: ((Smalltalk allClassesAndTraits
 			sorted: [ :a :b | a name < b name])
 			first: 10));
 		yourself.
 	list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleDragAndDrop1 [
 	"Show drag&drop between two lists"
 	<sampleInstance>
@@ -49,15 +51,15 @@ FTExamples class >> exampleDragAndDrop1 [
 		dataSource: (FTExampleDataSource elements: (Smalltalk allClassesAndTraits sorted: [ :a :b | a name < b name ]));
 		dragEnabled: true;
 		yourself.
-		
-	list2 := FTTableMorph new 
+
+	list2 := FTTableMorph new
 		hResizing: #spaceFill;
 		vResizing: #spaceFill;
 		addColumn: (FTColumn id: 'Drop into me!');
 		dataSource: FTExampleDropDataSource new;
 		dropEnabled: true;
 		yourself.
-		
+
 	^ PanelMorph new
 		extent: 600@350;
 		layoutPolicy: TableLayout new;
@@ -74,7 +76,7 @@ FTExamples class >> exampleDragAndDrop1 [
 		openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleDragAndDrop2 [
 	"Show drag&drop between two lists, multiple selection"
 	<sampleInstance>
@@ -89,15 +91,15 @@ FTExamples class >> exampleDragAndDrop2 [
 		dragEnabled: true;
 		beMultipleSelection;
 		yourself.
-		
-	list2 := FTTableMorph new 
+
+	list2 := FTTableMorph new
 		hResizing: #spaceFill;
 		vResizing: #spaceFill;
 		addColumn: (FTColumn id: 'Drop into me!');
 		dataSource: FTExampleDropDataSource new;
 		dropEnabled: true;
 		yourself.
-		
+
 	^ PanelMorph new
 		extent: 600@350;
 		layoutPolicy: TableLayout new;
@@ -114,9 +116,9 @@ FTExamples class >> exampleDragAndDrop2 [
 		openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleDragAndDrop3 [
-	"Show drag&drop between two lists, multiple selection. 
+	"Show drag&drop between two lists, multiple selection.
 	 Showing 50 elements, so we can test Cmd+A (select all)"
 	<sampleInstance>
 	<example>
@@ -130,15 +132,15 @@ FTExamples class >> exampleDragAndDrop3 [
 		dragEnabled: true;
 		beMultipleSelection;
 		yourself.
-		
-	list2 := FTTableMorph new 
+
+	list2 := FTTableMorph new
 		hResizing: #spaceFill;
 		vResizing: #spaceFill;
 		addColumn: (FTColumn id: 'Drop into me!');
 		dataSource: FTExampleDropDataSource new;
 		dropEnabled: true;
 		yourself.
-		
+
 	^ PanelMorph new
 		extent: 600@350;
 		layoutPolicy: TableLayout new;
@@ -155,7 +157,7 @@ FTExamples class >> exampleDragAndDrop3 [
 		openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleDragAndDrop4 [
 	"Show drag&drop in one list, with autoscroll"
 	<sampleInstance>
@@ -169,11 +171,11 @@ FTExamples class >> exampleDragAndDrop4 [
 		dragEnabled: true;
 		dropEnabled: true;
 		yourself.
-		
+
 	^ list openInWindowLabeled: 'Autoscrolling'
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleEasyList1 [
 	"Show an easy list with all Morph methods"
 	<sampleInstance>
@@ -184,13 +186,13 @@ FTExamples class >> exampleEasyList1 [
 		extent: 300@550;
 		elements: Morph methods;
 		icon: [ :method | (FTExampleMethodModel method: method) actionOn: nil ];
-		"display: [ :method | method selector ];	"	
+		"display: [ :method | method selector ];	"
 		yourself.
-		
+
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleEasyList2 [
 	"Show an easy list with all Morph methods and a simple menu"
 	<example>
@@ -201,9 +203,9 @@ FTExamples class >> exampleEasyList2 [
 		extent: 300@550;
 		elements: Morph methods;
 		icon: [ :method | (FTExampleMethodModel method: method) actionOn: nil ];
-		display: [ :method | method selector ];		
-		menu: [ :method | 
-			MenuMorph new 
+		display: [ :method | method selector ];
+		menu: [ :method |
+			MenuMorph new
 				add: ('Browse #', (method methodClass name), '>>#', method selector)
 					target: method
 					selector: #browse;
@@ -212,11 +214,11 @@ FTExamples class >> exampleEasyList2 [
 					selector: #inspect;
 				yourself ];
 		yourself.
-		
+
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleEasyList3 [
 	"Show an easy list with all Morph methods and a simple menu, with a list header"
 	<example>
@@ -228,9 +230,9 @@ FTExamples class >> exampleEasyList3 [
 		elements: Morph methods;
 		header: 'Method list';
 		icon: [ :method | (FTExampleMethodModel method: method) actionOn: nil ];
-		display: [ :method | method selector ];		
-		menu: [ :method | 
-			MenuMorph new 
+		display: [ :method | method selector ];
+		menu: [ :method |
+			MenuMorph new
 				add: ('Browse #', (method methodClass name), '>>#', method selector)
 					target: method
 					selector: #browse;
@@ -239,11 +241,11 @@ FTExamples class >> exampleEasyList3 [
 					selector: #inspect;
 				yourself ];
 		yourself.
-		
+
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleEditableList1 [
 	<sampleInstance>
 	<example>
@@ -255,12 +257,12 @@ FTExamples class >> exampleEditableList1 [
 		selectIndex: 1;
 		showFirstSelection;
 		onAnnouncement: FTStrongSelectionChanged
-			do: [ :ann | 
+			do: [ :ann |
 			| index morph ed |
 			index := ann selectedIndex.
 			morph := list visibleRowMorphAtIndex: index.
 			ed := RubFloatingEditorBuilder new
-				customizeEditorWith: [ :editor | 
+				customizeEditorWith: [ :editor |
 					editor scrollbarsShowNever.
 					editor
 						bounds:
@@ -271,7 +273,7 @@ FTExamples class >> exampleEditableList1 [
 										top: 0
 										right: 0
 										bottom: 0)) ];
-				withEditedContentsDo: [ :editedContents | 
+				withEditedContentsDo: [ :editedContents |
 					data at: index put: editedContents asString.
 					list refresh ].
 			ed openEditorWithContents: (data at: index) ];
@@ -280,7 +282,7 @@ FTExamples class >> exampleEditableList1 [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleFilterableList [
 	<example>
 	| list |
@@ -293,7 +295,7 @@ FTExamples class >> exampleFilterableList [
 	list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleList1 [
 	"Show a list with all Object methods"
 	<example>
@@ -304,11 +306,11 @@ FTExamples class >> exampleList1 [
 		extent: 300@550;
 		dataSource: (FTExampleMethodListDataSource for: Object);
 		yourself.
-		
+
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleList2 [
 	"Show a list with all Object methods and preselects one item"
 
@@ -326,9 +328,9 @@ FTExamples class >> exampleList2 [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleList3 [
-	"Show a list with all Object methods, 
+	"Show a list with all Object methods,
 		- preselects one element
 	 	- responds to selection changes"
 
@@ -346,10 +348,10 @@ FTExamples class >> exampleList3 [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleList4 [
-	"Show a list with all Object methods, 
-		- preselects one element 
+	"Show a list with all Object methods,
+		- preselects one element
 		- respond to selection changes
 		- respond to strong selections (double click)"
 
@@ -370,10 +372,10 @@ FTExamples class >> exampleList4 [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleList5 [
-	"Show a list with all Object methods, 
-		- preselects one element 
+	"Show a list with all Object methods,
+		- preselects one element
 		- respond to selection changes
 		- respond to strong selections (double click)
 		- allows multiple selection"
@@ -394,7 +396,7 @@ FTExamples class >> exampleList5 [
 	^ list openInWindow
 ]
 
-{ #category : #'function examples' }
+{ #category : 'function examples' }
 FTExamples class >> exampleListWithExplicitFilter [
 	<example>
 	| list |
@@ -407,7 +409,7 @@ FTExamples class >> exampleListWithExplicitFilter [
 	list openInWindow
 ]
 
-{ #category : #'function examples' }
+{ #category : 'function examples' }
 FTExamples class >> exampleListWithExplicitFilterAndActionButton [
 	<example>
 	| list |
@@ -422,7 +424,7 @@ FTExamples class >> exampleListWithExplicitFilterAndActionButton [
 	list openInWindow
 ]
 
-{ #category : #'function examples' }
+{ #category : 'function examples' }
 FTExamples class >> exampleListWithExplicitFilterAndActionButton2 [
 	<example>
 	| list |
@@ -434,7 +436,7 @@ FTExamples class >> exampleListWithExplicitFilterAndActionButton2 [
 	list openInWindow
 ]
 
-{ #category : #'function examples' }
+{ #category : 'function examples' }
 FTExamples class >> exampleListWithExplicitSearch [
 	<example>
 	| list |
@@ -447,7 +449,7 @@ FTExamples class >> exampleListWithExplicitSearch [
 	list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleListWithGenerator [
 	"Show a list with all Object methods"
 	<example>
@@ -458,11 +460,11 @@ FTExamples class >> exampleListWithGenerator [
 		extent: 300@550;
 		dataSource: (FTExampleMethodListGeneratorDataSource for: Object);
 		yourself.
-		
+
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleListWithHeader [
 	"Show a list with all Object methods with a header"
 
@@ -478,7 +480,7 @@ FTExamples class >> exampleListWithHeader [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleOutline1 [
 	<example>
 	| list |
@@ -495,7 +497,7 @@ FTExamples class >> exampleOutline1 [
 	list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleOutline2 [
 	<example>
 	| data list |
@@ -509,7 +511,7 @@ FTExamples class >> exampleOutline2 [
 	list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleRowNotHomogeneousList1 [
 	"Show a list with all Object methods"
 	<example>
@@ -520,11 +522,11 @@ FTExamples class >> exampleRowNotHomogeneousList1 [
 		beRowNotHomogeneous;
 		dataSource: (FTExampleMethodNotHomogeneousListDataSource for: Object);
 		yourself.
-		
+
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleSortableList [
 	"Show a list with all Object methods with a header"
 
@@ -543,7 +545,7 @@ FTExamples class >> exampleSortableList [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleSortableList2 [
 	"Show a list with all Object methods with a header"
 
@@ -562,7 +564,7 @@ FTExamples class >> exampleSortableList2 [
 	^ list openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleSortableTable1 [
 	"Show a table with all Object methods"
 
@@ -595,7 +597,7 @@ FTExamples class >> exampleSortableTable1 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleSortableTable2 [
 	"Show a table with all Object methods"
 
@@ -629,7 +631,7 @@ FTExamples class >> exampleSortableTable2 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleSortableTable3 [
 	"Show a table with all Object methods"
 
@@ -663,7 +665,7 @@ FTExamples class >> exampleSortableTable3 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleSortableTree [
 	"Show a list with all Object methods with a header"
 
@@ -681,7 +683,7 @@ FTExamples class >> exampleSortableTree [
 		openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleTable1 [
 	"Show a table with all Object methods"
 
@@ -705,7 +707,7 @@ FTExamples class >> exampleTable1 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleTable2 [
 	"Show a table with all Object methods, with a fixed width"
 
@@ -729,7 +731,7 @@ FTExamples class >> exampleTable2 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleTable3 [
 	"Show a table with all Object methods, with a header"
 
@@ -755,7 +757,7 @@ FTExamples class >> exampleTable3 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleTable4 [
 	"Show a table with all Object methods, with a resizable header"
 
@@ -783,7 +785,7 @@ FTExamples class >> exampleTable4 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleTable5 [
 	"Show a table with cell selection mode"
 
@@ -805,7 +807,7 @@ FTExamples class >> exampleTable5 [
 	^ table openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 FTExamples class >> exampleTableHorizontalScroll [
 	"Show a table with all Object methods, with a header,
 	 all fixed width columns as horizontal scroll."
@@ -832,7 +834,7 @@ FTExamples class >> exampleTableHorizontalScroll [
 	^ table openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTree1 [
 	<example>
 	| ds |
@@ -847,13 +849,13 @@ FTExamples class >> exampleTree1 [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTree2 [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 1000)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -863,13 +865,13 @@ FTExamples class >> exampleTree2 [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTreeWithAllItemsFilter [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 10)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -882,13 +884,13 @@ FTExamples class >> exampleTreeWithAllItemsFilter [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTreeWithAllItemsSearch [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 10)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -900,13 +902,13 @@ FTExamples class >> exampleTreeWithAllItemsSearch [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTreeWithRootFilter [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 1000)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -919,13 +921,13 @@ FTExamples class >> exampleTreeWithRootFilter [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTreeWithRootSearch [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 1000)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -937,13 +939,13 @@ FTExamples class >> exampleTreeWithRootSearch [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTreeWithVisibleItemsFilter [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 1000)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -956,13 +958,13 @@ FTExamples class >> exampleTreeWithVisibleItemsFilter [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleTreeWithVisibleItemsSearch [
 	<example>
 	| ds |
 	ds := FTTreeDataSource
 		roots: (1 to: 1000)
-		children: [ :data :item | 
+		children: [ :data :item |
 			item depth even
 				ifTrue: [ 1 to: data / 2 ]
 				ifFalse: [ 1 to: data - 1 ] ].
@@ -974,7 +976,7 @@ FTExamples class >> exampleTreeWithVisibleItemsSearch [
 		openInWindow
 ]
 
-{ #category : #'tree examples' }
+{ #category : 'tree examples' }
 FTExamples class >> exampleexampleOneSubLevelTree [
 	<example>
 	| ds |
@@ -990,6 +992,6 @@ FTExamples class >> exampleexampleOneSubLevelTree [
 		openInWindow
 ]
 
-{ #category : #'see class side' }
+{ #category : 'see class side' }
 FTExamples >> seeClassSide [
 ]

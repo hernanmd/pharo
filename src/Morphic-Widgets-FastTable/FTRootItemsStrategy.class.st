@@ -30,12 +30,14 @@ Example
  
 "
 Class {
-	#name : #FTRootItemsStrategy,
-	#superclass : #FTTreeFunctionStrategy,
-	#category : #'Morphic-Widgets-FastTable-Tree'
+	#name : 'FTRootItemsStrategy',
+	#superclass : 'FTTreeFunctionStrategy',
+	#category : 'Morphic-Widgets-FastTable-Tree',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Tree'
 }
 
-{ #category : #action }
+{ #category : 'action' }
 FTRootItemsStrategy >> filter [
 	^ dataSource class
 		root:
@@ -45,13 +47,13 @@ FTRootItemsStrategy >> filter [
 		children: dataSource childrenBlock
 ]
 
-{ #category : #action }
+{ #category : 'action' }
 FTRootItemsStrategy >> realSearch [
 	| result index |
 	result := OrderedCollection new.
 	index := 1.
 	dataSource rootsItems
-		do: [ :item | 
+		do: [ :item |
 			(self isMatching: item)
 				ifTrue: [ result add: index ].
 			index := index + (item numberOfVisibleChildren + 1) ].

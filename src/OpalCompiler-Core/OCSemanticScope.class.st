@@ -26,30 +26,43 @@ Configuration methods like #class:, #context:, #receiver:, #noPattern: perform t
 
 "
 Class {
+<<<<<<< HEAD
 	#name : #OCSemanticScope,
 	#superclass : #OCAbstractScope,
 	#instVars : [
 		'targetEnvironment'
 	],
 	#category : #'OpalCompiler-Core-Semantics'
+||||||| f5a33d82ec
+	#name : #OCSemanticScope,
+	#superclass : #OCAbstractScope,
+	#category : #'OpalCompiler-Core-Semantics'
+=======
+	#name : 'OCSemanticScope',
+	#superclass : 'OCAbstractScope',
+	#category : 'OpalCompiler-Core-Semantics',
+	#package : 'OpalCompiler-Core',
+	#tag : 'Semantics'
+>>>>>>> Pharo13
 }
 
-{ #category : #testing }
-OCSemanticScope class >> isAbstract [ 
-	^self = OCSemanticScope 
+{ #category : 'testing' }
+OCSemanticScope class >> isAbstract [
+	^self = OCSemanticScope
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 OCSemanticScope >> allTemps [
 	^#()
 ]
 
-{ #category : #'code evaluation' }
-OCSemanticScope >> announceDoItEvaluation: aSourceString by: aSystemAnnouncer [ 
+{ #category : 'code evaluation' }
+OCSemanticScope >> announceDoItEvaluation: aSourceString by: aSystemAnnouncer [
 
 	aSystemAnnouncer evaluated: aSourceString context: nil
 ]
 
+<<<<<<< HEAD
 { #category : #converting }
 OCSemanticScope >> asDoItScope [
 	self subclassResponsibility 
@@ -66,29 +79,64 @@ OCSemanticScope >> asDoItScopeForReceiver: anObject [
 ]
 
 { #category : #testing }
-OCSemanticScope >> hasBindingThatBeginsWith: aString [
-	
-	(self targetClass hasBindingThatBeginsWith: aString) ifTrue: [ ^true ].
-	
-	^super hasBindingThatBeginsWith: aString
+||||||| f5a33d82ec
+{ #category : #converting }
+OCSemanticScope >> asDoItScope [
+	self subclassResponsibility 
+]
 
+{ #category : #converting }
+OCSemanticScope >> asDoItScopeForContext: aContext [ 
+	^OCContextualDoItSemanticScope targetingContext: aContext
+]
+
+{ #category : #converting }
+OCSemanticScope >> asDoItScopeForReceiver: anObject [
+	^OCReceiverDoItSemanticScope targetingReceiver: anObject
+]
+
+{ #category : #'code compilation' }
+OCSemanticScope >> compileMethodFromASTBy: aCompiler [
+	self subclassResponsibility 
 ]
 
 { #category : #testing }
-OCSemanticScope >> isDoItScope [ 
+=======
+{ #category : 'testing' }
+>>>>>>> Pharo13
+OCSemanticScope >> hasBindingThatBeginsWith: aString [
+
+	(self targetClass hasBindingThatBeginsWith: aString) ifTrue: [ ^true ].
+
+	^super hasBindingThatBeginsWith: aString
+]
+
+{ #category : 'testing' }
+OCSemanticScope >> isDoItScope [
 	^false
 ]
 
-{ #category : #lookup }
-OCSemanticScope >> lookupVar: name declare: aBoolean [
+{ #category : 'lookup' }
+OCSemanticScope >> lookupVar: name [
 
+<<<<<<< HEAD
 	(self targetClass lookupLocalVar: name) ifNotNil: [ :v | ^v ].
 	(self targetEnvironment lookupVar: name) ifNotNil: [ :v | ^v ].	
 		
 	^outerScope ifNotNil: [ outerScope lookupVar: name declare: aBoolean ]
 	
 ]
+||||||| f5a33d82ec
+	(self targetClass lookupVar: name declare: aBoolean) ifNotNil: [ :v | ^v ].
+	
+	^outerScope ifNotNil: [ outerScope lookupVar: name declare: aBoolean ]
+	
+]
+=======
+	(self targetClass lookupVar: name) ifNotNil: [ :v | ^v ].
+>>>>>>> Pharo13
 
+<<<<<<< HEAD
 { #category : #'code compilation' }
 OCSemanticScope >> parseASTBy: aParser [
 	self subclassResponsibility 
@@ -113,4 +161,26 @@ OCSemanticScope >> targetEnvironment [
 OCSemanticScope >> targetEnvironment: anObject [
 
 	targetEnvironment := anObject
+||||||| f5a33d82ec
+{ #category : #'code compilation' }
+OCSemanticScope >> parseASTBy: aParser [
+	self subclassResponsibility 
+]
+
+{ #category : #printing }
+OCSemanticScope >> scopeLevel [ 
+	^0
+]
+
+{ #category : #accessing }
+OCSemanticScope >> targetClass [ 
+	self subclassResponsibility  
+]
+
+{ #category : #accessing }
+OCSemanticScope >> targetEnvironment [ 
+	^self targetClass environment 
+=======
+	^ super lookupVar: name
+>>>>>>> Pharo13
 ]

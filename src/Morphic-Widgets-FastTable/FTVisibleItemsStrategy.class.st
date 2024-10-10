@@ -30,12 +30,14 @@ Example
  
 "
 Class {
-	#name : #FTVisibleItemsStrategy,
-	#superclass : #FTTreeFunctionStrategy,
-	#category : #'Morphic-Widgets-FastTable-Tree'
+	#name : 'FTVisibleItemsStrategy',
+	#superclass : 'FTTreeFunctionStrategy',
+	#category : 'Morphic-Widgets-FastTable-Tree',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Tree'
 }
 
-{ #category : #action }
+{ #category : 'action' }
 FTVisibleItemsStrategy >> filter [
 	| items |
 	items := OrderedCollection new.
@@ -49,12 +51,12 @@ FTVisibleItemsStrategy >> filter [
 		children: dataSource childrenBlock
 ]
 
-{ #category : #action }
+{ #category : 'action' }
 FTVisibleItemsStrategy >> matchingFilter: anItem [
 	anItem isExpanded
 		ifTrue:
 			[ ((anItem children collect: [ :each | self matchingFilter: each ]) reject: #isNil)
-				ifNotEmpty: [ :coll | 
+				ifNotEmpty: [ :coll |
 					^ (self newStaticItemFrom: anItem)
 						children: coll asArray;
 						expandWithoutChange;
@@ -66,7 +68,7 @@ FTVisibleItemsStrategy >> matchingFilter: anItem [
 		ifEmpty: [ nil ]
 ]
 
-{ #category : #action }
+{ #category : 'action' }
 FTVisibleItemsStrategy >> newStaticItemFrom: anItem [
 	^ FTStaticBasicItem new
 		data: anItem data;
@@ -75,15 +77,15 @@ FTVisibleItemsStrategy >> newStaticItemFrom: anItem [
 		yourself
 ]
 
-{ #category : #action }
+{ #category : 'action' }
 FTVisibleItemsStrategy >> realSearch [
 	| result cpt |
 	result := OrderedCollection new.
 	cpt := 0.
 	dataSource rootsItems
 		do:
-			[ :item | 
-			1 to: item numberOfVisibleChildren + 1 do: [ :index | 
+			[ :item |
+			1 to: item numberOfVisibleChildren + 1 do: [ :index |
 				| elem |
 				elem := item selfOrChildAt: index.
 				(self isMatching: elem)

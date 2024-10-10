@@ -2,65 +2,67 @@
 I keep some examples on how to use a PluggableToggleButtonMorph
 "
 Class {
-	#name : #PluggableToggleButtonMorphExample,
-	#superclass : #PluggableButtonMorphExample,
-	#category : #'Morphic-Examples-Widgets'
+	#name : 'PluggableToggleButtonMorphExample',
+	#superclass : 'PluggableButtonMorphExample',
+	#category : 'Morphic-Examples-Widgets',
+	#package : 'Morphic-Examples',
+	#tag : 'Widgets'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableToggleButtonMorphExample class >> exampleToggleButton [
 	<sampleInstance>
 	<example>
 	^ self new buildToggleButton openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableToggleButtonMorphExample class >> exampleToggleButtonNoLabel [
 	<sampleInstance>
 	<example>
 	^ self new buildToggleButtonNoLabel openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 PluggableToggleButtonMorphExample class >> exampleToggleButtonWithIcon [
 	<sampleInstance>
 	<example>
 	^ self new buildToggleButtonWithIcon openInWindow
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableToggleButtonMorphExample >> buildToggleButton [
 	^ PluggableToggleButtonMorph
-		on: self 
+		on: self
 		getState: nil
 		action:  #toggleAction:
-		label: #label 
-		menu: nil.
+		label: #label
+		menu: nil
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableToggleButtonMorphExample >> buildToggleButtonNoLabel [
 	^ PluggableToggleButtonMorph
-		on: self 
+		on: self
 		getState: nil
 		action:  #toggleAction:
-		label: nil 
+		label: nil
 		icon: #icon
-		menu: nil.
+		menu: nil
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 PluggableToggleButtonMorphExample >> buildToggleButtonWithIcon [
 	^ PluggableToggleButtonMorph
-		on: self 
+		on: self
 		getState: nil
 		action:  #toggleAction:
-		label: #label 
+		label: #label
 		icon: #icon
-		menu: nil.
+		menu: nil
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 PluggableToggleButtonMorphExample >> toggleAction: aBoolean [
 	self inform: (aBoolean
 		ifTrue: [ 'Button pressed' ]

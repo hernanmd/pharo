@@ -10,8 +10,8 @@ IconicListItemMorph new
 	openInWorld
 "
 Class {
-	#name : #IconicListItemMorph,
-	#superclass : #BorderedMorph,
+	#name : 'IconicListItemMorph',
+	#superclass : 'BorderedMorph',
 	#traits : 'TAbleToRotate',
 	#classTraits : 'TAbleToRotate classTrait',
 	#instVars : [
@@ -19,14 +19,15 @@ Class {
 		'morph',
 		'originalObject'
 	],
-	#category : #'Morphic-Widgets-Basic'
+	#category : 'Morphic-Widgets-Basic',
+	#package : 'Morphic-Widgets-Basic'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 IconicListItemMorph class >> text: aText icon: form [
 	| morph |
-	
-	aText ifNotNil: [ morph := aText asMorph 
+
+	aText ifNotNil: [ morph := aText asMorph
 		lock;
 		yourself ].
 
@@ -36,35 +37,35 @@ IconicListItemMorph class >> text: aText icon: form [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> enabled: aBoolean [
 
 	self submorphs do: [ :each |
-			each enabled: aBoolean ].
+			each enabled: aBoolean ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> icon [
 	^ icon
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> icon: anObject [
 
 	icon ifNotNil: [ self removeMorph: icon ].
-	
+
 	icon := anObject asAlphaImageMorph.
-	anObject ifNotNil: [ "since the text can be removed" 
+	anObject ifNotNil: [ "since the text can be removed"
 		self addMorphFront: icon.
 		self adjustLayoutBounds]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 IconicListItemMorph >> initialize [
 
 	super initialize.
 
-	self 	
+	self
 		changeTableLayout;
 		listDirection: #leftToRight;
 		cellPositioning: #center;
@@ -73,32 +74,32 @@ IconicListItemMorph >> initialize [
 		color: Color transparent;
 		hResizing: #shrinkWrap;
 		vResizing: #shrinkWrap;
-		extent: 20@16.
+		extent: 20@16
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> morph [
 	^ morph
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> morph: anObject [
-	
+
 	morph ifNotNil: [ self removeMorph: morph ].
 	morph := anObject.
-	morph ifNotNil: [ "since the text can be removed" 
+	morph ifNotNil: [ "since the text can be removed"
 		self addMorphBack: morph.
 		self adjustLayoutBounds]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> originalObject [
 
 	^ originalObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IconicListItemMorph >> originalObject: anObject [
-	
+
 	originalObject := anObject
 ]

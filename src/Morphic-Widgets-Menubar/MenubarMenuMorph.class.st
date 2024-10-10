@@ -5,22 +5,24 @@ Description
 I am a specialization of the MenuMorph for the Menubar. I adapt the keyboard navigation of the menubar.
 "
 Class {
-	#name : #MenubarMenuMorph,
-	#superclass : #MenuMorph,
-	#category : #'Morphic-Widgets-Menubar-View'
+	#name : 'MenubarMenuMorph',
+	#superclass : 'MenuMorph',
+	#category : 'Morphic-Widgets-Menubar-View',
+	#package : 'Morphic-Widgets-Menubar',
+	#tag : 'View'
 }
 
-{ #category : #events }
+{ #category : 'events' }
 MenubarMenuMorph >> leftArrowStroked: evt [
 	| keyboardFocus |
 	super leftArrowStroked: evt.
-	
+
 	"If the menu is a submenu of a MenubarItemMorph then we need to give back the focus but also move the MenubarItemMorph selected one left."
 	keyboardFocus := evt hand keyboardFocus.
 	keyboardFocus isMenubar ifTrue: [ keyboardFocus keyStroke: evt ]
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 MenubarMenuMorph >> rightArrowStroked: evt [
 	"If the super return false it's probably because we need to give back the focus to the menubar and move to the right."
 
@@ -33,7 +35,7 @@ MenubarMenuMorph >> rightArrowStroked: evt [
 	^ false
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 MenubarMenuMorph >> sendRightArrowPressedToMenubarOwner: evt [
 	popUpOwner owner isMenubar
 		ifTrue:

@@ -5,13 +5,25 @@ It's the simplest change to the compiler that I could imagine that doesn't inter
 
 "
 Class {
-	#name : #OCTargetCompiler,
-	#superclass : #OpalCompiler,
-	#category : #'OpalCompiler-Tests-Semantic'
+	#name : 'OCTargetCompiler',
+	#superclass : 'OpalCompiler',
+	#category : 'OpalCompiler-Tests-Semantic',
+	#package : 'OpalCompiler-Tests',
+	#tag : 'Semantic'
 }
 
+<<<<<<< HEAD
 { #category : #accessing }
 OCTargetCompiler >> newCompilationContext [
 	^super newCompilationContext 
 		parserClass: OCTargetCompilerParser
+||||||| f5a33d82ec
+{ #category : #accessing }
+OCTargetCompiler >> compilationContext [
+	^ compilationContext ifNil: [ compilationContext := self compilationContextClass default parserClass: OCTargetCompilerParser ]
+=======
+{ #category : 'accessing' }
+OCTargetCompiler >> compilationContext [
+	^ compilationContext ifNil: [ compilationContext := self compilationContextClass default parserClass: OCTargetCompilerParser ]
+>>>>>>> Pharo13
 ]

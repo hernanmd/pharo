@@ -4,8 +4,8 @@ Display a hierarchical list of items.  Each item should be wrapped with a ListIt
 For a simple example, look at submorphsExample.  For beefier examples, look at ObjectExplorer or FileList.
 "
 Class {
-	#name : #SimpleHierarchicalListMorph,
-	#superclass : #ScrollPane,
+	#name : 'SimpleHierarchicalListMorph',
+	#superclass : 'ScrollPane',
 	#instVars : [
 		'selectedMorph',
 		'getListSelector',
@@ -22,10 +22,11 @@ Class {
 		'searchedElement',
 		'keystrokeActionSelector'
 	],
-	#category : #'Morphic-Widgets-List'
+	#category : 'Morphic-Widgets-List',
+	#package : 'Morphic-Widgets-List'
 }
 
-{ #category : #shortcuts }
+{ #category : 'shortcuts' }
 SimpleHierarchicalListMorph class >> buildSimpleHierarchicalListShortcuts: aBuilder [
 	<keymap>
 	(aBuilder shortcut: #cursorUp)
@@ -55,35 +56,35 @@ SimpleHierarchicalListMorph class >> buildSimpleHierarchicalListShortcuts: aBuil
 	(aBuilder shortcut: #cursorRight)
 		category: #SimpleHierarchicalList
 		default: Character arrowRight asKeyCombination
-		do: [ :target | 
+		do: [ :target |
 			target selectedMorph
-				ifNotNil: [ 
+				ifNotNil: [
 					target selectedMorph canExpand
-						ifTrue: [ 
+						ifTrue: [
 							target selectedMorph isExpanded not
 								ifTrue: [ target toggleExpandedState: target selectedMorph ]
 								ifFalse: [ target setSelectionIndex: target getSelectionIndex + 1 ] ] ] ].
 	(aBuilder shortcut: #cursorLeft)
 		category: #SimpleHierarchicalList
 		default: Character arrowLeft asKeyCombination
-		do: [ :target | 
+		do: [ :target |
 			| selectedMorph |
 			(selectedMorph := target selectedMorph)
-				ifNotNil: [ 
+				ifNotNil: [
 					selectedMorph isExpanded
 						ifTrue: [ target toggleExpandedState: selectedMorph ]
-						ifFalse: [ 
+						ifFalse: [
 							| i |
 							"Search parent."
 							selectedMorph indentLevel > 0
-								ifTrue: [ 
+								ifTrue: [
 									i := target getSelectionIndex max: 1.
 									[ i > 1 and: [ (target scroller submorphs at: i) indentLevel >= selectedMorph indentLevel ] ]
 										whileTrue: [ i := i - 1 max: 1 ].
 									target setSelectionIndex: i ] ] ] ]
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 SimpleHierarchicalListMorph class >> exampleSubmorphs [
 	"display a hierarchical list of the World plus its submorphs plus its submorphs' submorphs etc."
 	"[SimpleHierarchicalListMorph exampleSubmorphs]"
@@ -99,7 +100,7 @@ SimpleHierarchicalListMorph class >> exampleSubmorphs [
 	morph openInWindow
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 SimpleHierarchicalListMorph class >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel [
 	"Create a 'pluggable' list view on the given model parameterized by the given message selectors."
 
@@ -111,7 +112,7 @@ SimpleHierarchicalListMorph class >> on: anObject list: getListSel selected: get
 		menu: getMenuSel
 ]
 
-{ #category : #'dropping/grabbing' }
+{ #category : 'dropping/grabbing' }
 SimpleHierarchicalListMorph >> acceptDroppingMorph: aMorph event: evt [
 
 	self model
@@ -120,33 +121,33 @@ SimpleHierarchicalListMorph >> acceptDroppingMorph: aMorph event: evt [
 		inMorph: self.
 	self resetPotentialDropMorph.
 	evt hand releaseMouseFocus: self.
-	Cursor normal show.
+	Cursor normal show
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 SimpleHierarchicalListMorph >> addMorphsTo: morphList from: aCollection allowSorting: sortBoolean withExpandedItems: expandedItems atLevel: newIndent [
 
 	| priorMorph newCollection firstAddition |
 	priorMorph := nil.
-	newCollection := (sortBoolean and: [sortingSelector notNil]) ifTrue: [
-		(aCollection asSortedCollection: [ :a :b | 
+	newCollection := (sortBoolean and: [sortingSelector isNotNil]) ifTrue: [
+		(aCollection asSortedCollection: [ :a :b |
 			(a perform: sortingSelector) <= (b perform: sortingSelector)]) asOrderedCollection
 	] ifFalse: [
 		aCollection
 	].
 	firstAddition := nil.
-	newCollection do: [:item | 
-		priorMorph := self indentingItemClass basicNew 
-			initWithContents: item 
-			prior: priorMorph 
+	newCollection do: [:item |
+		priorMorph := self indentingItemClass basicNew
+			initWithContents: item
+			prior: priorMorph
 			forList: self
 			indentLevel: newIndent.
 		firstAddition ifNil: [firstAddition := priorMorph].
 		morphList add: priorMorph.
 		((item hasEquivalentIn: expandedItems) or: [priorMorph isExpanded]) ifTrue: [
 			priorMorph isExpanded: true.
-			priorMorph 
-				addChildrenForList: self 
+			priorMorph
+				addChildrenForList: self
 				addingTo: morphList
 				withExpandedItems: expandedItems.
 		].
@@ -154,22 +155,22 @@ SimpleHierarchicalListMorph >> addMorphsTo: morphList from: aCollection allowSor
 	^firstAddition
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 SimpleHierarchicalListMorph >> addSubmorphsAfter: parentMorph fromCollection: aCollection allowSorting: sortBoolean [
 
 	| priorMorph morphList newCollection |
 	priorMorph := nil.
-	newCollection := (sortBoolean and: [sortingSelector notNil]) ifTrue: [
-		(aCollection asSortedCollection: [ :a :b | 
+	newCollection := (sortBoolean and: [sortingSelector isNotNil]) ifTrue: [
+		(aCollection asSortedCollection: [ :a :b |
 			(a perform: sortingSelector) <= (b perform: sortingSelector)]) asOrderedCollection
 	] ifFalse: [
 		aCollection
 	].
 	morphList := OrderedCollection new.
-	newCollection do: [:item | 
-		priorMorph := self indentingItemClass basicNew 
-			initWithContents: item 
-			prior: priorMorph 
+	newCollection do: [:item |
+		priorMorph := self indentingItemClass basicNew
+			initWithContents: item
+			prior: priorMorph
 			forList: self
 			indentLevel: parentMorph indentLevel + 1.
 		morphList add: priorMorph.
@@ -178,10 +179,10 @@ SimpleHierarchicalListMorph >> addSubmorphsAfter: parentMorph fromCollection: aC
 	^morphList
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 SimpleHierarchicalListMorph >> adjustSubmorphPositions [
 	"Fixed to not require setting item widths to 9999."
-	
+
 	| p |
 	p := 0@0.
 	scroller submorphsDo: [ :each | | h |
@@ -189,87 +190,87 @@ SimpleHierarchicalListMorph >> adjustSubmorphPositions [
 		each privateBounds: (p extent: each width@h).
 		p := p + (0@h)
 	].
-	self 
+	self
 		changed;
 		layoutChanged;
-		setScrollDeltas.
+		setScrollDeltas
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 SimpleHierarchicalListMorph >> adoptPaneColor: paneColor [
 	"Pass on to the border too."
-	
+
 	super adoptPaneColor: paneColor.
 	paneColor ifNil: [^self].
 	self selectionColor: self selectionColor.
 	self borderStyle baseColor: paneColor twiceDarker
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> allItems [
 
 	^ (submorphs detect:[:each | each class = TransformMorph ]) submorphs
 ]
 
-{ #category : #'keyboard navigation' }
+{ #category : 'keyboard navigation' }
 SimpleHierarchicalListMorph >> arrowKey: aChar [
 	"Handle a keyboard navigation character. Answer true if handled, false if not."
 
 	| keyEvent |
 	keyEvent := aChar asciiValue.
 	keyEvent = 31
-		ifTrue: [ 
+		ifTrue: [
 			"down"
 			self setSelectionIndex: self getSelectionIndex + 1.
 			^ true ].
 	keyEvent = 30
-		ifTrue: [ 
+		ifTrue: [
 			"up"
 			self setSelectionIndex: (self getSelectionIndex - 1 max: 1).
 			^ true ].
 	keyEvent = 1
-		ifTrue: [ 
+		ifTrue: [
 			"home"
 			self setSelectionIndex: 1.
 			^ true ].
 	keyEvent = 4
-		ifTrue: [ 
+		ifTrue: [
 			"end"
 			self setSelectionIndex: scroller submorphs size.
 			^ true ].
 	keyEvent = 11
-		ifTrue: [ 
+		ifTrue: [
 			"page up"
 			self setSelectionIndex: (self getSelectionIndex - self numSelectionsInView max: 1).
 			^ true ].
 	keyEvent = 12
-		ifTrue: [ 
+		ifTrue: [
 			"page down"
 			self setSelectionIndex: self getSelectionIndex + self numSelectionsInView.
 			^ true ].
 	keyEvent = 29
-		ifTrue: [ 
+		ifTrue: [
 			"right"
 			selectedMorph
-				ifNotNil: [ 
+				ifNotNil: [
 					selectedMorph canExpand
-						ifTrue: [ 
+						ifTrue: [
 							selectedMorph isExpanded not
 								ifTrue: [ self toggleExpandedState: selectedMorph ]
 								ifFalse: [ self setSelectionIndex: self getSelectionIndex + 1 ] ] ].
 			^ true ].
 	keyEvent = 28
-		ifTrue: [ 
+		ifTrue: [
 			"left"
 			selectedMorph
-				ifNotNil: [ 
+				ifNotNil: [
 					selectedMorph isExpanded
 						ifTrue: [ self toggleExpandedState: selectedMorph ]
-						ifFalse: [ 
+						ifFalse: [
 							| i |
 							"Search parent."
 							selectedMorph indentLevel > 0
-								ifTrue: [ 
+								ifTrue: [
 									i := self getSelectionIndex max: 1.
 									[ i > 1 and: [ (scroller submorphs at: i) indentLevel >= selectedMorph indentLevel ] ]
 										whileTrue: [ i := i - 1 max: 1 ].
@@ -278,13 +279,13 @@ SimpleHierarchicalListMorph >> arrowKey: aChar [
 	^ false
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> autoDeselect: trueOrFalse [
 	"Enable/disable autoDeselect (see class comment)"
-	autoDeselect := trueOrFalse.
+	autoDeselect := trueOrFalse
 ]
 
-{ #category : #search }
+{ #category : 'search' }
 SimpleHierarchicalListMorph >> basicKeyPressed: aChar [
 	| nextSelection milliSeconds slowKeyStroke oldSelection list |
 	nextSelection := oldSelection := lastSelection.
@@ -293,10 +294,10 @@ SimpleHierarchicalListMorph >> basicKeyPressed: aChar [
 	lastKeystrokeTime := milliSeconds.
 	self searchedElement: nil.
 	slowKeyStroke
-		ifTrue: [ 
+		ifTrue: [
 			"forget previous keystrokes and search in following elements"
 			lastKeystrokes := aChar asLowercase asString ]
-		ifFalse: [ 
+		ifFalse: [
 			"append quick keystrokes but don't move selection if it still matches"
 			lastKeystrokes := lastKeystrokes , aChar asLowercase asString ].	"Get rid of blanks and style used in some lists"	"No change if model is locked"
 	model okToChange
@@ -304,7 +305,7 @@ SimpleHierarchicalListMorph >> basicKeyPressed: aChar [
 	list := self allItems.
 	list
 		detect: [ :a | a searchingString trimBoth asLowercase beginsWith: lastKeystrokes ]
-		ifFound: [ :nextSelectionNode | 
+		ifFound: [ :nextSelectionNode |
 			nextSelection := list indexOf: nextSelectionNode ifAbsent: [ 0 ].	"The following line is a workaround around the behaviour of OBColumn>>selection:,
 	 which deselects when called twice with the same argument."
 			self searchedElement: nextSelectionNode.
@@ -312,79 +313,79 @@ SimpleHierarchicalListMorph >> basicKeyPressed: aChar [
 			^ self vScrollValue: (nextSelection - 1) / list size ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> collapseAll [
 	"Expand all of the roots!"
-	
+
 	self roots do: [:m |
 		self collapseAll: m].
 	self adjustSubmorphPositions
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> collapseAll: aMorph [
 	| allChildren |
 	aMorph toggleExpandedState.
 	allChildren := OrderedCollection new: 10.
 	aMorph recursiveAddTo: allChildren.
-	allChildren do: [:each | 
+	allChildren do: [:each |
 		each isExpanded
-			ifTrue: [self collapseAll: each]].
+			ifTrue: [self collapseAll: each]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> columns [
 
 	^columns
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> columns: anArray [
 
 	columns := anArray
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> currentlyExpanded [
 
 	^(scroller submorphs select: [ :each | each isExpanded]) collect: [ :each | each complexContents]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> defaultColor [
 	^ self theme backgroundColor
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 SimpleHierarchicalListMorph >> drawLinesOn: aCanvas [
 	"Draw the lines for the submorphs.
 	Modified for performance."
-	
+
 	| lColor|
 	lColor := self lineColor.
-	aCanvas 
+	aCanvas
 		transformBy: scroller transform
 		clippingTo: scroller innerBounds
 		during: [:clippedCanvas |
 			scroller submorphs do: [ :submorph | | last |
 				((submorph isExpanded and: [
-					(submorph nextSibling notNil and: [
+					(submorph nextSibling isNotNil and: [
 						clippedCanvas isVisible: (submorph fullBounds topLeft
 							corner: submorph nextSibling fullBounds bottomRight)]) or: [
-					submorph nextSibling isNil and: [(last := submorph lastChild) notNil and: [
+					submorph nextSibling isNil and: [(last := submorph lastChild) isNotNil and: [
 						clippedCanvas isVisible: (submorph fullBounds topLeft
 							corner: last fullBounds bottomRight)]]]]) or: [
 				(clippedCanvas isVisible: submorph fullBounds) or: [
-				(submorph nextSibling notNil and: [
+				(submorph nextSibling isNotNil and: [
 						clippedCanvas isVisible: submorph nextSibling fullBounds])]]) ifTrue:[
 					submorph drawLinesOn: clippedCanvas lineColor: lColor]]]
 		smoothing: scroller smoothing
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 SimpleHierarchicalListMorph >> drawOn: aCanvas [
 	"Draw the selection and lines."
-	
+
 	super drawOn: aCanvas.
 	searchedElement ifNotNil:
 		[aCanvas clipBy: self innerBounds during: [:c |
@@ -399,40 +400,40 @@ SimpleHierarchicalListMorph >> drawOn: aCanvas [
 	self drawLinesOn: aCanvas
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 SimpleHierarchicalListMorph >> expand: aMorph to: level [
 	| allChildren |
 	aMorph toggleExpandedState.
 	allChildren := OrderedCollection new: 10.
 	aMorph recursiveAddTo: allChildren.
-	allChildren do: [:each | 
+	allChildren do: [:each |
 		((each canExpand
 			and: [each isExpanded not])
 			and: [level > 0])
-			ifTrue: [self expand: each to: level-1]].
+			ifTrue: [self expand: each to: level-1]]
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 SimpleHierarchicalListMorph >> expandAll [
 	"Expand all of the roots!"
-	
+
 	self roots do: [:m |
 		self expandAll: m].
 	self adjustSubmorphPositions
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 SimpleHierarchicalListMorph >> expandAll: aMorph [
 	| allChildren |
 	aMorph toggleExpandedState.
 	allChildren := OrderedCollection new: 10.
 	aMorph recursiveAddTo: allChildren.
-	allChildren do: [:each | 
+	allChildren do: [:each |
 		(each canExpand and: [each isExpanded not])
-			ifTrue: [self expandAll: each]].
+			ifTrue: [self expandAll: each]]
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 SimpleHierarchicalListMorph >> expandAll: aMorph except: aBlock [
 	| allChildren |
 	(aBlock value: aMorph complexContents)
@@ -440,13 +441,13 @@ SimpleHierarchicalListMorph >> expandAll: aMorph except: aBlock [
 	aMorph toggleExpandedState.
 	allChildren := OrderedCollection new: 10.
 	aMorph recursiveAddTo: allChildren.
-	allChildren do: [:each | 
+	allChildren do: [:each |
 		(each canExpand
 			and: [each isExpanded not])
-			ifTrue: [self expandAll: each except: aBlock]].
+			ifTrue: [self expandAll: each except: aBlock]]
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 SimpleHierarchicalListMorph >> expandRoots [
 	"Expand all the receiver's roots"
 	self roots
@@ -456,61 +457,54 @@ SimpleHierarchicalListMorph >> expandRoots [
 	self adjustSubmorphPositions
 ]
 
-{ #category : #accessing }
-SimpleHierarchicalListMorph >> expandedForm [
-	"Answer the form to use for expanded items."
-	
-	^self theme treeExpandedForm
-]
+{ #category : 'actions' }
+SimpleHierarchicalListMorph >> expandedFormSetForMorph: aMorph [
+	"Answer the form set to use for expanded items."
 
-{ #category : #actions }
-SimpleHierarchicalListMorph >> expandedFormForMorph: aMorph [
-	"Answer the form to use for expanded items."
-	
 	^ (self selectedMorph = aMorph and: [self theme selectionColor luminance < 0.6])
-		ifTrue: [self theme whiteTreeExpandedForm]
-		ifFalse: [self theme treeExpandedForm]
+		ifTrue: [self theme whiteTreeExpandedFormSet]
+		ifFalse: [self theme treeExpandedFormSet]
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 SimpleHierarchicalListMorph >> extent: newExtent [
 	bounds extent = newExtent ifTrue: [^ self].
 	super extent: newExtent.
 	self setScrollDeltas
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> getCurrentSelectionItem [
 
 	^model perform: (getSelectionSelector ifNil: [^nil])
 ]
 
-{ #category : #accessing }
-SimpleHierarchicalListMorph >> getList [ 
+{ #category : 'accessing' }
+SimpleHierarchicalListMorph >> getList [
 	"Answer the list to be displayed."
 
 	^(model perform: (getListSelector ifNil: [^#()])) ifNil: [#()]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> getListSelector [
 	"Answer for compatibility with PluggableListMorph."
-	
+
 	^ getListSelector
 ]
 
-{ #category : #'keyboard navigation' }
+{ #category : 'keyboard navigation' }
 SimpleHierarchicalListMorph >> getSelectionIndex [
 	^scroller submorphs indexOf: selectedMorph
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 SimpleHierarchicalListMorph >> hExtraScrollRange [
 	"Return the amount of extra blank space to include below the bottom of the scroll content."
 	^5
 ]
 
-{ #category : #'events-processing' }
+{ #category : 'events-processing' }
 SimpleHierarchicalListMorph >> handleMouseMove: anEvent [
 	"Reimplemented because we really want #mouseMove when a morph is dragged around"
 	anEvent wasHandled ifTrue:[^self]. "not interested"
@@ -519,42 +513,42 @@ SimpleHierarchicalListMorph >> handleMouseMove: anEvent [
 	self mouseMove: anEvent.
 	(self handlesMouseStillDown: anEvent) ifTrue:[
 		"Step at the new location"
-		self startStepping: #handleMouseStillDown: 
+		self startStepping: #handleMouseStillDown:
 			at: Time millisecondClockValue
 			arguments: {anEvent copy resetHandlerFields}
-			stepTime: 1].
+			stepTime: 1]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> handlesKeyboard: evt [
 	^true
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> handlesMouseOverDragging: evt [
 	^self dropEnabled
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 SimpleHierarchicalListMorph >> highlightSelection [
 
 	selectedMorph ifNotNil: [selectedMorph highlight]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> indentingItemClass [
-	
+
 	^IndentingListItemMorph
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> initForKeystrokes [
 	lastKeystrokeTime := 0.
 	lastKeystrokes := ''.
 	lastSelection := 0
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> initialize [
 	"initialize the state of the receiver"
 	super initialize.
@@ -565,7 +559,7 @@ SimpleHierarchicalListMorph >> initialize [
 		to: self
 ]
 
-{ #category : #keymapping }
+{ #category : 'keymapping' }
 SimpleHierarchicalListMorph >> initializeShortcuts: aKMDispatcher [
 
 	super initializeShortcuts: aKMDispatcher.
@@ -573,42 +567,42 @@ SimpleHierarchicalListMorph >> initializeShortcuts: aKMDispatcher [
 	aKMDispatcher attachCategory: #MorphFocusNavigation
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 SimpleHierarchicalListMorph >> insertNewMorphs: morphList [
 
 	scroller addAllMorphs: morphList.
 	self adjustSubmorphPositions.
 	self selection: self getCurrentSelectionItem.
-	self setScrollDeltas.
+	self setScrollDeltas
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> keyDown: event [
 
 	| aCharacter args |
 	event anyModifierKeyPressed ifFalse: [ ^ false ].
 	keystrokeActionSelector ifNil: [ ^ false ].
 	aCharacter := event keyCharacter.
-	(args := keystrokeActionSelector numArgs) = 1 ifTrue: [ 
+	(args := keystrokeActionSelector numArgs) = 1 ifTrue: [
 		^ model perform: keystrokeActionSelector with: aCharacter ].
-	args = 2 ifTrue: [ 
-		^ model perform: keystrokeActionSelector with: aCharacter with: self ].
+	args = 2 ifTrue: [
+		^ model perform: keystrokeActionSelector with: aCharacter with: self ]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> keyStroke: event [
 	"Process potential command keys that are not handled by keymappings yet"
 
 	| aCharacter |
 	aCharacter := event keyValue asCharacter.
-	event anyModifierKeyPressed ifFalse: [ 
+	event anyModifierKeyPressed ifFalse: [
 		self basicKeyPressed: aCharacter.
 		^ false ].
 	(self scrollByKeyboard: event) ifTrue: [ ^ true ].
 	^ false
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 SimpleHierarchicalListMorph >> keyboardFocusChange: aBoolean [
 	"The message is sent to a morph when its keyboard focus changes.
 	Update for focus feedback."
@@ -616,12 +610,12 @@ SimpleHierarchicalListMorph >> keyboardFocusChange: aBoolean [
 	self focusChanged
 ]
 
-{ #category : #accessing }
-SimpleHierarchicalListMorph >> keystrokeActionSelector: aString [ 
+{ #category : 'accessing' }
+SimpleHierarchicalListMorph >> keystrokeActionSelector: aString [
 	keystrokeActionSelector := aString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> lineColor [
 	"Answer a good color to use for drawing the lines that connect members of the hierarchy view.
 	Used the cached color, or derive it if necessary by finding the receiver or the first owner (up to my root) that is not transparent, then picking a contrasting color.
@@ -638,12 +632,12 @@ SimpleHierarchicalListMorph >> lineColor [
 		ifFalse: [Color white]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> lineColor: aColor [
 	^lineColor := aColor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> list: aCollection [
 
 	| wereExpanded morphList |
@@ -651,59 +645,59 @@ SimpleHierarchicalListMorph >> list: aCollection [
 	scroller removeAllMorphs.
 	(aCollection isNil or: [aCollection isEmpty]) ifTrue: [^ self selectedMorph: nil].
 	morphList := OrderedCollection new.
-	self 
+	self
 		addMorphsTo: morphList
-		from: aCollection 
+		from: aCollection
 		allowSorting: false
 		withExpandedItems: wereExpanded
 		atLevel: 0.
-	self insertNewMorphs: morphList.
+	self insertNewMorphs: morphList
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> listItemHeight [
 	"This should be cleaned up.  The list should get spaced by this parameter."
 	^ 12
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> maximumSelection [
 
 	^ scroller submorphs size
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> minimumSelection [
 	^ 1
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> mouseDown: evt [
-	"Changed to take keybaord focus."
-	
+	"Changed to take keyboard focus."
+
 	| aMorph selectors |
 	self wantsKeyboardFocus
 		ifTrue: [self takeKeyboardFocus].
 	aMorph := self itemFromPoint: evt position.
-	(aMorph notNil and:[aMorph inToggleArea: (aMorph point: evt position from: self)])
-		ifTrue:[^self toggleExpandedState: aMorph event: evt]. 
-	
+	(aMorph isNotNil and:[aMorph inToggleArea: (aMorph point: evt position from: self)])
+		ifTrue:[^self toggleExpandedState: aMorph event: evt].
+
 	evt yellowButtonPressed  "First check for option (menu) click"
-		ifTrue: [ 
-			(self yellowButtonActivity: evt shiftPressed) 
+		ifTrue: [
+			(self yellowButtonActivity: evt shiftPressed)
 				ifTrue: [ ^ self ]].
-		
+
 	aMorph ifNil:[^super mouseDown: evt].
 	aMorph highlightForMouseDown.
-	selectors := Array 
+	selectors := Array
 		with: #click:
 		with: nil
 		with: nil
 		with: (self dragEnabled ifTrue:[#startDrag:] ifFalse:[nil]).
-	evt hand waitForClicksOrDrag: self event: evt selectors: selectors threshold: 10 "pixels".
+	evt hand waitForClicksOrDrag: self event: evt selectors: selectors threshold: 10 "pixels"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> mouseDownHighlightColor [
 	"Answer a good color to use for drawing the mouse down highlight.
 	Used the line color if not transparent, otherwise a contrasting color in the
@@ -722,17 +716,17 @@ SimpleHierarchicalListMorph >> mouseDownHighlightColor [
 		ifFalse: [Color white]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> mouseEnter: event [
 	"Changed to take keyboardFocusOnMouseDown into account."
-	
+
 	super mouseEnter: event.
 	self wantsKeyboardFocus ifFalse: [^self].
 	self keyboardFocusOnMouseDown
 		ifFalse: [self takeKeyboardFocus]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> mouseEnterDragging: evt [
 	| aMorph |
 	(evt hand hasSubmorphs and:[self dropEnabled]) ifFalse: ["no d&d"
@@ -743,10 +737,10 @@ SimpleHierarchicalListMorph >> mouseEnterDragging: evt [
 			aMorph ifNotNil:[self potentialDropMorph: aMorph].
 			evt hand newMouseFocus: self.
 			"above is ugly but necessary for now"
-		].
+		]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> mouseLeaveDragging: anEvent [
 	(self dropEnabled and:[anEvent hand hasSubmorphs]) ifFalse: ["no d&d"
 		^ super mouseLeaveDragging: anEvent].
@@ -755,7 +749,7 @@ SimpleHierarchicalListMorph >> mouseLeaveDragging: anEvent [
 	"above is ugly but necessary for now"
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleHierarchicalListMorph >> mouseMove: evt [
 
 	|aMorph|
@@ -765,58 +759,53 @@ SimpleHierarchicalListMorph >> mouseMove: evt [
 			ifTrue: [scroller submorphsDo: [:m |
 					m highlightedForMouseDown ifTrue: [m highlightForMouseDown: false]].
 					aMorph ifNotNil: [aMorph highlightForMouseDown]]].
-	(self dropEnabled and:[evt hand hasSubmorphs]) 
+	(self dropEnabled and:[evt hand hasSubmorphs])
 		ifFalse:[^super mouseMove: evt].
 	potentialDropMorph ifNotNil:[
 		(potentialDropMorph containsPoint: (potentialDropMorph point: evt position from: self))
 			ifTrue:[^self].
 	].
 	self mouseLeaveDragging: evt.
-	(self containsPoint: evt position) 
-		ifTrue:[self mouseEnterDragging: evt].
+	(self containsPoint: evt position)
+		ifTrue:[self mouseEnterDragging: evt]
 ]
 
-{ #category : #'event handling' }
-SimpleHierarchicalListMorph >> mouseUp: event [ 
+{ #category : 'event handling' }
+SimpleHierarchicalListMorph >> mouseUp: event [
 	"Fixed up highlight problems."
-	
-	| aMorph wasHigh|
+
+	| aMorph wasHigh |
 	aMorph := self itemFromPoint: event position.
-	wasHigh := aMorph notNil ifTrue: [aMorph highlightedForMouseDown] ifFalse: [false].
-	scroller submorphsDo: [:m |
-		m highlightedForMouseDown ifTrue: [m highlightForMouseDown: false]].
-	aMorph ifNil: [^self].
-	wasHigh ifFalse: [^self].
-	model okToChange ifFalse: [^self].
+	wasHigh := aMorph
+		           ifNotNil: [ aMorph highlightedForMouseDown ]
+		           ifNil: [ false ].
+	scroller submorphsDo: [ :m |
+		m highlightedForMouseDown ifTrue: [ m highlightForMouseDown: false ] ].
+	aMorph ifNil: [ ^ self ].
+	wasHigh ifFalse: [ ^ self ].
+	model okToChange ifFalse: [ ^ self ].
 	"No change if model is locked"
-	((autoDeselect == true) and: [aMorph == selectedMorph]) 
-		ifTrue: [self setSelectedMorph: nil]
-		ifFalse: [self setSelectedMorph: aMorph].
+	(autoDeselect == true and: [ aMorph == selectedMorph ])
+		ifTrue: [ self setSelectedMorph: nil ]
+		ifFalse: [ self setSelectedMorph: aMorph ].
 	Cursor normal show
 ]
 
-{ #category : #accessing }
-SimpleHierarchicalListMorph >> notExpandedForm [
-	"Answer the form to use for unexpanded items."
-	
-	^self theme treeUnexpandedForm
-]
-
-{ #category : #accessing }
-SimpleHierarchicalListMorph >> notExpandedFormForMorph: aMorph [
+{ #category : 'accessing' }
+SimpleHierarchicalListMorph >> notExpandedFormSetForMorph: aMorph [
 	^ (self selectedMorph = aMorph and: [self theme selectionColor luminance < 0.6])
-		ifTrue: [self theme whiteTreeUnexpandedForm]
-		ifFalse: [self theme treeUnexpandedForm]
+		ifTrue: [self theme whiteTreeUnexpandedFormSet]
+		ifFalse: [self theme treeUnexpandedFormSet]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 SimpleHierarchicalListMorph >> noteRemovalOfAll: aCollection [
 
 	scroller removeAllMorphsIn: aCollection.
-	(aCollection includes: selectedMorph) ifTrue: [self setSelectedMorph: nil].
+	(aCollection includes: selectedMorph) ifTrue: [self setSelectedMorph: nil]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel [
 
 	self model: anObject.
@@ -826,10 +815,10 @@ SimpleHierarchicalListMorph >> on: anObject list: getListSel selected: getSelect
 	getMenuSelector := getMenuSel.
 	autoDeselect := true.
 	self borderWidth: 1.
-	self list: self getList.
+	self list: self getList
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleHierarchicalListMorph >> on: anObject list: getListSel selected: getSelectionSel changeSelected: setSelectionSel menu: getMenuSel keystroke: keyActionSel [
 
 	self model: anObject.
@@ -840,76 +829,76 @@ SimpleHierarchicalListMorph >> on: anObject list: getListSel selected: getSelect
 	autoDeselect := true.
 	keystrokeActionSelector := keyActionSel.
 	self borderWidth: 1.
-	self list: self getList.
+	self list: self getList
 ]
 
-{ #category : #'dropping/grabbing' }
+{ #category : 'dropping/grabbing' }
 SimpleHierarchicalListMorph >> potentialDropMorph [
 	^potentialDropMorph
 ]
 
-{ #category : #'dropping/grabbing' }
+{ #category : 'dropping/grabbing' }
 SimpleHierarchicalListMorph >> potentialDropMorph: aMorph [
 	potentialDropMorph := aMorph.
 	aMorph highlightForDrop
 ]
 
-{ #category : #'dropping/grabbing' }
+{ #category : 'dropping/grabbing' }
 SimpleHierarchicalListMorph >> resetPotentialDropMorph [
 	potentialDropMorph ifNotNil: [
 		potentialDropMorph resetHighlightForDrop.
 		potentialDropMorph := nil]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> roots [
 	"Answer the receiver's roots"
 	^ scroller submorphs
 		select: [:each | each indentLevel isZero]
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 SimpleHierarchicalListMorph >> scrollDeltaHeight [
 	^ scroller firstSubmorph height
 ]
 
-{ #category : #geometry }
+{ #category : 'geometry' }
 SimpleHierarchicalListMorph >> scrollDeltaWidth [
 "A guess -- assume that the width of a char is approx 1/2 the height of the font"
 	^ self scrollDeltaHeight // 2
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> searchedElement [
 
 	^ searchedElement
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> searchedElement: anElement [
 
-	searchedElement := anElement.
+	searchedElement := anElement
 ]
 
-{ #category : #search }
+{ #category : 'search' }
 SimpleHierarchicalListMorph >> searchedFrame [
 	"Answer the frame of the selected morph in the receiver or nil if none."
-	
+
 	^searchedElement
 		ifNotNil: [:elt | elt bounds: elt selectionFrame in: self]
 ]
 
-{ #category : #search }
+{ #category : 'search' }
 SimpleHierarchicalListMorph >> secondarySelectionColor [
 	^ self theme secondarySelectionColor
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> selectedMorph [
 	^selectedMorph
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> selectedMorph: aMorph [
 
 	self unhighlightSelection.
@@ -917,7 +906,7 @@ SimpleHierarchicalListMorph >> selectedMorph: aMorph [
 	self highlightSelection
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> selection: item [
 	"Called from outside to request setting a new selection.
 	Assumes scroller submorphs is exactly our list.
@@ -931,14 +920,14 @@ SimpleHierarchicalListMorph >> selection: item [
 	self selectionIndex: i
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> selectionColor [
 	"Answer the colour to use for selected items."
 
 	^self valueOfProperty: #selectionColor ifAbsent: []
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> selectionColor: aColor [
 	"Set the colour for selected items."
 
@@ -946,24 +935,24 @@ SimpleHierarchicalListMorph >> selectionColor: aColor [
 	aColor
 		ifNil: [ self removeProperty: #selectionColor ]
 		ifNotNil: [ self setProperty: #selectionColor toValue: aColor ].
-		
+
 	window := self ownerThatIsA: SystemWindow.
-	
+
 	self selectionColorToUse: ((self theme fadedBackgroundWindows not or: [ window isNil or: [ window isActive ] ])
 		ifTrue: [ aColor ]
 		ifFalse: [ self theme unfocusedSelectionColor ])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> selectionColorToUse [
 	"Answer the colour to use for selected items."
 
-	^self 
-		valueOfProperty: #selectionColorToUse 
+	^self
+		valueOfProperty: #selectionColorToUse
 		ifAbsent: [ self theme selectionColor ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> selectionColorToUse: aColor [
 	"Set the colour for selected items."
 
@@ -974,23 +963,23 @@ SimpleHierarchicalListMorph >> selectionColorToUse: aColor [
 	self selectionFrameChanged
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> selectionFrame [
 	"Answer the frame of the selected morph in the receiver or nil if none."
-	
+
 	^selectedMorph
 		ifNotNil: [selectedMorph bounds:  selectedMorph selectionFrame in: self]
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 SimpleHierarchicalListMorph >> selectionFrameChanged [
 	"Invalidate frame of the current selection if any."
-	
+
 	selectedMorph ifNil: [ ^self ].
 	self invalidRect: self selectionFrame
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> selectionIndex: idx [
 	"Called internally to select the index-th item."
 	| theMorph range index |
@@ -1010,46 +999,46 @@ SimpleHierarchicalListMorph >> selectionIndex: idx [
 	self selectedMorph: theMorph
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> selectionOneOf: aListOfItems [
 	"Set the selection to the first item in the list which is represented by one of my submorphs"
 
-	
+
 	aListOfItems do: [ :item | | index |
-		index := scroller submorphs findFirst: [:m | 
+		index := scroller submorphs findFirst: [:m |
 			m withoutListWrapper = item withoutListWrapper
 		].
 		index > 0 ifTrue: [^self selectionIndex: index].
 	].
-	self selectionIndex: 0.
+	self selectionIndex: 0
 ]
 
-{ #category : #selection }
+{ #category : 'selection' }
 SimpleHierarchicalListMorph >> setSelectedMorph: aMorph [
 
-	model 
-		perform: (setSelectionSelector ifNil: [^self]) 
+	model
+		perform: (setSelectionSelector ifNil: [^self])
 		with: aMorph complexContents	"leave last wrapper in place"
 ]
 
-{ #category : #'keyboard navigation' }
+{ #category : 'keyboard navigation' }
 SimpleHierarchicalListMorph >> setSelectionIndex: idx [
 	"Called internally to select the index-th item."
 	| theMorph index |
 	idx ifNil: [^ self].
 	index := idx min: scroller submorphs size max: 0.
 	theMorph := index = 0 ifTrue: [nil] ifFalse: [scroller submorphs at: index].
-	self setSelectedMorph: theMorph.
+	self setSelectedMorph: theMorph
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleHierarchicalListMorph >> sortingSelector: s [
 
 	sortingSelector := s
 ]
 
-{ #category : #'event handling' }
-SimpleHierarchicalListMorph >> startDrag: anEvent [ 
+{ #category : 'event handling' }
+SimpleHierarchicalListMorph >> startDrag: anEvent [
 	| aTransferMorph itemMorph passenger |
 	self dragEnabled
 		ifTrue: [itemMorph := scroller submorphs
@@ -1072,20 +1061,20 @@ SimpleHierarchicalListMorph >> startDrag: anEvent [
 	anEvent hand releaseMouseFocus: self
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 SimpleHierarchicalListMorph >> takesKeyboardFocus [
 	"Answer whether the receiver can normally take keyboard focus."
 
 	^true
 ]
 
-{ #category : #'keyboard navigation' }
+{ #category : 'keyboard navigation' }
 SimpleHierarchicalListMorph >> toggleExpandedState: aMorph [
 	aMorph toggleExpandedState.
-	self adjustSubmorphPositions.
+	self adjustSubmorphPositions
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 SimpleHierarchicalListMorph >> toggleExpandedState: aMorph event: event [
 	| oldState |
 	"self setSelectedMorph: aMorph."
@@ -1099,54 +1088,54 @@ SimpleHierarchicalListMorph >> toggleExpandedState: aMorph event: event [
 	] ifFalse: [
 		aMorph toggleExpandedState.
 	].
-	self adjustSubmorphPositions.
+	self adjustSubmorphPositions
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 SimpleHierarchicalListMorph >> unhighlightSelection [
 	selectedMorph ifNotNil: [selectedMorph unhighlight]
 ]
 
-{ #category : #updating }
-SimpleHierarchicalListMorph >> update: aSymbol [ 
-	aSymbol == getSelectionSelector 
-		ifTrue: 
+{ #category : 'updating' }
+SimpleHierarchicalListMorph >> update: aSymbol [
+	aSymbol == getSelectionSelector
+		ifTrue:
 			[self selection: self getCurrentSelectionItem.
 			^self].
-	aSymbol == getListSelector 
-		ifTrue: 
+	aSymbol == getListSelector
+		ifTrue:
 			[self list: self getList.
 			^self].
-	((aSymbol isKindOf: Array) 
+	((aSymbol isKindOf: Array)
 		and: [aSymbol size > 1 and: [aSymbol first == getListSelector and: [
 					aSymbol second == #openPath]]]) "allow directed path opening where multiple trees exist"
-			ifTrue: 
-				[^(scroller submorphs at: 1 ifAbsent: [^self]) 
+			ifTrue:
+				[^(scroller submorphs at: 1 ifAbsent: [^self])
 					openPath: (aSymbol allButFirst: 2)].
-	((aSymbol isKindOf: Array) 
+	((aSymbol isKindOf: Array)
 		and: [aSymbol size > 1 and: [aSymbol first == getListSelector and: [
 					aSymbol second == #openItemPath]]]) "allow directed path opening where multiple trees exist"
-			ifTrue: 
-				[^(scroller submorphs at: 1 ifAbsent: [^self]) 
+			ifTrue:
+				[^(scroller submorphs at: 1 ifAbsent: [^self])
 					openItemPath: (aSymbol allButFirst: 2)].
-	((aSymbol isKindOf: Array) 
-		and: [aSymbol notEmpty and: [aSymbol first == #openPath]]) 
-			ifTrue: 
-				[^(scroller submorphs at: 1 ifAbsent: [^self]) 
+	((aSymbol isKindOf: Array)
+		and: [aSymbol notEmpty and: [aSymbol first == #openPath]])
+			ifTrue:
+				[^(scroller submorphs at: 1 ifAbsent: [^self])
 					openPath: aSymbol allButFirst].
-	((aSymbol isKindOf: Array) 
+	((aSymbol isKindOf: Array)
 		and: [aSymbol size  = 2 and: [aSymbol first = getListSelector and: [
-					aSymbol second == #expandRoots]]]) 
-			ifTrue: 
+					aSymbol second == #expandRoots]]])
+			ifTrue:
 				[^self expandRoots].
-	((aSymbol isKindOf: Array) 
+	((aSymbol isKindOf: Array)
 		and: [aSymbol notEmpty and: [aSymbol first = getListSelector and: [
-					aSymbol second == #expandAll]]]) 
-			ifTrue: 
+					aSymbol second == #expandAll]]])
+			ifTrue:
 				[^self expandAll]
 ]
 
-{ #category : #scrolling }
+{ #category : 'scrolling' }
 SimpleHierarchicalListMorph >> vUnadjustedScrollRange [
 "Return the width of the widest item in the list"
 
@@ -1154,7 +1143,7 @@ SimpleHierarchicalListMorph >> vUnadjustedScrollRange [
 	^scroller submorphs last fullBounds bottom
 ]
 
-{ #category : #'dropping/grabbing' }
-SimpleHierarchicalListMorph >> wantsDroppedMorph: aMorph event: anEvent [ 
+{ #category : 'dropping/grabbing' }
+SimpleHierarchicalListMorph >> wantsDroppedMorph: aMorph event: anEvent [
 	^ self model wantsDroppedMorph: aMorph event: anEvent inMorph: self
 ]

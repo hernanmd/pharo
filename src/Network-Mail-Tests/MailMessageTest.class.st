@@ -2,12 +2,13 @@
 SUnit tests for MailMessage
 "
 Class {
-	#name : #MailMessageTest,
-	#superclass : #TestCase,
-	#category : #'Network-Mail-Tests'
+	#name : 'MailMessageTest',
+	#superclass : 'TestCase',
+	#category : 'Network-Mail-Tests',
+	#package : 'Network-Mail-Tests'
 }
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailMessageTest >> testAttachment [
 	"Test if the attachment of a file to a mail works.
 		Create a file and attach it to a MailMessage. After that, delete the file.
@@ -21,7 +22,7 @@ MailMessageTest >> testAttachment [
 		yourself.
 	theFilename := 'testfile.txt'.
 	(File named: theFilename)
-		writeStreamDo: [ :stream | 
+		writeStreamDo: [ :stream |
 			stream
 				nextPutAll: 'This is the text of the mail attachment to be generated' ].
 	theMailMessage
@@ -62,11 +63,11 @@ ZA==
 				reject: [ :each | 'CelesteAttachment*' match: each ])
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailMessageTest >> testCreateFromString [
 
 	| text message |
-	text := 
+	text :=
 'Date: Tue, 20 Feb 2001 13:52:53 +0300
 From: mdr@scn.rg (Me Ru)
 Subject: RE: Windows 2000 on your laptop
@@ -83,7 +84,7 @@ Mike
 
 	message := MailMessage fromRfc822: text.
 
-	self 
+	self
 		assert: message text equals: text;
 		assert: message subject equals: 'RE: Windows 2000 on your laptop';
 		assert: message from equals: 'mdr@scn.rg (Me Ru)';
@@ -93,75 +94,93 @@ Mike
 		assert: message cc equals: 'cc1@scn.org, cc1also@test.org, cc2@scn.org'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailMessageTest >> testMultiPartAlternative [
 	| m txt html  part1 part2 |
-	
+
 	txt := 'This is plain text.'.
 	html :=  '<html><head></head><body>This is html.</body></html>'.
-	
+
 	m := MailMessage empty
-	 		addAlternativePart: txt contentType: 'text/plain'; 
+	 		addAlternativePart: txt contentType: 'text/plain';
 	 		addAlternativePart: html contentType: 'text/html';
 			yourself.
 
-	self 
-		assert: ((m fields at: 'content-type') at: 1) mainValue asLowercase equals: 'multipart/alternative'; 
+	self
+		assert: ((m fields at: 'content-type') at: 1) mainValue asLowercase equals: 'multipart/alternative';
 		assert: m parts size equals: 2.
 
 	part1 := m parts at: 1.
 	part2 := m parts at: 2.
 
-	self 
+	self
 		assert: ((part1 fields at: 'content-type') at: 1) mainValue asLowercase equals: 'text/plain';
 		assert: part1 body content equals: txt.
-	
-	self 
+
+	self
 		assert: ((part2 fields at: 'content-type') at: 1) mainValue asLowercase equals: 'text/html';
 		assert: part2 body content equals: html
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailMessageTest >> testMultiPartMixed [
 	| m txt html  part1 part2 |
-	
+
 	txt := 'This is plain text.'.
 	html :=  '<html><head></head><body>This is html.</body></html>'.
-	
+
 	m := MailMessage empty
-			addMixedPart: txt contentType: 'text/plain'; 
+			addMixedPart: txt contentType: 'text/plain';
 			addMixedPart: html contentType: 'text/html';
 			yourself.
 
-	self 
-		assert: ((m fields at: 'content-type') at: 1) mainValue asLowercase equals: 'multipart/mixed'; 
+	self
+		assert: ((m fields at: 'content-type') at: 1) mainValue asLowercase equals: 'multipart/mixed';
 		assert: m parts size equals: 2.
 
 	part1 := m parts at: 1.
 	part2 := m parts at: 2.
 
-	self 
+	self
 		assert: ((part1 fields at: 'content-type') at: 1) mainValue asLowercase equals: 'text/plain';
 		assert: part1 body content equals: txt.
-	
-	self 
+
+	self
 		assert: ((part2 fields at: 'content-type') at: 1) mainValue asLowercase equals: 'text/html';
 		assert: part2 body content equals: html
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailMessageTest >> testRecipientList [
 
 	| message |
-	message := MailMessage fromRfc822: 'To: pharo-project@lists.gforge.inria.fr, pharo-users@lists.gforge.inria.fr'.
-	
-	self 
+	message := MailMessage fromRfc822:
+		           'To: pharo-project@lists.pharo.org, "Pharo Users" <pharo-users@lists.pharo.org>'.
+	self
 		assert: message recipientList size equals: 2;
-		assert: message recipientList first equals: 'pharo-project@lists.gforge.inria.fr';	
-		assert: message recipientList second equals: 'pharo-users@lists.gforge.inria.fr'
+		assert: message recipientList first
+		equals: 'pharo-project@lists.pharo.org';
+		assert: message recipientList second
+		equals: 'pharo-users@lists.pharo.org'.
+
+	message
+		setField: 'cc'
+		toString: '"Pharo Development" <pharo-dev@lists.pharo.org>'.
+	self assert: message recipientList size equals: 3.
+	self
+		assert: message recipientList third
+		equals: 'pharo-dev@lists.pharo.org'.
+
+	message
+		setField: 'bcc'
+		toString: '"Pharo IOT" <pharo-iot@lists.pharo.org>'.
+	self assert: message recipientList size equals: 4.
+	self
+		assert: message recipientList fourth
+		equals: 'pharo-iot@lists.pharo.org'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailMessageTest >> testSimpleCreate [
 
 	| message |
@@ -170,7 +189,7 @@ MailMessageTest >> testSimpleCreate [
 		to: { 'pharo-project@lists.gforge.inria.fr'. 'pharo-users@lists.gforge.inria.fr' }
 		about: 'Great Progress'
 		asFollows: 'Pharo is getting so cool!'.
-	
+
 	self assert: (message text matchesRegex: 'Date\: [[:alpha:]]+, \d+ [[:alpha:]]+ \d+ \d\d\:\d\d\:\d\d [-+]\d\d\d\d
 From\: community@world.st
 To\: pharo-project@lists.gforge.inria.fr, pharo-users@lists.gforge.inria.fr

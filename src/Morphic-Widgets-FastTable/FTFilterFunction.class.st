@@ -11,18 +11,20 @@ I use a semaphore in order to let a delay before I filter the table. With this t
 /!\ To use me the data source must implement the method #newDataSourceMatching: aRegex
 "
 Class {
-	#name : #FTFilterFunction,
-	#superclass : #FTFieldFunction,
+	#name : 'FTFilterFunction',
+	#superclass : 'FTFieldFunction',
 	#instVars : [
 		'initialDataSource',
 		'pattern',
 		'isEditingSemaphore',
 		'filterClass'
 	],
-	#category : #'Morphic-Widgets-FastTable-Functions'
+	#category : 'Morphic-Widgets-FastTable-Functions',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Functions'
 }
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTFilterFunction >> colorText: aText [
 	table dataSource numberOfRows ~= 0
 		ifTrue: [ aText makeAllColor: self table theme textColor ]
@@ -30,72 +32,72 @@ FTFilterFunction >> colorText: aText [
 	^ aText
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTFilterFunction >> filter [
 	pattern ifNil: [ ^ self ].
 
 	table dataSource: (pattern ifEmpty: [ initialDataSource ] ifNotEmpty: [ initialDataSource newDataSourceMatching: (filterClass pattern: pattern) ]).
 	table refresh.
 	table deselectAll.
-		
+
 	self isExplicit
 		ifTrue: [ self resizeWidget ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTFilterFunction >> filterClass [
 	^filterClass
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTFilterFunction >> filterClass: aFTFilterClass [
 	filterClass := aFTFilterClass
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTFilterFunction >> filterWith: aStringOrText [
 	initialDataSource ifNil: [ self initializeFilter ].	"I do this in case the filter is use explicictly in the FT, at the first call the Filter will not be initialize."
 	pattern := aStringOrText asString trimBoth.
 	isEditingSemaphore signal
 ]
 
-{ #category : #'widget API' }
+{ #category : 'widget API' }
 FTFilterFunction >> ghostText [
 	^ 'Filter...'
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTFilterFunction >> initialize [
 	super initialize.
 	filterClass := FTRegexFilter
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTFilterFunction >> initializeFilter [
 	initialDataSource := table dataSource.
 	isEditingSemaphore := Semaphore new.
 	self spawnFilterUpdateThread
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 FTFilterFunction >> keyDown: anEvent [
 	self isExplicit ifTrue: [ ^false ].
-	
+
 	"If the user escape after a search, he want the full data source again so we reinitialize the table."
 	(anEvent keyCharacter = Character escape and: [ initialDataSource isNotNil ])
 		ifTrue: [ ^ self reinitializeTable ].
 	^ false
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 FTFilterFunction >> keyStroke: anEvent [
 	self isExplicit ifTrue: [ ^false ].
-	
+
 	self showFilterFieldFromKeystrokeEvent: anEvent.
 	^ true
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTFilterFunction >> patternFromString: aString [
 	" do not throw an error if the pattern is bad - important in case of auto-accepting"
 
@@ -104,18 +106,18 @@ FTFilterFunction >> patternFromString: aString [
 		do: [ :ex |  ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTFilterFunction >> reinitializeTable [
 	table dataSource: initialDataSource.
 	^ true
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTFilterFunction >> reset [
 	"self filter"
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTFilterFunction >> showFilterFieldFromKeystrokeEvent: anEvent [
 	| text ed |
 	text := anEvent keyCharacter asString asText.
@@ -123,7 +125,7 @@ FTFilterFunction >> showFilterFieldFromKeystrokeEvent: anEvent [
 	self filterWith: text.
 	ed := RubFloatingEditorBuilder new
 		customizeEditorWith: [ :editor | editor bounds: (self table bottomLeft + (0 @ 2) corner: self table bottomRight + (0 @ (editor font height + 6))) ];
-		withEditedContentsDo: [ :contents :editor | 
+		withEditedContentsDo: [ :contents :editor |
 			self filterWith: contents.
 			editor setTextWith: (self colorText: contents) ].
 	ed autoAccept: true.
@@ -131,7 +133,7 @@ FTFilterFunction >> showFilterFieldFromKeystrokeEvent: anEvent [
 	ed openEditorWithContents: (self colorText: text)
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTFilterFunction >> spawnFilterUpdateThread [
 	"Runs in background, thank to Henrik Johansen for this"
 
@@ -148,7 +150,7 @@ FTFilterFunction >> spawnFilterUpdateThread [
 				ifTrue: [ self filter ] ] ] repeat ] forkAt: Processor userBackgroundPriority
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTFilterFunction >> textUpdated: anAnnouncement [
 	self filterWith: field getTextFromModel
 ]

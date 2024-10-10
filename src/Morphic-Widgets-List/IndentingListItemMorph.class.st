@@ -21,8 +21,8 @@ Contributed by Bob Arning as part of the ObjectExplorer package.
 Don't blame him if it's not perfect.  We wanted to get it out for people to play with.
 "
 Class {
-	#name : #IndentingListItemMorph,
-	#superclass : #StringMorph,
+	#name : 'IndentingListItemMorph',
+	#superclass : 'StringMorph',
 	#instVars : [
 		'indentLevel',
 		'isExpanded',
@@ -32,17 +32,18 @@ Class {
 		'nextSibling',
 		'icon'
 	],
-	#category : #'Morphic-Widgets-List'
+	#category : 'Morphic-Widgets-List',
+	#package : 'Morphic-Widgets-List'
 }
 
-{ #category : #'drag and drop' }
+{ #category : 'drag and drop' }
 IndentingListItemMorph >> acceptDroppingMorph: toDrop event: evt [
 	complexContents acceptDroppingObject: toDrop complexContents.
 	toDrop delete.
-	self highlightForDrop: false.
+	self highlightForDrop: false
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> addChildrenForList: hostList addingTo: morphList withExpandedItems: expandedItems [
 
 	firstChild ifNotNil: [
@@ -50,21 +51,21 @@ IndentingListItemMorph >> addChildrenForList: hostList addingTo: morphList withE
 	].
 	firstChild := nil.
 	complexContents hasContents ifFalse: [^self].
-	firstChild := hostList 
+	firstChild := hostList
 		addMorphsTo: morphList
-		from: complexContents contents 
+		from: complexContents contents
 		allowSorting: true
 		withExpandedItems: expandedItems
-		atLevel: indentLevel + 1.
+		atLevel: indentLevel + 1
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> balloonText [
 
 	^complexContents balloonText ifNil: [super balloonText]
 ]
 
-{ #category : #'halos and balloon help' }
+{ #category : 'halos and balloon help' }
 IndentingListItemMorph >> boundsForBalloon [
 
 	"some morphs have bounds that are way too big"
@@ -72,13 +73,13 @@ IndentingListItemMorph >> boundsForBalloon [
 	^self boundsInWorld intersect: container boundsInWorld ifNone: [self boundsInWorld ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> canExpand [
 
 	^complexContents hasContents
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> children [
 	| children |
 	children := OrderedCollection new.
@@ -86,7 +87,7 @@ IndentingListItemMorph >> children [
 	^children
 ]
 
-{ #category : #enumeration }
+{ #category : 'enumeration' }
 IndentingListItemMorph >> childrenDo: aBlock [
 
 	firstChild ifNotNil: [
@@ -94,13 +95,13 @@ IndentingListItemMorph >> childrenDo: aBlock [
 	]
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> complexContents [
 
 	^complexContents
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 IndentingListItemMorph >> drawLineToggleToTextOn: aCanvas lineColor: lineColor hasToggle: hasToggle [
 	"If I am not the only item in my container, draw the line between:
 		- my toggle (if any) or my left edge (if no toggle)
@@ -123,8 +124,8 @@ IndentingListItemMorph >> drawLineToggleToTextOn: aCanvas lineColor: lineColor h
 		dashes: myTheme treeLineDashes
 ]
 
-{ #category : #drawing }
-IndentingListItemMorph >> drawLinesOn: aCanvas lineColor: lineColor [ 
+{ #category : 'drawing' }
+IndentingListItemMorph >> drawLinesOn: aCanvas lineColor: lineColor [
 	| hasToggle |
 	hasToggle := self hasToggle.
 	"Draw line from toggle to text"
@@ -134,11 +135,11 @@ IndentingListItemMorph >> drawLinesOn: aCanvas lineColor: lineColor [
 	self nextSibling ifNotNil: [ self drawLinesToNextSiblingOn: aCanvas lineColor: lineColor hasToggle: hasToggle ].
 
 	"If I have children and am expanded, draw a line to my first child"
-	(self firstChild notNil and: [ self isExpanded ])
+	(self firstChild isNotNil and: [ self isExpanded ])
 		ifTrue: [ self drawLinesToFirstChildOn: aCanvas lineColor: lineColor]
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 IndentingListItemMorph >> drawLinesToFirstChildOn: aCanvas lineColor: lineColor [
 	"Draw line from me to first child.
 	Don't bother if the first child has a toggle.."
@@ -161,10 +162,10 @@ IndentingListItemMorph >> drawLinesToFirstChildOn: aCanvas lineColor: lineColor 
 		dashes: myTheme treeLineDashes
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 IndentingListItemMorph >> drawLinesToNextSiblingOn: aCanvas lineColor: lineColor hasToggle: hasToggle [
 	"Draw line from me to next sibling"
-	
+
 	| myBounds nextSibBounds vLineX myCenter vLineTop vLineBottom myTheme|
 	myBounds := self toggleBounds.
 	nextSibBounds := self nextSibling toggleBounds.
@@ -181,7 +182,7 @@ IndentingListItemMorph >> drawLinesToNextSiblingOn: aCanvas lineColor: lineColor
 		dashes: myTheme treeLineDashes
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 IndentingListItemMorph >> drawOn: aCanvas [
 
 	| tRect sRect columnScanner colorToUse columnLeft |
@@ -209,7 +210,7 @@ IndentingListItemMorph >> drawOn: aCanvas [
 		ifFalse: [ columnLeft := sRect left.
 			columnScanner := contents asString readStream.
 			container columns
-				do: [ :width | 
+				do: [ :width |
 					| columnData columnRect |
 
 					columnRect := columnLeft @ sRect top extent: width @ sRect height.
@@ -226,22 +227,22 @@ IndentingListItemMorph >> drawOn: aCanvas [
 			]
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 IndentingListItemMorph >> drawToggleOn: aCanvas in: aRectangle [
 
-	| aForm centeringOffset |
+	| aFormSet centeringOffset |
 	complexContents hasContents ifFalse: [^self].
-	aForm := isExpanded 
-		ifTrue: [container expandedFormForMorph: self]
-		ifFalse: [container notExpandedFormForMorph: self].
-	centeringOffset := ((aRectangle height - aForm extent y) / 2.0) truncated.
-	^aCanvas 
-		translucentImage: aForm 
-		at: (aRectangle topLeft translateBy: 0 @ centeringOffset).
+	aFormSet := isExpanded
+		ifTrue: [container expandedFormSetForMorph: self]
+		ifFalse: [container notExpandedFormSetForMorph: self].
+	centeringOffset := ((aRectangle height - aFormSet extent y) / 2.0) truncated.
+	^aCanvas
+		translucentFormSet: aFormSet
+		at: (aRectangle topLeft translateBy: 0 @ centeringOffset)
 ]
 
-{ #category : #private }
-IndentingListItemMorph >> findExactPathMatchIn: anArray [ 
+{ #category : 'private' }
+IndentingListItemMorph >> findExactPathMatchIn: anArray [
 	self
 		withSiblingsDo: [:each | (each complexContents asString = anArray first
 					or: [anArray first isNil])
@@ -249,8 +250,8 @@ IndentingListItemMorph >> findExactPathMatchIn: anArray [
 	^ nil
 ]
 
-{ #category : #private }
-IndentingListItemMorph >> findPathIn: anArray [ 
+{ #category : 'private' }
+IndentingListItemMorph >> findPathIn: anArray [
 	| found |
 	found := self findExactPathMatchIn: anArray.
 	found
@@ -259,57 +260,57 @@ IndentingListItemMorph >> findPathIn: anArray [
 	^ found
 ]
 
-{ #category : #private }
-IndentingListItemMorph >> findSimilarPathMatchIn: anArray [ 
+{ #category : 'private' }
+IndentingListItemMorph >> findSimilarPathMatchIn: anArray [
 	self
 		withSiblingsDo: [:each | (each complexContents asString sameAs: anArray first)
 				ifTrue: [^ each]].
 	^ nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> firstChild [
 
 	^firstChild
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> hasIcon [
 	"Answer whether the receiver has an icon."
-	^ icon notNil
+	^ icon isNotNil
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 IndentingListItemMorph >> hasToggle [
 	^ complexContents hasContents
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> highlight [
 
 	complexContents highlightingColor ifNotNil: [self color: complexContents highlightingColor].
-	self changed.
+	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> icon [
 	"answer the receiver's icon"
 	^ icon
 ]
 
-{ #category : #'mouse events' }
+{ #category : 'mouse events' }
 IndentingListItemMorph >> inToggleArea: aPoint [
 
 	^self toggleRectangle containsPoint: aPoint
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> indentLevel [
 
 	^indentLevel
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 IndentingListItemMorph >> initWithContents: anObject prior: priorMorph forList: hostList indentLevel: newLevel [
 
 	container := hostList.
@@ -325,7 +326,7 @@ IndentingListItemMorph >> initWithContents: anObject prior: priorMorph forList: 
 	self extent: self minWidth @ self minHeight
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 IndentingListItemMorph >> initialize [
 "initialize the state of the receiver"
 	super initialize.
@@ -334,34 +335,34 @@ IndentingListItemMorph >> initialize [
 	isExpanded := false
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> isExpanded [
 
 	^isExpanded
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> isExpanded: aBoolean [
 
 	isExpanded := aBoolean
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> isFirstItem [
 	"I have no idea why the owner of the list can get nil but it happens when the packages are published with the Monticello Browser."
-	
-	^ owner notNil and: [owner submorphs first == self]
+
+	^ owner isNotNil and: [owner submorphs first == self]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> isSoleItem [
 	^self isFirstItem and: [ owner submorphs size = 1 ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> minHeight [
 	"Answer the minimum height of the receiver."
-	
+
 	| iconHeight |
 	iconHeight := self hasIcon
 				ifTrue: [self icon height + 2]
@@ -369,7 +370,7 @@ IndentingListItemMorph >> minHeight [
 	^(( self contents heightToDisplayInTree: self) max: iconHeight) max: super minHeight
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> minWidth [
 	"Fixed to work such that guessed width is unnecessary in
 	#adjustSubmorphPositions."
@@ -382,19 +383,19 @@ IndentingListItemMorph >> minWidth [
 		+ iconWidth) max: super minWidth
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> nextSibling [
 
 	^nextSibling
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> nextSibling: anotherMorph [
 
 	nextSibling := anotherMorph
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> openPath: anArray [
 	| found |
 	anArray isEmpty
@@ -413,7 +414,7 @@ IndentingListItemMorph >> openPath: anArray [
 		ifNotNil: [ found firstChild openPath: anArray allButFirst ]
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> recursiveAddTo: aCollection [
 
 	firstChild ifNotNil: [
@@ -422,7 +423,7 @@ IndentingListItemMorph >> recursiveAddTo: aCollection [
 	aCollection add: self
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> recursiveDelete [
 
 	firstChild ifNotNil: [
@@ -431,7 +432,7 @@ IndentingListItemMorph >> recursiveDelete [
 	self delete
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> refreshExpandedState [
 
  	| newChildren toDelete c |
@@ -444,33 +445,33 @@ IndentingListItemMorph >> refreshExpandedState [
 		^self changed
 	].
 	(c := complexContents contents) isEmpty ifTrue: [^self changed].
-	newChildren := container 
-		addSubmorphsAfter: self 
-		fromCollection: c 
+	newChildren := container
+		addSubmorphsAfter: self
+		fromCollection: c
 		allowSorting: true.
-	firstChild := newChildren first.
+	firstChild := newChildren first
 ]
 
-{ #category : #search }
+{ #category : 'search' }
 IndentingListItemMorph >> searchingString [
 	" string used to detect research "
 
 	^ self contents asString
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 IndentingListItemMorph >> toggleBounds [
 	^self toggleRectangle
 ]
 
-{ #category : #'private - container protocol' }
+{ #category : 'private - container protocol' }
 IndentingListItemMorph >> toggleExpandedState [
 
 	isExpanded := isExpanded not.
-	self refreshExpandedState.
+	self refreshExpandedState
 ]
 
-{ #category : #action }
+{ #category : 'action' }
 IndentingListItemMorph >> toggleRectangle [
 
 	| h |
@@ -478,19 +479,19 @@ IndentingListItemMorph >> toggleRectangle [
 	^(bounds left + (13 * indentLevel)) @ bounds top extent: 9@h
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 IndentingListItemMorph >> unhighlight [
 	complexContents highlightingColor ifNotNil: [ self color: self theme textColor ].
-	self changed.
+	self changed
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 IndentingListItemMorph >> userString [
 	"Add leading tabs to my userString"
 	^ (String new: indentLevel withAll: Character tab), super userString
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 IndentingListItemMorph >> withSiblingsDo: aBlock [
 
 	| node |
@@ -498,10 +499,10 @@ IndentingListItemMorph >> withSiblingsDo: aBlock [
 	[node isNil] whileFalse: [
 		aBlock value: node.
 		node := node nextSibling
-	].
+	]
 ]
 
-{ #category : #converting }
+{ #category : 'converting' }
 IndentingListItemMorph >> withoutListWrapper [
 
 	^complexContents withoutListWrapper

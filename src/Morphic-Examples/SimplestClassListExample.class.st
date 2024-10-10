@@ -2,22 +2,24 @@
 SimplestClassListExample new openOn: Object
 "
 Class {
-	#name : #SimplestClassListExample,
-	#superclass : #MorphTreeModel,
+	#name : 'SimplestClassListExample',
+	#superclass : 'MorphTreeModel',
 	#instVars : [
 		'rootClass',
 		'selected'
 	],
-	#category : #'Morphic-Examples-MorphTreeWidget'
+	#category : 'Morphic-Examples-MorphTreeWidget',
+	#package : 'Morphic-Examples',
+	#tag : 'MorphTreeWidget'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 SimplestClassListExample class >> example [
 
 	SimplestClassListExample new openOn: Object
 ]
 
-{ #category : #view }
+{ #category : 'view' }
 SimplestClassListExample >> defaultTreeMorph [
 	^ super defaultTreeMorph
 		"beCheckList;"
@@ -27,52 +29,52 @@ SimplestClassListExample >> defaultTreeMorph [
 		yourself
 ]
 
-{ #category : #view }
-SimplestClassListExample >> openDialogOn: aClass [ 
+{ #category : 'view' }
+SimplestClassListExample >> openDialogOn: aClass [
 	rootClass := aClass.
 	^ self openDialogWindowIn: self currentWorld title: 'All Object subclasses'
 ]
 
-{ #category : #'instance creation' }
-SimplestClassListExample >> openOn: aClass [ 
+{ #category : 'instance creation' }
+SimplestClassListExample >> openOn: aClass [
 	rootClass := aClass.
 	(self defaultTreeMorph buildContents embeddedInMorphicWindowLabeled: 'test') openInWorld
 	"(self dialogWindowIn: World title: 'All Object subclasses') openInWorld"
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 SimplestClassListExample >> plugOne [
 	| l |
 	rootClass := Object.
 	l := PluggableListMorph
-		on: self 
+		on: self
 		list: #rootItems
 		selected: #selected
 		changeSelected: #selected:.
 	(l embeddedInMorphicWindowLabeled: 'test') openInWorld
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimplestClassListExample >> rootItems [
 	^ rootClass allSubclasses asArray sort: [:a :b | a name < b name]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimplestClassListExample >> rootItemsOrig [
 	^ rootClass allSubclasses asArray sort: [:a :b | a name < b name]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimplestClassListExample >> rootItemsTest [
 	^ (rootClass allSubclasses asArray sort: [:a :b | a name < b name])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimplestClassListExample >> selected [
 	^ selected ifNil: [selected := 1]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimplestClassListExample >> selected: x [
 	selected := x.
 	self changed: #selected

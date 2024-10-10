@@ -3,28 +3,30 @@ RBPatternParser is a subclass of RBParser that allows the extended syntax that c
 
 "
 Class {
-	#name : #RBPatternParser,
-	#superclass : #RBParser,
-	#category : #'AST-Core-Parser'
+	#name : 'RBPatternParser',
+	#superclass : 'RBParser',
+	#category : 'AST-Core-Parser',
+	#package : 'AST-Core',
+	#tag : 'Parser'
 }
 
-{ #category : #'private - classes' }
+{ #category : 'private - classes' }
 RBPatternParser >> messageNodeClass [
-	^RBPatternMessageNode
+	^ASTPatternMessageNode
 ]
 
-{ #category : #'private - classes' }
+{ #category : 'private - classes' }
 RBPatternParser >> methodNodeClass [
-	^RBPatternMethodNode
+	^ASTPatternMethodNode
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parseError: aString [
 
 	self error: aString
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parseLiteralByteArrayObject [
 	| node |
 	(currentToken isIdentifier and: [currentToken isPatternVariable])
@@ -37,7 +39,7 @@ RBPatternParser >> parseLiteralByteArrayObject [
 	^super parseLiteralByteArrayObject
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parsePatternBlock: aClass [
 	| position node |
 	position := currentToken start.
@@ -50,10 +52,9 @@ RBPatternParser >> parsePatternBlock: aClass [
 	self
 		parseStatements: false
 		into: node body
-		until: [ currentToken isSpecial
-			and: [ currentToken value = $} ] ].
+		untilAnyCloserOf: '}'.
 
-	(currentToken isSpecial and: [currentToken value = $}])
+	(currentToken isSpecial: $})
 		ifFalse: [ self addParserError: '''}'' expected' to: node body.
 			^ node ].
 	node right: currentToken start.
@@ -61,25 +62,25 @@ RBPatternParser >> parsePatternBlock: aClass [
 	^node
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parsePragmaLiteral [
 	| node |
 	currentToken isPatternBlock
-		ifTrue: [ ^ self parsePatternBlock: RBPatternBlockNode ].
+		ifTrue: [ ^ self parsePatternBlock: ASTPatternBlockNode ].
 	(currentToken isIdentifier and: [ currentToken isPatternVariable ]) ifTrue: [
 		node := self variableNodeClass identifierNamed: currentToken value at: currentToken start.
 		node isLiteralNode
 			ifFalse: [ self parseError: 'Literal pattern expected' ].
 		self step.
 		currentToken isPatternBlock ifTrue: [
-			node := (self parsePatternBlock: RBPatternWrapperBlockNode)
+			node := (self parsePatternBlock: ASTPatternWrapperBlockNode)
 				wrappedNode: node;
 				yourself ].
 		^ node ].
 	^ super parsePragmaLiteral
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parsePrimitiveLiteral [
 	| node |
 	(currentToken isIdentifier and: [currentToken isPatternVariable])
@@ -89,21 +90,21 @@ RBPatternParser >> parsePrimitiveLiteral [
 				ifTrue:
 					[self step.
 					^node].
-			currentToken := RBLiteralToken
+			currentToken := ASTLiteralToken
 						value: currentToken value asSymbol
 						start: currentToken start
 						stop: currentToken stop].
 	^super parsePrimitiveLiteral
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parsePrimitiveObject [
 	currentToken isPatternBlock
-		ifTrue: [^self parsePatternBlock: RBPatternBlockNode].
+		ifTrue: [^self parsePatternBlock: ASTPatternBlockNode].
 	^super parsePrimitiveObject
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parseUnaryMessage [
 	| node |
 	node := self parsePrimitiveObject.
@@ -116,42 +117,35 @@ RBPatternParser >> parseUnaryMessage [
 	currentToken isIdentifier]
 			whileTrue: [
 				currentToken isKeywordPattern
-					ifTrue: [ self parserError: ' incomplete keyword pattern ' ].
+					ifTrue: [ self parseErrorNode: ' incomplete keyword pattern ' ].
 				node := self parseUnaryMessageWith: node].
 	self addCommentsTo: node.
 	^node
 ]
 
-{ #category : #'private - parsing' }
+{ #category : 'private - parsing' }
 RBPatternParser >> parseWrapperPatternBlockWith: wrappedNode [
 	| node |
 
-	node := self parsePatternBlock: RBPatternWrapperBlockNode.
-	node class == RBPatternWrapperBlockNode ifTrue: [
+	node := self parsePatternBlock: ASTPatternWrapperBlockNode.
+	node class == ASTPatternWrapperBlockNode ifTrue: [
 		self flag: 'I think this is ugly, but I don''t know how to avoid checking the result of #parsePatternBlock:'.
 		node wrappedNode: wrappedNode ].
 
 	^ node
 ]
 
-{ #category : #private }
-RBPatternParser >> patchLiteralArrayToken [
-	(currentToken isIdentifier and: [currentToken isPatternVariable])
-		ifTrue: [^self].
-	super patchLiteralArrayToken
-]
-
-{ #category : #'private - classes' }
+{ #category : 'private - classes' }
 RBPatternParser >> pragmaNodeClass [
-	^RBPatternPragmaNode
+	^ASTPatternPragmaNode
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RBPatternParser >> scannerClass [
 	^RBPatternScanner
 ]
 
-{ #category : #'private - classes' }
+{ #category : 'private - classes' }
 RBPatternParser >> variableNodeClass [
-	^RBPatternVariableNode
+	^ASTPatternVariableNode
 ]

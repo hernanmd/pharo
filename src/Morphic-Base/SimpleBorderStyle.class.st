@@ -2,32 +2,34 @@
 see BorderedMorph
 "
 Class {
-	#name : #SimpleBorderStyle,
-	#superclass : #BorderStyle,
+	#name : 'SimpleBorderStyle',
+	#superclass : 'BorderStyle',
 	#instVars : [
 		'baseColor',
 		'color',
 		'width'
 	],
-	#category : #'Morphic-Base-Borders'
+	#category : 'Morphic-Base-Borders',
+	#package : 'Morphic-Base',
+	#tag : 'Borders'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> baseColor [
 	^baseColor ifNil:[Color transparent]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> baseColor: aColor [
 	| cc |
 	cc := aColor isTransparent ifTrue:[nil] ifFalse:[aColor].
 	baseColor = cc ifTrue:[^self].
 	baseColor := cc.
 	self releaseCachedState.
-	self color: cc.
+	self color: cc
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> bottomRightColor [
 	"Changed from direct access to color since, if nil,
 	self color is transparent."
@@ -35,41 +37,41 @@ SimpleBorderStyle >> bottomRightColor [
 	^self color
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> color [
 	^color ifNil:[Color transparent]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> color: aColor [
 	color = aColor ifTrue:[^self].
 	color := aColor.
-	self releaseCachedState.
+	self releaseCachedState
 ]
 
-{ #category : #drawing }
-SimpleBorderStyle >> drawLineFrom: startPoint to: stopPoint on: aCanvas [ 
+{ #category : 'drawing' }
+SimpleBorderStyle >> drawLineFrom: startPoint to: stopPoint on: aCanvas [
 	| lineColor |
-	lineColor := (stopPoint truncated quadrantOf: startPoint truncated) > 2 
+	lineColor := (stopPoint truncated quadrantOf: startPoint truncated) > 2
 				ifTrue: [self topLeftColor]
 				ifFalse: [self bottomRightColor].
-	aCanvas 
+	aCanvas
 		line: startPoint
-		to: stopPoint 
+		to: stopPoint
 		width: self width
 		color: lineColor
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 SimpleBorderStyle >> frameRectangle: aRectangle on: aCanvas [
 	aCanvas frameAndFillRectangle: aRectangle
 		fillColor: Color transparent
 		borderWidth: self width
 		topLeftColor: self topLeftColor
-		bottomRightColor: self bottomRightColor.
+		bottomRightColor: self bottomRightColor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleBorderStyle >> initialize [
 
 	super initialize.
@@ -77,12 +79,12 @@ SimpleBorderStyle >> initialize [
 	color := Color transparent
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> style [
 	^#simple
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> topLeftColor [
 	"Changed from direct access to color since, if nil,
 	self color is transparent."
@@ -90,14 +92,14 @@ SimpleBorderStyle >> topLeftColor [
 	^self color
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> width [
 	^width
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SimpleBorderStyle >> width: aNumber [
 	width = aNumber ifTrue:[^self].
 	width := aNumber truncated max: (width isPoint ifTrue:[0@0] ifFalse:[0]).
-	self releaseCachedState.
+	self releaseCachedState
 ]

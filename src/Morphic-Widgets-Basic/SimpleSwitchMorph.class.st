@@ -4,28 +4,30 @@ I represent a switch that can be either on or off.  I chnage my state in respons
 	SimpleSwitchMorph new openInWorld
 "
 Class {
-	#name : #SimpleSwitchMorph,
-	#superclass : #SimpleButtonMorph,
+	#name : 'SimpleSwitchMorph',
+	#superclass : 'SimpleButtonMorph',
 	#instVars : [
 		'onColor',
 		'offColor'
 	],
-	#category : #'Morphic-Widgets-Basic-Buttons'
+	#category : 'Morphic-Widgets-Basic-Buttons',
+	#package : 'Morphic-Widgets-Basic',
+	#tag : 'Buttons'
 }
 
-{ #category : #button }
+{ #category : 'button' }
 SimpleSwitchMorph >> doButtonAction [
 	"Perform the action of this button. The last argument of the message sent to the target is the new state of this switch."
 
 	| newState |
-	(target notNil and: [actionSelector notNil]) 
-		ifTrue: 
+	(target isNotNil and: [actionSelector isNotNil])
+		ifTrue:
 			[newState := color = onColor.
 			target perform: actionSelector
 				withArguments: (arguments copyWith: newState)]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 SimpleSwitchMorph >> initialize [
 
 	super initialize.
@@ -36,26 +38,26 @@ SimpleSwitchMorph >> initialize [
 	color := offColor
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> isOn [
 	^ color = onColor
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleSwitchMorph >> mouseDown: evt [
 
-	oldColor := self fillStyle.
+	oldColor := self fillStyle
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleSwitchMorph >> mouseMove: evt [
 
 	(self containsPoint: evt cursorPoint)
 		ifTrue: [self setSwitchState: (oldColor = offColor)]
-		ifFalse: [self setSwitchState: (oldColor = onColor)].
+		ifFalse: [self setSwitchState: (oldColor = onColor)]
 ]
 
-{ #category : #'event handling' }
+{ #category : 'event handling' }
 SimpleSwitchMorph >> mouseUp: evt [
 
 	(self containsPoint: evt cursorPoint)
@@ -63,43 +65,43 @@ SimpleSwitchMorph >> mouseUp: evt [
 			self setSwitchState: (oldColor = offColor).
 			self doButtonAction]
 		ifFalse: [  "restore old appearance"
-			self setSwitchState: (oldColor = onColor)].
+			self setSwitchState: (oldColor = onColor)]
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> offColor: aColor [
 
-	offColor := aColor.
+	offColor := aColor
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> onColor: aColor [
 
-	onColor := aColor.
+	onColor := aColor
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> setSwitchState: aBoolean [
 
 	aBoolean
 		ifTrue: [self turnOn]
-		ifFalse: [self turnOff].
+		ifFalse: [self turnOff]
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> toggleState [
 	self isOn
 		ifTrue: [self turnOff]
 		ifFalse: [self turnOn]
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> turnOff [
 	self borderColor: #raised.
 	self color: offColor
 ]
 
-{ #category : #switching }
+{ #category : 'switching' }
 SimpleSwitchMorph >> turnOn [
 	self borderColor: #inset.
 	self color: onColor

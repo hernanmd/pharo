@@ -2,8 +2,8 @@
 Handle a number of dropped files from the OS
 "
 Class {
-	#name : #ExternalDropHandler,
-	#superclass : #Object,
+	#name : 'ExternalDropHandler',
+	#superclass : 'Object',
 	#instVars : [
 		'action',
 		'type',
@@ -13,52 +13,54 @@ Class {
 		'DefaultHandler',
 		'RegisteredHandlers'
 	],
-	#category : #'Morphic-Core-Worlds'
+	#category : 'Morphic-Core-Worlds',
+	#package : 'Morphic-Core',
+	#tag : 'Worlds'
 }
 
-{ #category : #private }
+{ #category : 'private' }
 ExternalDropHandler class >> chooseServiceFrom: aCollection [
-	"private - choose a service from aCollection asking the user if  
+	"private - choose a service from aCollection asking the user if
 	needed"
 	aCollection size = 1 ifTrue: [^ aCollection anyOne].
-	^ UIManager default chooseFrom: (aCollection collect: [:each | 
-			each label]) values: aCollection.
+	^ self morphicUIManager chooseFrom: (aCollection collect: [:each |
+			each label]) values: aCollection
 ]
 
-{ #category : #cleanup }
+{ #category : 'cleanup' }
 ExternalDropHandler class >> cleanUp [
-	self resetRegisteredHandlers.
+	self resetRegisteredHandlers
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler class >> defaultHandler [
 	DefaultHandler ifNil: [DefaultHandler := ExternalDropHandler type: nil extension: nil action: [:dropStream | dropStream edit]].
 	^DefaultHandler
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler class >> defaultHandler: externalDropHandler [
 	DefaultHandler := externalDropHandler
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 ExternalDropHandler class >> initialize [
 
 	self resetRegisteredHandlers
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler class >> lookupExternalDropHandler: aFileReference [
 
 	| types serviceHandler |
 	types := aFileReference mimeTypes.
 
 	types ifNotNil: [
-		self registeredHandlers do: [:handler | 
+		self registeredHandlers do: [:handler |
 			(handler matchesTypes: types)
 				ifTrue: [^handler]]].
 
-	self registeredHandlers do: [:handler | 
+	self registeredHandlers do: [:handler |
 		(handler matchesExtension: aFileReference extension)
 				ifTrue: [^handler]].
 	serviceHandler := self lookupServiceBasedHandler: aFileReference.
@@ -66,7 +68,7 @@ ExternalDropHandler class >> lookupExternalDropHandler: aFileReference [
 		ifNil: [self defaultHandler]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler class >> lookupServiceBasedHandler: aFileReference [
 	"the file was just droped, let's do our job"
 	| services theOne |
@@ -83,47 +85,47 @@ ExternalDropHandler class >> lookupServiceBasedHandler: aFileReference [
 		ifNotNil: [ExternalDropHandler type: nil extension: nil action: [:stream | theOne performServiceFor: aFileReference]]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler class >> registerHandler: aHandler [
 	self registeredHandlers add: aHandler
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ExternalDropHandler class >> registeredHandlers [
 	RegisteredHandlers ifNil: [RegisteredHandlers := OrderedCollection new].
 	^RegisteredHandlers
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ExternalDropHandler class >> resetRegisteredHandlers [
 	RegisteredHandlers := nil
 ]
 
-{ #category : #'instance creation' }
-ExternalDropHandler class >> type: aType extension: anExtension action: anAction [ 
+{ #category : 'instance creation' }
+ExternalDropHandler class >> type: aType extension: anExtension action: anAction [
 	^self new type: aType extension: anExtension action: anAction
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 ExternalDropHandler class >> unwantedSelectors [
 	"private - answer a collection well known unwanted selectors "
 	^ #(#removeLineFeeds: #compressFile:)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler >> extension [
 	^extension
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler >> handle: dropStream in: pasteUp dropEvent: anEvent [
-	
-	^action cull: dropStream 
-			cull: pasteUp 
+
+	^action cull: dropStream
+			cull: pasteUp
 			cull: anEvent
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 ExternalDropHandler >> matchesExtension: aExtension [
 	(self extension isNil or: [ aExtension isNil ]) ifTrue: [ ^ false ].
 	^ FileSystem disk isCaseSensitive
@@ -131,20 +133,20 @@ ExternalDropHandler >> matchesExtension: aExtension [
 		ifFalse: [ extension sameAs: aExtension ]
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 ExternalDropHandler >> matchesTypes: types [
 	(self type isNil or: [types isNil])
 		ifTrue: [^false].
-	^types anySatisfy: [:mimeType | mimeType beginsWith: self type]
+	^types anySatisfy: [:mimeType | mimeType main beginsWith: self type]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ExternalDropHandler >> type [
 	^type
 ]
 
-{ #category : #initialize }
-ExternalDropHandler >> type: aType extension: anExtension action: anAction [ 
+{ #category : 'initialize' }
+ExternalDropHandler >> type: aType extension: anExtension action: anAction [
 	action := anAction.
 	type := aType.
 	extension := anExtension

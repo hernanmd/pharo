@@ -8,6 +8,7 @@ I have an inspector extension to show the results in a table.
 
 Examples:
 
+```
 global := CoStaticBenchmarks new
 	scope: (CoBenchmarkPackage on: SpAbstractAdapter package);
 	builder: (CoGlobalSorterResultSetBuilder new
@@ -15,23 +16,34 @@ global := CoStaticBenchmarks new
 		yourself);
 	run.
 
+""Get the total accuracy of finding the right result among the first three when typing 2 characters.""
+(global accuracyForCompletionIndex: (1 to: 3) withPrefixSize: 2) asFloat. 
+```
+
+```
 staticHeuristics := CoStaticBenchmarks new
 	scope: (CoBenchmarkPackage on: SpAbstractAdapter package);
 	builder: CoASTHeuristicsResultSetBuilder new;
 	run.
+
+""Get the total accuracy of finding the right result among the first three when typing 2 characters.""
+(staticHeuristics accuracyForCompletionIndex: (1 to: 3) withPrefixSize: 2) asFloat. 
+```
 "
 Class {
-	#name : #CoStaticBenchmarks,
-	#superclass : #Object,
+	#name : 'CoStaticBenchmarks',
+	#superclass : 'Object',
 	#instVars : [
 		'scope',
 		'completionBenchs',
 		'builder'
 	],
-	#category : #'HeuristicCompletion-Model-Benchmarks'
+	#category : 'HeuristicCompletion-Model-Benchmarks',
+	#package : 'HeuristicCompletion-Model',
+	#tag : 'Benchmarks'
 }
 
-{ #category : #running }
+{ #category : 'running' }
 CoStaticBenchmarks class >> runFor: aClass [
 
 	^ self new
@@ -39,7 +51,7 @@ CoStaticBenchmarks class >> runFor: aClass [
 		run
 ]
 
-{ #category : #inspector }
+{ #category : 'inspector' }
 CoStaticBenchmarks >> accuracyForCompletionIndex: completionIndexRange withPrefixSize: prefixSize [
 
 	| totalEntries |
@@ -51,21 +63,21 @@ CoStaticBenchmarks >> accuracyForCompletionIndex: completionIndexRange withPrefi
 	]) / totalEntries
 ]
 
-{ #category : #benchmarks }
-CoStaticBenchmarks >> benchCallsite: aRBMessageNode atPosition: aPosition [
+{ #category : 'benchmarks' }
+CoStaticBenchmarks >> benchCallsite: aMessageNode atPosition: aPosition [
 
 	| originalSelector |
-	originalSelector := aRBMessageNode selector.
-	2 to: (aRBMessageNode selector size min: 8) do: [ :index | | prefix completion candidates completionIndex previousResultsPerIndexPerPrefixSize |
+	originalSelector := aMessageNode selector.
+	2 to: (aMessageNode selector size min: 8) do: [ :index | | prefix completion candidates completionIndex previousResultsPerIndexPerPrefixSize |
 
 		"The CoGlobalSorterResultSetBuilder uses the selector to pre-narrow the results"
 		prefix := originalSelector copyFrom: 1 to: index.
-		aRBMessageNode selector: prefix.
+		aMessageNode selector: prefix.
 
 		completion := builder
-			node: aRBMessageNode;
+			node: aMessageNode;
 			completionContext: (CoBenchmarkContext new
-				callsite: aRBMessageNode;
+				callsite: aMessageNode;
 				position: aPosition;
 				yourself);
 			buildCompletion.
@@ -85,16 +97,16 @@ CoStaticBenchmarks >> benchCallsite: aRBMessageNode atPosition: aPosition [
 			at: prefix size
 			put: {previousResultsPerIndexPerPrefixSize first + 1 . previousResultsPerIndexPerPrefixSize second }
 	].
-	aRBMessageNode selector: originalSelector
+	aMessageNode selector: originalSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CoStaticBenchmarks >> builder: aCompletionBuilder [
 
 	builder := aCompletionBuilder
 ]
 
-{ #category : #inspector }
+{ #category : 'inspector' }
 CoStaticBenchmarks >> completionIndexes [
 
 	^ { 1 to: 1.
@@ -105,26 +117,62 @@ CoStaticBenchmarks >> completionIndexes [
 	}
 ]
 
-{ #category : #scoring }
+{ #category : 'scoring' }
 CoStaticBenchmarks >> gradeForPrefixSize: prefixSize [
 
 	^ self accuracyForCompletionIndex: (2 to: 8) withPrefixSize: prefixSize
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 CoStaticBenchmarks >> initialize [
 
 	super initialize.
-	completionBenchs := Dictionary new
+	completionBenchs := Dictionary new.
+	builder := CoASTHeuristicsResultSetBuilder new
 ]
 
-{ #category : #inspector }
+{ #category : 'inspector' }
+CoStaticBenchmarks >> inspectionResults [
+
+	<inspectorPresentationOrder: 0 title: 'Results'>
+	| table |
+	table := SpTablePresenter new
+		         items: self completionIndexes;
+		         addColumn: (SpCompositeTableColumn new
+				          title: 'Prefix';
+				          addColumn:
+					          (SpStringTableColumn evaluated: [ :completionIndexRange |
+							           | label |
+							           label := '% '.
+							           label := label , (completionIndexRange size = 1
+									                     ifTrue: [
+										                     { 'fail'. '1st'. '2nd'. '3rd' } at:
+												                     completionIndexRange first + 1 ]
+									                     ifFalse: [
+										                     completionIndexRange first asString
+										                     , '-'
+										                     , completionIndexRange last asString ]).
+							           label ]);
+				          yourself).
+	self prefixSizes do: [ :prefixSize |
+		table addColumn: (SpStringTableColumn
+				 title: prefixSize asString
+				 evaluated: [ :completionIndexRange |
+					 | float |
+					 float := self
+						          accuracyForCompletionIndex: completionIndexRange
+						          withPrefixSize: prefixSize.
+					 float * 100 printShowingDecimalPlaces: 2 ]) ].
+	^ table
+]
+
+{ #category : 'inspector' }
 CoStaticBenchmarks >> prefixSizes [
 
 	^ 2 to: 8
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 CoStaticBenchmarks >> printOn: aStream [
 
 	aStream
@@ -134,7 +182,7 @@ CoStaticBenchmarks >> printOn: aStream [
 		nextPutAll: ')'
 ]
 
-{ #category : #running }
+{ #category : 'running' }
 CoStaticBenchmarks >> run [
 
 	scope methodsDo: [ :method |
@@ -145,18 +193,18 @@ CoStaticBenchmarks >> run [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 CoStaticBenchmarks >> scope: aClass [
 	scope := aClass
 ]
 
-{ #category : #scoring }
+{ #category : 'scoring' }
 CoStaticBenchmarks >> score [
 
 	^ ((1 to: 7) sum: [ :i | (self gradeForPrefixSize: i + 1) / i ]) * 100 / ((1 to: 7) sum: [ :index | 1/index ])
 ]
 
-{ #category : #inspector }
+{ #category : 'inspector' }
 CoStaticBenchmarks >> totalEntriesPerPrefixSize: aPrefixSize [
 
 	^ completionBenchs sum: [ :benchsPerPrefix | (benchsPerPrefix at: aPrefixSize ifAbsent: [ {0} ]) first ]

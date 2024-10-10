@@ -2,23 +2,25 @@
 I am the handle in the right bottom of windows used for resizing them.
 "
 Class {
-	#name : #BottomRightGripMorph,
-	#superclass : #CornerGripMorph,
-	#category : #'Morphic-Widgets-Windows-Resizing'
+	#name : 'BottomRightGripMorph',
+	#superclass : 'CornerGripMorph',
+	#category : 'Morphic-Widgets-Windows-Resizing',
+	#package : 'Morphic-Widgets-Windows',
+	#tag : 'Resizing'
 }
 
-{ #category : #'target resize' }
-BottomRightGripMorph >> apply: delta [ 
+{ #category : 'target resize' }
+BottomRightGripMorph >> apply: delta [
 	| oldBounds |
 	oldBounds := target bounds.
 	target
 		bounds: (oldBounds origin corner: oldBounds corner + delta)
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 BottomRightGripMorph >> containsPoint: aPoint [
 	"Answer true only if on edges."
-	
+
 	|w|
 	^(super containsPoint: aPoint) and: [
 		w := SystemWindow borderWidth.
@@ -26,16 +28,16 @@ BottomRightGripMorph >> containsPoint: aPoint [
 			containsPoint: aPoint) not]
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 BottomRightGripMorph >> drawOn: aCanvas [
 	"Draw the grip on the given canvas."
 
 	| dotBounds alphaCanvas windowBorderWidth dotBounds2 |
-	
+
 	self shouldDraw ifFalse: [^self].
 
 	windowBorderWidth := SystemWindow borderWidth.
-	alphaCanvas := aCanvas asAlphaBlendingCanvas: 0.7.	
+	alphaCanvas := aCanvas asAlphaBlendingCanvas: 0.7.
 	"alphaCanvas
 		frameRectangle: bounds color: Color blue."
 
@@ -45,7 +47,7 @@ BottomRightGripMorph >> drawOn: aCanvas [
 	alphaCanvas
 		fillRectangle: dotBounds2
 		color: self handleColor.
-	
+
 	dotBounds2 := dotBounds right: (dotBounds right - windowBorderWidth).
 	dotBounds2 := dotBounds2 top: (dotBounds2 bottom - windowBorderWidth).
 	alphaCanvas
@@ -71,18 +73,18 @@ BottomRightGripMorph >> drawOn: aCanvas [
 		color: self dotColor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 BottomRightGripMorph >> gripLayoutFrame [
-	^ (1 @ 1 corner: 1 @ 1) asLayoutFrame 
+	^ (1 @ 1 corner: 1 @ 1) asLayoutFrame
 		topLeftOffset: (0 - self defaultWidth @ (0 - self defaultHeight))
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 BottomRightGripMorph >> ptName [
 	^#bottomRight
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 BottomRightGripMorph >> resizeCursor [
 
 	^ Cursor resizeForEdge: #bottomRight

@@ -9,10 +9,11 @@ set -o xtrace
 # The first parameter is the architecture
 # The second parameter is the stage name
 
-CACHE="${BOOTSTRAP_CACHE:-bootstrap-cache}"
 
 SCRIPTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 . ${SCRIPTS}/envvars.sh
+
+CACHE="${BOOTSTRAP_CACHE}"
 
 find ${CACHE}
 
@@ -21,7 +22,7 @@ find ${CACHE}
 # WARNING: I'm assuming CACHE=bootstrap-cache
 # WARNING: If you change this, you will need to change "runKernelTests.sh" too
 #
-TEST_NAME_PREFIX=$(find ${CACHE} -name "Pharo*.zip" | head -n 1 | cut -d'/' -f 2 | cut -d'-' -f 1-2)
+TEST_NAME_PREFIX=$(basename `find ${CACHE} -name "Pharo*.zip" | head -n 1` | cut -d'-' -f 1-2)
 
 # Extract the VM version from the image file version, avoiding going to git to extract the tags
 # This is handy in later stages of the build process when no repository is available, e.g., to run the tests
@@ -33,13 +34,8 @@ TEST_NAME_PREFIX=$(find ${CACHE} -name "Pharo*.zip" | head -n 1 | cut -d'/' -f 2
 #  - removing the prefix "Pharo"
 TEST_VM_VERSION=`echo ${TEST_NAME_PREFIX} | cut -d'.' -f 1 | cut -d'-' -f 1 | cut -c6-`0
 
-#Odd PR builds use the the latest VM, else use the stable VM
-if [[ $(is_development_build) == "0" && $((${BUILD_NUMBER} % 2)) -eq 1 ]]
-then
- TEST_VM_KIND="vmLatest"
-else
- TEST_VM_KIND="vm"	
-fi
+#Use always the latest VM
+TEST_VM_KIND="vmLatest"
 
 ${BOOTSTRAP_REPOSITORY:-.}/bootstrap/scripts/getPharoVM.sh ${TEST_VM_VERSION} ${TEST_VM_KIND} ${1}
 

@@ -2,41 +2,43 @@
 Border with customisable inner margin.
 "
 Class {
-	#name : #MarginBorderStyle,
-	#superclass : #SimpleBorderStyle,
+	#name : 'MarginBorderStyle',
+	#superclass : 'SimpleBorderStyle',
 	#instVars : [
 		'margin'
 	],
-	#category : #'Morphic-Base-Borders'
+	#category : 'Morphic-Base-Borders',
+	#package : 'Morphic-Base',
+	#tag : 'Borders'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MarginBorderStyle >> drawLineFrom: startPoint to: stopPoint on: aCanvas [
 	"Reduce the width by the margin."
-	
+
 	| lineColor |
-	lineColor := (stopPoint truncated quadrantOf: startPoint truncated) > 2 
+	lineColor := (stopPoint truncated quadrantOf: startPoint truncated) > 2
 				ifTrue: [self topLeftColor]
 				ifFalse: [self bottomRightColor].
-	aCanvas 
+	aCanvas
 		line: startPoint
-		to: stopPoint 
+		to: stopPoint
 		width: (self width - self margin max: 0)
 		color: lineColor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MarginBorderStyle >> frameRectangle: aRectangle on: aCanvas [
 	"Reduce width by the margin."
-	
+
 	aCanvas frameAndFillRectangle: aRectangle
 		fillColor: Color transparent
 		borderWidth: (self width - self margin max: 0)
 		topLeftColor: self topLeftColor
-		bottomRightColor: self bottomRightColor.
+		bottomRightColor: self bottomRightColor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 MarginBorderStyle >> initialize [
 	"Initialize the receiver."
 
@@ -45,14 +47,14 @@ MarginBorderStyle >> initialize [
 		margin: 0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MarginBorderStyle >> margin [
 	"Answer the value of margin"
 
 	^ margin
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 MarginBorderStyle >> margin: anObject [
 	"Set the value of margin"
 

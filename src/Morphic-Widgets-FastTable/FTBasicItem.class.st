@@ -38,61 +38,63 @@ Internal Representation and Key Implementation Points.
 I calculate my children with a block that is inside my dataSource. I execute this block with my data, the roots items of the dataSource and my level as arguments.
 "
 Class {
-	#name : #FTBasicItem,
-	#superclass : #FTTreeItem,
+	#name : 'FTBasicItem',
+	#superclass : 'FTTreeItem',
 	#instVars : [
 		'isExpanded',
 		'data',
 		'depth',
 		'recentlyChanged'
 	],
-	#category : #'Morphic-Widgets-FastTable-Tree'
+	#category : 'Morphic-Widgets-FastTable-Tree',
+	#package : 'Morphic-Widgets-FastTable',
+	#tag : 'Tree'
 }
 
-{ #category : #'expanding-collapsing' }
-FTBasicItem class >> expandedForm [
-	^ self theme treeExpandedForm
+{ #category : 'expanding-collapsing' }
+FTBasicItem class >> expandedFormSet [
+	^ self theme treeExpandedFormSet
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem class >> theme [
 	^ Smalltalk ui theme
 ]
 
-{ #category : #'expanding-collapsing' }
-FTBasicItem class >> unexpandedForm [
-	^ self theme treeUnexpandedForm
+{ #category : 'expanding-collapsing' }
+FTBasicItem class >> unexpandedFormSet [
+	^ self theme treeUnexpandedFormSet
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> calculateChildren [
 	^ self getChildren
-		collect: [ :elem | 
+		collect: [ :elem |
 			(self class data: elem from: dataSource)
 				depth: self depth + 1;
 				yourself ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> children [
 	"I use a cache because my children can be call often."
 
 	^ children ifNil: [ children := self calculateChildren ]
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> collapse [
-	"I do not refresh the table. Use collapseAndRefresh for that. I also do not 
+	"I do not refresh the table. Use collapseAndRefresh for that. I also do not
 	ensure that any selected element is visible after collapsing the element.
 	If any selected elements are within the childrens of the collapsed element,
 	I select the collapsed element."
 
 	self isExpanded ifFalse: [ ^ self ].
-	
+
 	recentlyChanged := true.
 	self dataSource
 		updateSelectionWithCollectBlock:
-			[ :indexOfCurrentSelection :indexOfCollapsedElement | 
+			[ :indexOfCurrentSelection :indexOfCollapsedElement |
 			| changedBy |
 			changedBy := self numberOfVisibleChildren.
 			(indexOfCurrentSelection between: indexOfCollapsedElement and: indexOfCollapsedElement + changedBy)
@@ -103,143 +105,143 @@ FTBasicItem >> collapse [
 	isExpanded := false
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> collapseAll [
 	self children do: #collapseAll.
 	self collapse
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> collapseAndRefresh [
 
-	self dataSource preservingScrollbarPositionDo: [ 
+	self dataSource preservingScrollbarPositionDo: [
 		self collapse.
 		self refreshTable ]
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicItem >> collpasedButton [
 	^ IconicButtonMorph new
 		target: self;
 		actionSelector: #expandAndRefresh;
 		arguments: {};
-		labelGraphic: self class unexpandedForm;
+		labelFormSet: self class unexpandedFormSet;
 		color: Color transparent;
 		helpText: 'Expand Item';
 		borderWidth: 0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> data [
 	^ data
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> data: anObject [
 	data := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> depth [
 	^ depth ifNil: [ depth := 0 ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> depth: anObject [
 	depth := anObject
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> expand [
-	"I do not refresh the table. Use expandAndRefresh for that. I also do not 
+	"I do not refresh the table. Use expandAndRefresh for that. I also do not
 	ensure that any selected element is visible after expanding the element."
 
 	isExpanded := true.
 	recentlyChanged := true.
 	self dataSource
 		updateSelectionWithCollectBlock: [ :indexOfCurrentSelection :indexOfCollapsedElement |
-			indexOfCurrentSelection <= indexOfCollapsedElement 
+			indexOfCurrentSelection <= indexOfCollapsedElement
 				ifTrue: [ indexOfCurrentSelection ]
 				ifFalse: [ indexOfCurrentSelection + self numberOfVisibleChildren ] ]
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> expandAll [
 	self expand.
 	self children do: #expandAll
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> expandAllTo: aDepth [
 	self expand.
 	aDepth > self depth
 		ifTrue: [ self children do: [ :each | each expandAllTo: aDepth ] ]
 ]
 
-{ #category : #'expanding-collapsing' }
+{ #category : 'expanding-collapsing' }
 FTBasicItem >> expandAndRefresh [
 
-	self dataSource preservingScrollbarPositionDo: [ 
+	self dataSource preservingScrollbarPositionDo: [
 		self expand.
 		self refreshTable ]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 FTBasicItem >> expandWithoutChange [
 	"I exist because in some rare case it's hard to keep the selection during the expension so I just expand myself don't update the selection :("
 
 	isExpanded := true
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicItem >> expandedButton [
 	^ IconicButtonMorph new
 		target: self;
 		actionSelector: #collapseAndRefresh;
 		arguments: {};
-		labelGraphic: self class expandedForm;
+		labelFormSet: self class expandedFormSet;
 		color: Color transparent;
 		helpText: 'Unexpand Item';
 		borderWidth: 0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> expandedChildren [
 	self isExpanded ifFalse: [ ^ {} ].
 	^ self children flatCollect: #withExpandedChildren
 ]
 
-{ #category : #button }
+{ #category : 'button' }
 FTBasicItem >> generateButton [
 	^ isExpanded
 		ifTrue: [ self expandedButton ]
 		ifFalse: [ self collpasedButton ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> getChildren [
 	^ dataSource childrenBlock isSymbol
 		ifTrue: [ dataSource childrenBlock value: data ]
 		ifFalse: [ dataSource childrenBlock cull: data cull: self ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FTBasicItem >> initialize [
 	isExpanded := false.
 	recentlyChanged := false
 ]
 
-{ #category : #accessing }
+{ #category : 'testing' }
 FTBasicItem >> isExpanded [
 	^ isExpanded
 ]
 
-{ #category : #accessing }
+{ #category : 'testing' }
 FTBasicItem >> isRootItem [
 	^ self depth = 0
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 FTBasicItem >> printOn: aStream [
 	super printOn: aStream.
 	aStream
@@ -248,7 +250,7 @@ FTBasicItem >> printOn: aStream [
 		nextPut: $]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> recentlyChanged [
 	"Since I must be true only if I collapsed recently, I change to false if someone get me."
 
@@ -258,18 +260,18 @@ FTBasicItem >> recentlyChanged [
 			true ]
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTBasicItem >> refreshTable [
 	dataSource tableRefresh.
 	dataSource table resetFunction
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 FTBasicItem >> updateData [
 	children := nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 FTBasicItem >> withExpandedChildren [
 	^ {self} , self expandedChildren
 ]

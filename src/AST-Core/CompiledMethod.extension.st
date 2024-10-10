@@ -1,33 +1,57 @@
-Extension { #name : #CompiledMethod }
+Extension { #name : 'CompiledMethod' }
 
-{ #category : #'*AST-Core' }
+{ #category : '*AST-Core' }
 CompiledMethod >> ast [
 	"return an AST for this method. The AST is cached. see class comment of ASTCache"
+	
+	"Workaround, see https://github.com/pharo-project/pharo/issues/14871
+	We force recompile to make sure the next call creates a correct BC to AST mapping"
+	
+	 ((self hasLiteral: #runtimeUndeclaredReadInContext:) or: [self hasLiteral: #runtimeUndeclaredWrite:inContext:])
+ 			ifTrue: [self isInstalled ifTrue: [self recompile]].
+	
 	^ ASTCache at: self
 ]
 
-{ #category : #'*AST-Core' }
+{ #category : '*AST-Core' }
 CompiledMethod >> comments [
 	"Answer a collection of strings representing the comments in the method. Return an empty collection if the method's source code does not contain a comment."
 
 	^ self ast allComments collect: [:c| c contents]
 ]
 
-{ #category : #'*AST-Core' }
+{ #category : '*AST-Core' }
 CompiledMethod >> firstComment [
 	"Answer a string representing the first comment in the method associated with selector. Return an empty string if the method's source code does not contain a comment."
 
 	^ self comments ifEmpty: [ #() ] ifNotEmpty: [ :comments | comments first ]
 ]
 
-{ #category : #'*AST-Core' }
+{ #category : '*AST-Core' }
 CompiledMethod >> parseTree [
 	"returns an AST for this method, do not cache it. (see #ast for the cached alternative)"
 	| ast |
+<<<<<<< HEAD
 	ast := self methodClass compiler 
 		failBlock: [^ self decompile ];
+||||||| f5a33d82ec
+	ast := self methodClass compiler
+		source: self sourceCode;
+		failBlock: [^ self decompile ];
+=======
+	ast := self methodClass compiler
+		source: self sourceCode;
+>>>>>>> Pharo13
 		class: self methodClass;
+<<<<<<< HEAD
 		parse: self sourceCode.
 	ast compilationContext compiledMethod: self.
+||||||| f5a33d82ec
+		parse.
+	ast compilationContext compiledMethod: self.
+=======
+		parse.
+	ast compiledMethod: self.
+>>>>>>> Pharo13
 	^ast
 ]

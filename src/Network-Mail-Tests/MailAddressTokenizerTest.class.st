@@ -1,10 +1,11 @@
 Class {
-	#name : #MailAddressTokenizerTest,
-	#superclass : #TestCase,
-	#category : #'Network-Mail-Tests'
+	#name : 'MailAddressTokenizerTest',
+	#superclass : 'TestCase',
+	#category : 'Network-Mail-Tests',
+	#package : 'Network-Mail-Tests'
 }
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailAddressTokenizerTest >> testTokensInAscii [
 	"Basic test that the tokenizer returns the correct values"
 
@@ -13,12 +14,12 @@ MailAddressTokenizerTest >> testTokensInAscii [
 	tokens := MailAddressTokenizer tokensIn: 'first last <person@company.com>'.
 	tokensCollection := tokens collect: [ :each |
 		each type -> each text ] as: Array.
-	self 
+	self
 		assert: tokensCollection
 		equals: {#Atom->'first'. #Atom->'last'. $<->'<'. #Atom->'person'. $@->'@'. #Atom->'company'. $.->'.'. #Atom->'com'. $>->'>'}
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailAddressTokenizerTest >> testTokensInLatin [
 	"RFC6531 (February 2012) allows character values > 127.
 	Check that the parser handles values between 128 and 255 (which can be correctly represented with single byte encoding)"
@@ -32,25 +33,25 @@ MailAddressTokenizerTest >> testTokensInLatin [
 	tokens := MailAddressTokenizer tokensIn: email.
 	tokensCollection := tokens collect: [ :each |
 		each type -> each text ] as: Array.
-	self 
+	self
 		assert: tokensCollection
 		equals: {
 			#Atom->('first' copy
 				at: 2 put: 237 asCharacter;
-				yourself). 
-			#Atom->'last' copy. 
-			$<->'<'. 
+				yourself).
+			#Atom->'last' copy.
+			$<->'<'.
 			#Atom->('person' copy
 				at: 2 put: 233 asCharacter;
-				yourself). 
-			$@->'@'. 
-			#Atom->'company' copy. 
-			$.->'.'. 
-			#Atom->'com' copy. 
+				yourself).
+			$@->'@'.
+			#Atom->'company' copy.
+			$.->'.'.
+			#Atom->'com' copy.
 			$>->'>'}
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 MailAddressTokenizerTest >> testTokensInUnicode [
 	"RFC6531 (February 2012) allows character values > 127.
 	Check that the parser handles values greater than 255 (which require multi-byte encoding)"
@@ -64,20 +65,20 @@ MailAddressTokenizerTest >> testTokensInUnicode [
 	tokens := MailAddressTokenizer tokensIn: email.
 	tokensCollection := tokens collect: [ :each |
 		each type -> each text ] as: Array.
-	self 
+	self
 		assert: tokensCollection
 		equals: {
 			#Atom->('first' copy
 				at: 3 put: 345 asCharacter;
-				yourself). 
-			#Atom->'last' copy. 
-			$<->'<'. 
+				yourself).
+			#Atom->'last' copy.
+			$<->'<'.
 			#Atom->('person' copy
 				at: 3 put: 345 asCharacter;
-				yourself). 
-			$@->'@'. 
-			#Atom->'company'. 
-			$.->'.'. 
-			#Atom->'com'. 
+				yourself).
+			$@->'@'.
+			#Atom->'company'.
+			$.->'.'.
+			#Atom->'com'.
 			$>->'>'}
 ]

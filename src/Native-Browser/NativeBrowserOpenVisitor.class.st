@@ -11,27 +11,29 @@ Examples
 	See class side in #examples protocol
 "
 Class {
-	#name : #NativeBrowserOpenVisitor,
-	#superclass : #OSPlatformVisitor,
+	#name : 'NativeBrowserOpenVisitor',
+	#superclass : 'OSPlatformVisitor',
 	#instVars : [
 		'pathString'
 	],
-	#category : #'Native-Browser-Base'
+	#category : 'Native-Browser-Base',
+	#package : 'Native-Browser',
+	#tag : 'Base'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 NativeBrowserOpenVisitor class >> example [
 	<example>
 	FileSystem workingDirectory openInOSFileBrowser
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 NativeBrowserOpenVisitor class >> example2 [
 	<example>
 	self openOn: FileLocator home
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 NativeBrowserOpenVisitor class >> openOn: aFileReference [
 	"Opens an OS-specific file and directory browser on ==aFileReference==. If aFileReference is a file, opens the browser on its containing directory instead."
 
@@ -45,16 +47,16 @@ NativeBrowserOpenVisitor class >> openOn: aFileReference [
 		visit
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 NativeBrowserOpenVisitor >> pathString: aString [
 	pathString := aString
 ]
 
-{ #category : #'private - ffi' }
+{ #category : 'private - ffi' }
 NativeBrowserOpenVisitor >> privShellExecute: lpOperation file: lpFile parameters: lpParameters directory: lpDirectory show: nShowCmd [
-	^ self ffiCall: #( 
+	^ self ffiCall: #(
 			FFIConstantHandle ShellExecuteA(
-     				0,
+     				int 0, "Operation is not associated with a window"
      				char* lpOperation,
          			char* lpFile,
      				char* lpParameters,
@@ -62,17 +64,17 @@ NativeBrowserOpenVisitor >> privShellExecute: lpOperation file: lpFile parameter
         			int nShowCmd)) module: #shell32
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 NativeBrowserOpenVisitor >> visitMacOS: aPlatform [
 	LibC runCommand: ('open "{1}"' format: {pathString})
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 NativeBrowserOpenVisitor >> visitUnix: aPlatform [
 	LibC runCommand: ('xdg-open "{1}"' format: {pathString})
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 NativeBrowserOpenVisitor >> visitWindows: aPlatform [
 	self
 		privShellExecute: 'explore'

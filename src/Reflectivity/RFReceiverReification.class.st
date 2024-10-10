@@ -2,47 +2,49 @@
 I reify the receiver of a Message or a method
 "
 Class {
-	#name : #RFReceiverReification,
-	#superclass : #RFReification,
-	#category : #'Reflectivity-Reifications'
+	#name : 'RFReceiverReification',
+	#superclass : 'RFReification',
+	#category : 'Reflectivity-Reifications',
+	#package : 'Reflectivity',
+	#tag : 'Reifications'
 }
 
-{ #category : #'plugin interface' }
+{ #category : 'plugin interface' }
 RFReceiverReification class >> entities [
-	^{RBMethodNode. RBMessageNode}
+	^{ASTMethodNode. ASTMessageNode}
 ]
 
-{ #category : #'plugin interface' }
+{ #category : 'plugin interface' }
 RFReceiverReification class >> key [
 	^#receiver
 ]
 
-{ #category : #generate }
-RFReceiverReification >> genForRBMessageNode [
-	^RBVariableNode named: #RFReceiverReificationVar.
+{ #category : 'generate' }
+RFReceiverReification >> genForASTMessageNode [
+	^ASTVariableNode named: #RFReceiverReificationVar
 ]
 
-{ #category : #generate }
-RFReceiverReification >> genForRBMethodNode [
-	^RBVariableNode selfNode
+{ #category : 'generate' }
+RFReceiverReification >> genForASTMethodNode [
+	^ASTVariableNode selfNode
 ]
 
-{ #category : #preamble }
+{ #category : 'preamble' }
 RFReceiverReification >> preambleForMessage: aNode [
 	| preamble |
 	preamble := OrderedCollection new.
 
-	(1 to: aNode numArgs) reverseWithIndexDo: [:each :index |  
+	(1 to: aNode numArgs) reverseWithIndexDo: [:each :index |
 			| name |
 			name := 'RFArg', index asString, 'RFReification'.
 			preamble add:  (RFStorePopIntoTempNode named: name).
 	].
-	preamble 
+	preamble
 		add: (RFStoreIntoTempNode named: #RFReceiverReificationVar).
-		(1 to: aNode numArgs) withIndexDo: [:each :index |  
+		(1 to: aNode numArgs) withIndexDo: [:each :index |
 			| name |
 			name := 'RFArg', index asString, 'RFReification'.
-			preamble add:  (RBVariableNode named: name).
+			preamble add:  (ASTVariableNode named: name).
 	].
 
 	^ preamble

@@ -1,33 +1,25 @@
-Extension { #name : #ShiftClassBuilder }
+Extension { #name : 'ShiftClassBuilder' }
 
-{ #category : #'*ClassParser' }
+{ #category : '*ClassParser' }
 ShiftClassBuilder >> buildFromAST: aCDClassDefinitionNode [
-
-	| package |
 
 	self name: aCDClassDefinitionNode className.
 
 	aCDClassDefinitionNode superclassName = #nil
-		ifFalse: [ self
-				superclass:
-					(superclassResolver
-						resolve: aCDClassDefinitionNode superclassName
-						inEnv: buildEnvironment) ]
+		ifFalse: [ self superclass: (superclassResolver resolve: aCDClassDefinitionNode superclassName inEnv: buildEnvironment) ]
 		ifTrue: [ self superclass: nil ].
 
 	self layoutClass: aCDClassDefinitionNode layoutClass.
 
-	self slots: (aCDClassDefinitionNode slots collect: [ :e | e asSlot]).
+	self slots: (aCDClassDefinitionNode slots collect: [ :e | e asSlot ]).
 
-	self sharedVariables: (aCDClassDefinitionNode sharedVariables collect: [ :e | e asClassVariable]).
+	self sharedVariables: (aCDClassDefinitionNode sharedVariables collect: [ :e | e asClassVariable ]).
 
-	aCDClassDefinitionNode packageName
-		ifNotNil: [ :cat | package := cat ]
-		ifNil: [ package := 'Unclassified' ].
-	self category: package.
+	aCDClassDefinitionNode packageName ifNotNil: [ :aPackage | self package: aPackage ].
 
-	self layoutDefinition sharedPools: (aCDClassDefinitionNode sharedPools collect: [ :e | e name ]).
+	aCDClassDefinitionNode tag ifNotNil: [ :aTag | self tag: aTag ].
 
+<<<<<<< HEAD
 	aCDClassDefinitionNode traitDefinition
 		ifNotNil: [ :traitDef |
 			traitDef originalNode formattedCode.
@@ -35,4 +27,22 @@ ShiftClassBuilder >> buildFromAST: aCDClassDefinitionNode [
 				traitComposition:
 					(self class compiler
 						evaluate: traitDef originalNode formattedCode) ]
+||||||| f5a33d82ec
+	aCDClassDefinitionNode traitDefinition
+		ifNotNil: [ :traitDef |
+			traitDef originalNode formattedCode.
+			self
+				traitComposition:
+					(self class compiler
+						source: traitDef originalNode formattedCode;
+							evaluate) ]
+=======
+	self sharedPools: (aCDClassDefinitionNode sharedPools collect: [ :e | e name ]).
+
+	aCDClassDefinitionNode traitDefinition ifNotNil: [ :traitDef |
+		traitDef originalNode formattedCode.
+		self traitComposition: (self class compiler
+				 source: traitDef originalNode formattedCode;
+				 evaluate) ]
+>>>>>>> Pharo13
 ]

@@ -14,123 +14,125 @@ If the mouse is moved over a FadingMorph present in the world, it will reset the
 
 "
 Class {
-	#name : #FadingMorph,
-	#superclass : #BorderedMorph,
+	#name : 'FadingMorph',
+	#superclass : 'BorderedMorph',
 	#instVars : [
 		'alpha',
 		'fadingFactor',
 		'resetable'
 	],
-	#category : #'Morphic-Base-Basic'
+	#category : 'Morphic-Base-Basic',
+	#package : 'Morphic-Base',
+	#tag : 'Basic'
 }
 
-{ #category : #drawing }
-FadingMorph >> areasRemainingToFill: aRectangle [ 
-	
+{ #category : 'drawing' }
+FadingMorph >> areasRemainingToFill: aRectangle [
+
 	"the whole rectangle is translucent"
-	
+
 	^Array with: aRectangle
 ]
 
-{ #category : #'properties-setting' }
+{ #category : 'properties-setting' }
 FadingMorph >> beResetable [
 
 	resetable := true
 ]
 
-{ #category : #'properties-setting' }
+{ #category : 'properties-setting' }
 FadingMorph >> beUnResetable [
 
 	resetable := false
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FadingMorph >> defaultFadingFactor [
 	"show the morph for 2.5 seconds"
-	
+
 	^0.04
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 FadingMorph >> fullDrawOn: aCanvas [
 
 	super fullDrawOn: (aCanvas asAlphaBlendingCanvas: alpha)
 ]
 
-{ #category : #'events-processing' }
+{ #category : 'events-processing' }
 FadingMorph >> handleMouseMove: anEvent [
 
-	(anEvent wasHandled or: [ resetable not ]) ifTrue:[ ^self ]. 
-	
+	(anEvent wasHandled or: [ resetable not ]) ifTrue:[ ^self ].
+
 	self resetAlpha.
 
-	anEvent wasHandled: true.
+	anEvent wasHandled: true
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FadingMorph >> initialize [
 
 	super initialize.
-	
-	self 
+
+	self
 	initializeAppearance;
 	initializeLayout;
 	beResetable;
 	resetAlpha.
-	
-	fadingFactor := self defaultFadingFactor.
+
+	fadingFactor := self defaultFadingFactor
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FadingMorph >> initializeAppearance [
 
-	self 
+	self
 	color: Color gray;
 	borderStyle: (BorderStyle inset width: 3)
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FadingMorph >> initializeLayout [
 
-	self 
+	self
 	changeTableLayout;
 	layoutInset: 6;
 	listDirection: #topToBottom;
 	cellPositioning: #topRight;
 	hResizing: #shrinkWrap;
 	vResizing: #shrinkWrap;
-	cellInset: 0.
+	cellInset: 0
 ]
 
-{ #category : #'events-processing' }
+{ #category : 'events-processing' }
 FadingMorph >> rejectsEvent: anEvent [
 
 	^(anEvent isMouse and: [ anEvent isMouseDown ]) or: [ super rejectsEvent: anEvent ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 FadingMorph >> resetAlpha [
 
 	alpha := 1.0
 ]
 
-{ #category : #stepping }
+{ #category : 'stepping' }
 FadingMorph >> step [
 
 	alpha <= fadingFactor ifTrue: [ ^self delete ].
 
 	alpha := alpha - fadingFactor.
-	
-	self changed.
+
+	self changed
 ]
 
-{ #category : #stepping }
+{ #category : 'stepping' }
 FadingMorph >> stepTime [
 
 	^100
 ]
 
-{ #category : #stepping }
+{ #category : 'stepping' }
 FadingMorph >> wantsSteps [
 	^true
 ]

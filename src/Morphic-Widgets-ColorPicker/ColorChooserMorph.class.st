@@ -2,8 +2,8 @@
 ColorPresenter that opens a colour selector when clicked.
 "
 Class {
-	#name : #ColorChooserMorph,
-	#superclass : #ColorPresenterMorph,
+	#name : 'ColorChooserMorph',
+	#superclass : 'ColorPresenterMorph',
 	#traits : 'TEnableOnHaloMenu',
 	#classTraits : 'TEnableOnHaloMenu classTrait',
 	#instVars : [
@@ -11,29 +11,30 @@ Class {
 		'enabled',
 		'getEnabledSelector'
 	],
-	#category : #'Morphic-Widgets-ColorPicker'
+	#category : 'Morphic-Widgets-ColorPicker',
+	#package : 'Morphic-Widgets-ColorPicker'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 ColorChooserMorph class >> example [
 	<sampleInstance>
-	^ (ColorChooserMorph 
-		on: (BorderedMorph new) 
+	^ (ColorChooserMorph
+		on: (BorderedMorph new)
 		color: #color changeColor: #color:) openInWorld
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 ColorChooserMorph class >> on: anObject color: getSel changeColor: setSel [
 	"Answer a new instance of the receiver on the given model using
 	the given selectors as the interface."
 	"(ColorChooserMorph on: (BorderedMorph new) color: #color changeColor: #color:) openInWorld"
 	^self new
-		on: anObject 
+		on: anObject
 		color: getSel
 		changeColor: setSel
 ]
 
-{ #category : #services }
+{ #category : 'services' }
 ColorChooserMorph >> chooseColor [
 	"Popup the color picker for now."
 
@@ -48,14 +49,14 @@ ColorChooserMorph >> chooseColor [
 	self setColorSelector ifNotNil: [self model perform: self setColorSelector with: newColor]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ColorChooserMorph >> enabled [
 	"Answer the enabled state of the receiver."
-	
+
 	^enabled
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ColorChooserMorph >> enabled: aBoolean [
 	"Set the enabled state of the receiver."
 
@@ -64,14 +65,14 @@ ColorChooserMorph >> enabled: aBoolean [
 	self changed: #enabled
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ColorChooserMorph >> getEnabledSelector [
 	"Answer the value of getEnabledSelector"
 
 	^ getEnabledSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ColorChooserMorph >> getEnabledSelector: anObject [
 	"Set the value of getEnabledSelector"
 
@@ -79,7 +80,7 @@ ColorChooserMorph >> getEnabledSelector: anObject [
 	self updateEnabled
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 ColorChooserMorph >> initialize [
 	"Initialize the receiver."
 
@@ -87,7 +88,7 @@ ColorChooserMorph >> initialize [
 	super initialize
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 ColorChooserMorph >> newContentMorph [
 	"Answer a new button morph"
 
@@ -106,7 +107,7 @@ ColorChooserMorph >> newContentMorph [
 	^b
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 ColorChooserMorph >> on: anObject color: getColSel changeColor: setColSel [
 	"Set the receiver to the given model parameterized by the given message selectors."
 
@@ -115,31 +116,31 @@ ColorChooserMorph >> on: anObject color: getColSel changeColor: setColSel [
 		setColorSelector: setColSel
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ColorChooserMorph >> setColorSelector [
 	"Answer the value of setColorSelector"
 
 	^ setColorSelector
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 ColorChooserMorph >> setColorSelector: anObject [
 	"Set the value of setColorSelector"
 
 	setColorSelector := anObject
 ]
 
-{ #category : #updating }
-ColorChooserMorph >> update: aSymbol [ 
+{ #category : 'updating' }
+ColorChooserMorph >> update: aSymbol [
 	"Refer to the comment in View|update:."
 
 	super update: aSymbol.
-	aSymbol == self getEnabledSelector ifTrue: 
+	aSymbol == self getEnabledSelector ifTrue:
 		[self updateEnabled.
 		^ self]
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 ColorChooserMorph >> updateEnabled [
 	"Update the enablement state."
 

@@ -1,9 +1,9 @@
-Extension { #name : #Collection }
+Extension { #name : 'Collection' }
 
-{ #category : #'*Network-Mail' }
+{ #category : '*Network-Mail' }
 Collection >> asEmailHeaderString [
 
-	^ String streamContents: [ :str | 
+	^ String streamContents: [ :str |
 			self
 				do: [ :e | str nextPutAll: e asEmailHeaderString ]
 				separatedBy: [ str nextPutAll: ', ' ] ]

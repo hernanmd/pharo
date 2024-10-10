@@ -2,12 +2,14 @@
 Menu designed to be embedded in another morph rather than popped up directly.
 "
 Class {
-	#name : #EmbeddedMenuMorph,
-	#superclass : #MenuMorph,
-	#category : #'Morphic-Base-Menus'
+	#name : 'EmbeddedMenuMorph',
+	#superclass : 'MenuMorph',
+	#category : 'Morphic-Base-Menus',
+	#package : 'Morphic-Base',
+	#tag : 'Menus'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 EmbeddedMenuMorph >> allEnabledSiblingItems [
 	"Answer the receiver's submorphs followed by the (wrapping) owner's
 	submorph items. Answer only enabled items."
@@ -15,7 +17,7 @@ EmbeddedMenuMorph >> allEnabledSiblingItems [
 	^self allSiblingItems select: [:item | item isEnabled]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 EmbeddedMenuMorph >> allSiblingItems [
 	"Answer the receiver's submorphs followed by the (wrapping) owner's
 	submorph items. Nasty."
@@ -29,7 +31,7 @@ EmbeddedMenuMorph >> allSiblingItems [
 	^str contents
 ]
 
-{ #category : #drawing }
+{ #category : 'drawing' }
 EmbeddedMenuMorph >> drawOn: aCanvas [
 	"Draw the receiver on the canvas."
 
@@ -37,26 +39,26 @@ EmbeddedMenuMorph >> drawOn: aCanvas [
 	self hasKeyboardFocus ifTrue: [self drawKeyboardFocusOn: aCanvas]
 ]
 
-{ #category : #'keyboard control' }
+{ #category : 'keyboard control' }
 EmbeddedMenuMorph >> handlesKeyboard: evt [
 	"Answer whether the receiver handles the keystroke represented by the event"
 
 	^true
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 EmbeddedMenuMorph >> keyDown: evt [
 	"Handle tabbing and arrows and cr/space."
 
 	| key |
-		
+
 	key := evt key.
 	(key isArrowLeft or: [ key isArrowRight ])
-		ifTrue: [ (selectedItem notNil and: [ selectedItem hasSubMenu ])
+		ifTrue: [ (selectedItem isNotNil and: [ selectedItem hasSubMenu ])
 				ifTrue: [ evt hand newMouseFocus: selectedItem subMenu.
 					selectedItem subMenu moveSelectionDown: 1 event: evt.
 					^ evt hand newKeyboardFocus: selectedItem subMenu ] ].
-	
+
 	key isArrowUp ifTrue: [ ^ self moveSelectionDown: -1 event: evt ].	"up arrow key"
 	key isArrowDown ifTrue: [ ^ self moveSelectionDown: 1 event: evt ].	"down arrow key"
 	key = KeyboardKey pageUp ifTrue: [ ^ self moveSelectionDown: -5 event: evt ].	"page up key"
@@ -64,10 +66,10 @@ EmbeddedMenuMorph >> keyDown: evt [
 
 	self window ifNotNil: [:win |
 		(win handlesKeyDown: evt) ifTrue: [
-			(win keyDown: evt) ifTrue: [^true]]].
+			(win keyDown: evt) ifTrue: [^true]]]
 ]
 
-{ #category : #events }
+{ #category : 'events' }
 EmbeddedMenuMorph >> keyStroke: event [
 	"Handle tabbing and arrows and cr/space."
 
@@ -83,10 +85,10 @@ EmbeddedMenuMorph >> keyStroke: event [
 						selectedItem subMenu takeKeyboardFocus ]
 					ifFalse: [ selectedItem invokeWithEvent: event ] ].
 		(selectable := self items) size = 1 ifTrue: [ ^ selectable first invokeWithEvent: event ].
-		^ self ].
+		^ self ]
 ]
 
-{ #category : #'keyboard control' }
+{ #category : 'keyboard control' }
 EmbeddedMenuMorph >> keyboardFocusChange: aBoolean [
 	"Nasty hack for scrolling upon keyboard focus."
 
@@ -97,7 +99,7 @@ EmbeddedMenuMorph >> keyboardFocusChange: aBoolean [
 		ifFalse: [self selectItem: nil event: nil]
 ]
 
-{ #category : #'keyboard control' }
+{ #category : 'keyboard control' }
 EmbeddedMenuMorph >> moveSelectionDown: anInteger event: anEvent [
 	"Move the selection down or up (negative number) by (at least)
 	the specified amount. If the item is not enabled, scan one at a time
@@ -118,10 +120,10 @@ EmbeddedMenuMorph >> moveSelectionDown: anInteger event: anEvent [
 	^self selectItem: nil event: anEvent
 ]
 
-{ #category : #control }
+{ #category : 'control' }
 EmbeddedMenuMorph >> selectItem: aMenuItem event: anEvent [
 	"Deselect any sibling menus."
-	
+
 	self owner ifNotNil: [
 		|menus|
 		menus := self owner submorphs select: [:m | (m isKindOf: self class) and: [m ~~ self]].
@@ -130,11 +132,11 @@ EmbeddedMenuMorph >> selectItem: aMenuItem event: anEvent [
 				perform: #selectItem:event:
 				withArguments: {nil. anEvent}
 				inSuperclass: self class superclass] ].
-		
+
 	^super selectItem: aMenuItem event: anEvent
 ]
 
-{ #category : #selecting }
+{ #category : 'selecting' }
 EmbeddedMenuMorph >> selectLastMatch: aString [
 	"Answer the last subitem that has text that includes the given substring.
 	Answer nil if none.
@@ -148,7 +150,7 @@ EmbeddedMenuMorph >> selectLastMatch: aString [
 	^lastMatch
 ]
 
-{ #category : #selecting }
+{ #category : 'selecting' }
 EmbeddedMenuMorph >> selectLastPrefix: aString [
 	"Answer the last subitem that has text that matches the given prefix.
 	Answer nil if none.
@@ -162,7 +164,7 @@ EmbeddedMenuMorph >> selectLastPrefix: aString [
 	^lastMatch
 ]
 
-{ #category : #selecting }
+{ #category : 'selecting' }
 EmbeddedMenuMorph >> selectMatch: aString [
 	"Answer the first subitem that has text that includes the given substring.
 	Answer nil if none.
@@ -176,7 +178,7 @@ EmbeddedMenuMorph >> selectMatch: aString [
 	^firstMatch
 ]
 
-{ #category : #selecting }
+{ #category : 'selecting' }
 EmbeddedMenuMorph >> selectPrefix: aString [
 	"Answer the first subitem that has text that matches the given prefix.
 	Answer nil if none.
