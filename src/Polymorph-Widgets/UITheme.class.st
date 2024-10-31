@@ -19,7 +19,6 @@ Class {
 	#instVars : [
 		'settings',
 		'formSets',
-		'soundTheme',
 		'focusIndicator',
 		'windowActiveDropShadowStyle',
 		'useScrollbarThumbShadow',
@@ -174,7 +173,6 @@ UITheme >> abortIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of an error dialog (true) with the given label and title."
 
 	| window |
-	self abortSound play.
 	window := (ErrorDialogWindow newWithTheme: aThemedMorph theme)
 		textFont: self textFont;
 		title: aString;
@@ -183,19 +181,11 @@ UITheme >> abortIn: aThemedMorph text: aStringOrText title: aString [
 	^ window cancelled not
 ]
 
-{ #category : 'sounds' }
-UITheme >> abortSound [
-	"Answer the abort sound."
-
-	^self soundTheme abortSound
-]
-
 { #category : 'services' }
 UITheme >> alertIn: aThemedMorph text: aStringOrText title: aString configure: aBlock [
 	"Answer the result of an alert dialog (true) with the given label and title."
 
 	|dialog|
-	SoundTheme useThemeSounds ifTrue: [self alertSound play].
 	dialog := (AlertDialogWindow newWithTheme: aThemedMorph theme)
 		textFont: self textFont;
 		title: aString;
@@ -203,13 +193,6 @@ UITheme >> alertIn: aThemedMorph text: aStringOrText title: aString configure: a
 	aBlock value: dialog.
 	dialog openModal.
 	^dialog cancelled not
-]
-
-{ #category : 'sounds' }
-UITheme >> alertSound [
-	"Answer the alert sound."
-
-	^self soundTheme alertSound
 ]
 
 { #category : 'accessing' }
@@ -253,7 +236,7 @@ UITheme >> baseColorFor: aWidget [
 ]
 
 { #category : 'private' }
-UITheme >> basePassiveBackgroundColorFor: aButton [
+UITheme >> basePassiveBackgroundColor [
 
 	^ colorPalette basePassiveBackgroundColor
 ]
@@ -518,7 +501,7 @@ UITheme >> buttonSelectedDisabledFillStyleFor: aButton [
 UITheme >> buttonSelectedFillStyleFor: aButton [
 	"Return the normal button fillStyle for the given button."
 
-	^ SolidFillStyle color: (self lightSelectionColorFor: aButton)
+	^ SolidFillStyle color: self lightSelectionColor
 ]
 
 { #category : 'border-styles - buttons' }
@@ -560,7 +543,6 @@ UITheme >> centeredAlertIn: aThemedMorph text: aStringOrText title: aString conf
 	"Answer the result of an alert dialog (true) with the given label and title."
 
 	| dialog |
-	SoundTheme useThemeSounds ifTrue: [ self alertSound play ].
 	dialog := (AlertDialogWindow newWithTheme: aThemedMorph theme)
 		textFont: self textFont;
 		title: aString;
@@ -1317,15 +1299,14 @@ UITheme >> customQuestionIn: aThemedMorph text: labelText yesText: yesText noTex
 	"Answer the result of a question dialog with the given label, button labels and title.
 	defaultOption should be one of true, false or nil to set the default button."
 
-	self questionSound play.
-	^((CustomQuestionDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: labelText;
-			yesText: yesText help: nil;
-			noText: noText help: nil;
-			cancelText: cancelText help: nil;
-			default: defaultOption) openModal answer
+	^ ((CustomQuestionDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: labelText;
+		   yesText: yesText help: nil;
+		   noText: noText help: nil;
+		   cancelText: cancelText help: nil;
+		   default: defaultOption) openModal answer
 ]
 
 { #category : 'accessing - colors' }
@@ -1395,30 +1376,14 @@ UITheme >> defaultSettings [
 		yourself
 ]
 
-{ #category : 'initialization' }
-UITheme >> defaultSoundTheme [
-	"Answer the default sound theme.
-	Answer the system sound theme by default."
-
-	^SoundTheme current
-]
-
 { #category : 'services' }
 UITheme >> denyIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of an deny dialog (true) with the given label and title."
 
-	self denySound play.
-	^((DenyDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText) openModal cancelled not
-]
-
-{ #category : 'sounds' }
-UITheme >> denySound [
-	"Answer the deny sound."
-
-	^self soundTheme denySound
+	^ ((DenyDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText) openModal cancelled not
 ]
 
 { #category : 'fill-styles' }
@@ -1451,7 +1416,7 @@ UITheme >> desktopImageLayout [
 UITheme >> dialogWindowActiveFillStyleFor: aWindow [
 	"Return the window active fillStyle for the given window."
 
-	^self windowActiveFillStyleFor: aWindow
+	^ self windowActiveFillStyle
 ]
 
 { #category : 'fill-styles' }
@@ -2043,12 +2008,6 @@ UITheme >> lightSelectionColor [
 	^ colorPalette lightSelectionColor
 ]
 
-{ #category : 'private' }
-UITheme >> lightSelectionColorFor: aMorph [
-
-	^ self lightSelectionColor
-]
-
 { #category : 'accessing - colors' }
 UITheme >> lineNumberColor [
 
@@ -2116,11 +2075,10 @@ UITheme >> listTextColor [
 UITheme >> longMessageIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of a (potentially long) message dialog (true) with the given label and title."
 
-	self messageSound play.
-	^((LongMessageDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText) openModal cancelled not
+	^ ((LongMessageDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText) openModal cancelled not
 ]
 
 { #category : 'defaults' }
@@ -2347,18 +2305,10 @@ UITheme >> menubarItemSelectionTextColorFor: aMenubarItem [
 UITheme >> messageIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of a message dialog (true) with the given label and title."
 
-	self messageSound play.
-	^((MessageDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText) openModal cancelled not
-]
-
-{ #category : 'sounds' }
-UITheme >> messageSound [
-	"Answer the message sound."
-
-	^self soundTheme messageSound
+	^ ((MessageDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText) openModal cancelled not
 ]
 
 { #category : 'border-styles' }
@@ -3720,8 +3670,8 @@ UITheme >> paneColorFor: aWindow [
 	"Answer the pane color that should be used."
 
 	^ (self fadedBackgroundWindows
-		ifTrue: [ aWindow fillStyleToUse ]
-		ifFalse: [ self windowActiveFillStyleFor: aWindow ]) asColor
+		   ifTrue: [ aWindow fillStyleToUse ]
+		   ifFalse: [ self windowActiveFillStyle ]) asColor
 ]
 
 { #category : 'services' }
@@ -3770,83 +3720,67 @@ UITheme >> preferGradientFill [
 UITheme >> proceedIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of a proceed dialog with the given label and title."
 
-	self questionSound play.
-	^((ProceedDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText) openModal cancelled not
+	^ ((ProceedDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText) openModal cancelled not
 ]
 
 { #category : 'border-styles' }
-UITheme >> progressBarBorderStyleFor: aProgressBar [
-	"Return the progress bar borderStyle for the given progress bar."
+UITheme >> progressBarBorderStyle [
+	"Return the progress bar borderStyle for a progress bar."
 
-	|c|
-	c := self progressBarColorFor: aProgressBar.
-	^BorderStyle simple
-		width: 1 scaledByDisplayScaleFactor;
-		baseColor: c
+	| c |
+	c := self progressBarColor.
+	^ BorderStyle simple
+		  width: 1 scaledByDisplayScaleFactor;
+		  baseColor: c
 ]
 
 { #category : 'basic-colors' }
-UITheme >> progressBarColorFor: aProgressBar [
-
+UITheme >> progressBarColor [
 	"Answer the colour for the given progress bar."
 
-	^ colorPalette progressBarColorFor: aProgressBar
+	^ colorPalette progressBarColor
 ]
 
 { #category : 'fill-styles' }
-UITheme >> progressBarFillStyleFor: aProgressBar [
-	^ self basePassiveBackgroundColorFor: aProgressBar
-]
+UITheme >> progressBarFillColor [
 
-{ #category : 'basic-colors' }
-UITheme >> progressBarProgressColorFor: aProgressBar [
-
-	"Answer the colour for the progress part of the given progress bar."
-
-	^ colorPalette progressBarProgressColorFor: aProgressBar
+	^ self basePassiveBackgroundColor
 ]
 
 { #category : 'fill-styles' }
-UITheme >> progressBarProgressFillStyleFor: aProgressBar [
-	^ (self lightSelectionColorFor: aProgressBar)
+UITheme >> progressBarProgressFillColor [
+
+	^ self lightSelectionColor
 ]
 
 { #category : 'fill-styles' }
-UITheme >> progressFillStyleFor: aProgress [
-	"Return the progress fillStyle for the given progress morph."
-	^ self windowActiveFillStyleFor: aProgress
+UITheme >> progressFillStyle [
+	"Return the progress fillStyle for progress morph."
+
+	^ self windowActiveFillStyle
 ]
 
 { #category : 'services' }
 UITheme >> questionIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of a question dialog with the given label and title."
 
-	self questionSound play.
-	^((QuestionDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText) openModal answer
-]
-
-{ #category : 'sounds' }
-UITheme >> questionSound [
-	"Answer the question sound."
-
-	^self soundTheme questionSound
+	^ ((QuestionDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText) openModal answer
 ]
 
 { #category : 'services' }
 UITheme >> questionWithoutCancelIn: aThemedMorph text: aStringOrText title: aString [
 	"Answer the result of a question dialog with the given label and title."
 
-	self questionSound play.
-	^((QuestionWithoutCancelDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText) openModal answer
+	^ ((QuestionWithoutCancelDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText) openModal answer
 ]
 
 { #category : 'border-styles - buttons' }
@@ -4240,8 +4174,7 @@ UITheme >> secondarySelectionColor [
 { #category : 'private' }
 UITheme >> selectedFillStyleFor: aMorph height: anInteger [
 
-
-	^ SolidFillStyle color: (self lightSelectionColorFor:  aMorph)
+	^ SolidFillStyle color: self lightSelectionColor
 ]
 
 { #category : 'accessing - colors' }
@@ -4354,21 +4287,6 @@ UITheme >> sliderNormalFillStyleFor: aSlider [
 	"Return the normal fillStyle for the given slider."
 
 	^ colorPalette sliderNormalFillStyleFor: aSlider
-]
-
-{ #category : 'accessing' }
-UITheme >> soundTheme [
-	"Answer the sound theme to use, if not specified
-	use the default sound theme."
-
-	^soundTheme ifNil: [self defaultSoundTheme]
-]
-
-{ #category : 'accessing' }
-UITheme >> soundTheme: anObject [
-	"Set the sound theme specific to this instance of ui theme,"
-
-	soundTheme := anObject
 ]
 
 { #category : 'fill-styles' }
@@ -4700,7 +4618,7 @@ UITheme >> textEditorDisabledBorderStyleFor: aTextEditor [
 UITheme >> textEditorDisabledFillStyleFor: aTextEditor [
 	"Return the disabled fillStyle for the given text editor."
 
-	^self basePassiveBackgroundColorFor: aTextEditor
+	^ self basePassiveBackgroundColor
 ]
 
 { #category : 'services' }
@@ -4708,13 +4626,12 @@ UITheme >> textEditorIn: aThemedMorph text: aStringOrText title: aString entryTe
 	"Answer the result of a text editor (multiline) dialog ( a string or nil if cancelled)
 	with the given label and title."
 
-	self questionSound play.
-	^((TextEditorDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText;
-			entryText: defaultEntryText;
-			entryHeight: entryHeight) openModal entryText
+	^ ((TextEditorDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText;
+		   entryText: defaultEntryText;
+		   entryHeight: entryHeight) openModal entryText
 ]
 
 { #category : 'border-styles' }
@@ -4744,12 +4661,11 @@ UITheme >> textEntryIn: aThemedMorph text: aStringOrText title: aString entryTex
 	"Answer the result of a text entry dialog ( a string or nil if cancelled)
 	with the given label and title."
 
-	self questionSound play.
-	^(TextEntryDialogWindow new
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText;
-			entryText: defaultEntryText) openModal entryText
+	^ (TextEntryDialogWindow new
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText;
+		   entryText: defaultEntryText) openModal entryText
 ]
 
 { #category : 'services' }
@@ -4757,13 +4673,12 @@ UITheme >> textEntryIn: aThemedMorph text: aStringOrText title: aString entryTex
 	"Answer the result of a text entry dialog ( a string or nil if cancelled)
 	with the given label and title."
 
-	self questionSound play.
-	^((TextEntryDialogWindow newWithTheme: aThemedMorph theme)
-			textFont: self textFont;
-			title: aString;
-			text: aStringOrText;
-			entryText: defaultEntryText;
-			entryCompletion: anEntryCompletion) openModal entryText
+	^ ((TextEntryDialogWindow newWithTheme: aThemedMorph theme)
+		   textFont: self textFont;
+		   title: aString;
+		   text: aStringOrText;
+		   entryText: defaultEntryText;
+		   entryCompletion: anEntryCompletion) openModal entryText
 ]
 
 { #category : 'fill-styles' }
@@ -4974,9 +4889,10 @@ UITheme >> windowActiveDropShadowStyle: anObject [
 ]
 
 { #category : 'fill-styles' }
-UITheme >> windowActiveFillStyleFor: aWindow [
+UITheme >> windowActiveFillStyle [
 	"We do not want the lighting effect when the window goes inactive"
-	^SolidFillStyle color: self baseColor
+
+	^ SolidFillStyle color: self baseColor
 ]
 
 { #category : 'fill-styles' }
@@ -5043,13 +4959,6 @@ UITheme >> windowClosePassiveFormSet [
 	^ self iconFormSetNamed: #windowCloseInactive
 ]
 
-{ #category : 'sounds' }
-UITheme >> windowCloseSound [
-	"Answer the window close sound."
-
-	^self soundTheme windowCloseSound
-]
-
 { #category : 'morph creation' }
 UITheme >> windowCollapseBoxLayoutFor: aWindow [
 
@@ -5104,7 +5013,8 @@ UITheme >> windowExtentChangedFor: aWindow [
 { #category : 'fill-styles' }
 UITheme >> windowInactiveFillStyleFor: aWindow [
 	"We do not want the lighting effect when the window goes inactive"
-	^self windowActiveFillStyleFor: aWindow
+
+	^ self windowActiveFillStyle
 ]
 
 { #category : 'fill-styles' }
@@ -5182,13 +5092,6 @@ UITheme >> windowMaximizePassiveFormSet [
 	^ self iconFormSetNamed: #windowMaximizeInactive
 ]
 
-{ #category : 'sounds' }
-UITheme >> windowMaximizeSound [
-	"Answer the window maximize sound."
-
-	^self soundTheme windowMaximizeSound
-]
-
 { #category : 'label-styles - windows' }
 UITheme >> windowMenuForm [
 
@@ -5261,20 +5164,6 @@ UITheme >> windowMinimizePassiveFormSet [
 	^ self iconFormSetNamed: #windowMinimizeInactive
 ]
 
-{ #category : 'sounds' }
-UITheme >> windowMinimizeSound [
-	"Answer the window minimize sound."
-
-	^self soundTheme windowMinimizeSound
-]
-
-{ #category : 'sounds' }
-UITheme >> windowOpenSound [
-	"Answer the window open sound."
-
-	^self soundTheme windowOpenSound
-]
-
 { #category : 'border-styles' }
 UITheme >> windowPaneBorderStyleFor: aMorph in: aSystemWindow [
 	"Answer the border style for a morph that is to be added
@@ -5303,20 +5192,6 @@ UITheme >> windowPreferredCornerStyleFor: aWindow [
 			aWindow cornerStyle == #rounded])
 		ifTrue: [#rounded]
 		ifFalse: [#square]
-]
-
-{ #category : 'sounds' }
-UITheme >> windowRestoreDownSound [
-	"Answer the window restore down sound."
-
-	^self soundTheme windowRestoreDownSound
-]
-
-{ #category : 'sounds' }
-UITheme >> windowRestoreUpSound [
-	"Answer the window restore up sound."
-
-	^self soundTheme windowRestoreUpSound
 ]
 
 { #category : 'defaults' }

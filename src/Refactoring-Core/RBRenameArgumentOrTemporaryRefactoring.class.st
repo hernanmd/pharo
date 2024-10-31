@@ -33,6 +33,12 @@ RBRenameArgumentOrTemporaryRefactoring class >> model: aRBSmalltalk renameTempor
 ]
 
 { #category : 'instance creation' }
+RBRenameArgumentOrTemporaryRefactoring class >> renameTemporaryFrom: anInterval in: aClass selector: aSelector [
+
+	^ self new class: aClass selector: aSelector interval: anInterval
+]
+
+{ #category : 'instance creation' }
 RBRenameArgumentOrTemporaryRefactoring class >> renameTemporaryFrom: anInterval to: newName in: aClass selector: aSelector [
 	^ self new
 		class: aClass
@@ -44,22 +50,41 @@ RBRenameArgumentOrTemporaryRefactoring class >> renameTemporaryFrom: anInterval 
 { #category : 'preconditions' }
 RBRenameArgumentOrTemporaryRefactoring >> applicabilityPreconditions [
 
+	^ self applicabilityPreconditionsIndependentOfTheNewName , self applicabilityPreconditionsOfTheNewName
+]
+
+{ #category : 'preconditions' }
+RBRenameArgumentOrTemporaryRefactoring >> applicabilityPreconditionsIndependentOfTheNewName [
+	"Those are the preconditions that should be checked before even asking to the user a new name for the temporary."
+
 	^ {
 		  (RBCondition withBlock: [
 			   | methodSource |
-			   interval first > interval last ifTrue: [
-				   self refactoringError: 'You must select a variable name' ].
+			   interval first > interval last ifTrue: [ self refactoringError: 'You must select a variable name' ].
 			   methodSource := class sourceCodeFor: selector.
-			   methodSource size >= interval last ifFalse: [
-				   self refactoringError: 'Invalid range for variable' ].
-			   oldName := methodSource
-				              copyFrom: interval first
-				              to: interval last.
+			   methodSource size >= interval last ifFalse: [ self refactoringError: 'Invalid range for variable' ].
+			   oldName := methodSource copyFrom: interval first to: interval last.
 			   true ]).
+
+		  (RBCondition definesSelector: selector in: class) }
+]
+
+{ #category : 'preconditions' }
+RBRenameArgumentOrTemporaryRefactoring >> applicabilityPreconditionsOfTheNewName [
+	"Those are the preconditions that should be checked after asking to the user a new name for the temporary."
+
+	^ {
 		  (RBCondition isValidInstanceVariableName: newName for: class).
-		  (RBCondition definesSelector: selector in: class).
-		  (RBCondition definesInstanceVariable: newName in: class) not.
-		  (RBCondition definesClassVariable: newName in: class) not }
+
+		  (ReCheckVariableNameCondition class: class variableName: newName parseTree: (class parseTreeForSelector: selector)) }
+]
+
+{ #category : 'initialization' }
+RBRenameArgumentOrTemporaryRefactoring >> class: aClass selector: aSelector interval: anInterval [
+
+	class := self classObjectFor: aClass.
+	selector := aSelector.
+	interval := anInterval
 ]
 
 { #category : 'initialization' }
@@ -67,6 +92,12 @@ RBRenameArgumentOrTemporaryRefactoring >> class: aClass selector: aSelector inte
 	class := self classObjectFor: aClass.
 	selector := aSelector.
 	interval := anInterval.
+	newName := aString
+]
+
+{ #category : 'accessing' }
+RBRenameArgumentOrTemporaryRefactoring >> newName: aString [
+
 	newName := aString
 ]
 
@@ -92,6 +123,12 @@ RBRenameArgumentOrTemporaryRefactoring >> renameNode: aParseTree [
 	(aParseTree allDefinedVariables includes: newName)
 		ifTrue: [ self refactoringError: newName asString , ' is already defined' ].
 	(self parseTreeRewriterClass rename: oldName to: newName) executeTree: aParseTree
+]
+
+{ #category : 'accessing' }
+RBRenameArgumentOrTemporaryRefactoring >> sourceClass [
+
+	^ class
 ]
 
 { #category : 'storing' }

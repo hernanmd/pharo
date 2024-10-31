@@ -46,13 +46,14 @@ RBCondition class >> checkClassVarName: aName in: aClass [
 
 { #category : 'utilities' }
 RBCondition class >> checkInstanceVariableName: aName in: aClass [
+
 	| string |
-	aName isString ifFalse: [^false].
-	string := aName asString.
-	string isEmpty ifTrue: [^false].
-	(self reservedNames includes: string) ifTrue: [^false].
-	string first isUppercase ifTrue: [^false].
-	^RBScanner isVariable: string
+	aName isString ifFalse: [ ^ false ].
+	string := aName.
+	string ifEmpty: [ ^ false ].
+	(self reservedNames includes: string) ifTrue: [ ^ false ].
+	string first isUppercase ifTrue: [ ^ false ].
+	^ RBScanner isVariable: string
 ]
 
 { #category : 'utilities' }
@@ -347,7 +348,7 @@ RBCondition class >> isValidMethodName: aString for: aClass [
 RBCondition class >> methodDefiningTemporary: aString in: aClass ignore: aBlock [
 
 	| searcher method |
-	searcher := RBParseTreeSearcher new.
+	searcher := ASTParseTreeSearcher new.
 	method := nil. "Shut-up the warning"
 	searcher matches: aString do: [ :aNode :answer | ^ method ].
 	aClass withAllSubclasses do: [ :class |
