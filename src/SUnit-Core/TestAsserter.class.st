@@ -33,6 +33,14 @@ Class {
 	#tag : 'Kernel'
 }
 
+{ #category : 'running' }
+TestAsserter class >> application [
+	"For now use the singleton"
+	
+	^ StPharoApplication current
+
+]
+
 { #category : 'asserting' }
 TestAsserter class >> assert: aBoolean description: aString [
 	"Minimal clone of the instance-side assert protocol so that class-side methods can use it."
@@ -55,7 +63,8 @@ TestAsserter class >> classForTestSuite [
 
 { #category : 'logging' }
 TestAsserter class >> failureLog [
-	^ Smalltalk tools transcript
+
+	^ self application tools transcript
 ]
 
 { #category : 'logging' }
